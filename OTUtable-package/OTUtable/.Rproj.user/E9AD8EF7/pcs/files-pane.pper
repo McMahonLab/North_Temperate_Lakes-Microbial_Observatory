@@ -1,0 +1,9 @@
+{
+    "path" : "~/OTUtable",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
