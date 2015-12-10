@@ -21,37 +21,47 @@ If you use this data or the package OTUtable in your research, please cite:
 Repo Structure
 --------------
 North_Temperate_Lakes-Microbial_Observatory
-|- README.txt					#This file
+|- README.txt							#This file
 |- Data
 ||- 16S_data
-|||- bog_repseqs_07Jul15.fasta			#Representative sequences for each OTU
-|||- bogs_OTUtable_07Jan15.csv			#Relative abundance table of OTUs
-|||- bogs_reclassified_expanded_19Oct15.csv	#Classifications of each OTU		
+|||- bog_repseqs_07Jul15.fasta					#Representative sequences for each OTU
+|||- bogs_OTUtable_07Jan15.csv					#Relative abundance table of OTUs
+|||- bogs_reclassified_expanded_19Oct15.csv			#Classifications of each OTU		
 ||- metadata
-|||- 2005_to_2009_field_book.csv		#Environmental metadata from each sample collection site and date
-|||- NTL-MO_sample_metadata.xlsx		#Information about the collection and sequencing of each sample
+|||- 2005_to_2009_field_book.csv				#Environmental metadata from each sample collection site and date
+|||- NTL-MO_sample_metadata.xlsx				#Information about the collection and sequencing of each sample
 ||- mothur_output
-|||- qc.bogs.clean.min25.phylip.an.0.02.cons.taxonomy	#Taxonomy output file
+|||- qc.bogs.clean.min25.phylip.an.0.02.cons.taxonomy		#Taxonomy output file
 |||- qc.bogs.clean.min25.phylip.an.0.02.subsample.shared	#Rarefied OTU table
 |- OTUtable-package
-|||- data						#Datasets for loading in package OTUtable
-||||- metadata.rda					#Equivalent to 2005_to_2009_field.book.csv		
-||||- otu_table.rda					#Equivalent to bogs_OTUtable_07Jan15.csv
-||||- taxonomy.rda					#Equivalent to bogs_reclassified_expanded_19Oct15.csv
+|||- data							#Datasets for loading in package OTUtable
+||||- metadata.rda						#Equivalent to 2005_to_2009_field.book.csv		
+||||- otu_table.rda						#Equivalent to bogs_OTUtable_07Jan15.csv
+||||- taxonomy.rda						#Equivalent to bogs_reclassified_expanded_19Oct15.csv
 |||- man
-||||- (many .Rd files)					#Help files for each function in OTUtable
-|||- R							#Source code for OTUtable
+||||- (many .Rd files)						#Help files for each function in OTUtable
+|||- R								#Source code for OTUtable
 ||||- alpha_biodiversity_metrics.R
 ||||- data_processing.R
 ||||- format_mothur_output.R
 ||||- water_column_plots.R
-|||- .Rbuildignore					#Ignore file for package building
-|||- .Rdata						#Part of R history
-|||- .Rhistory						#History of workspace
-|||- DESCRIPTION					#Package description
-|||- NAMESPACE						#Package namespace
-|||- OTUtable.Rproj					#Rstudio package building project
+|||- .Rbuildignore						#Ignore file for package building
+|||- .Rdata							#Part of R history
+|||- .Rhistory							#History of workspace
+|||- DESCRIPTION						#Package description
+|||- NAMESPACE							#Package namespace
+|||- OTUtable.Rproj						#Rstudio package building project
 ||- OTUtable
-||- OTUtable_1.0.tar.gz					#Downloadable package for Macs/Linux
-||- OTUtable_1.0.zip					#Downloadable package for Windows
+||- OTUtable_1.0.tar.gz						#Downloadable package for Macs/Linux
+||- OTUtable_1.0.zip						#Downloadable package for Windows
 |- Scripts+Workflows
+||- Sequence_analysis
+|||- 16S_deblurred_table_mothur_workflow.docs			#Workflow from sequence data to OTU table
+|||- bog_repseq_generation.R					#Generates representative sequence fasta file
+|||- names_from_shared.R					#Generates a .names from a .shared file
+|||- remove_seqs_from_shared.R					#Removes sequences from .shared file that were removed in the .names file (from chimera and chloroplast removal steps)
+|||- shared_to_count.R						#Converts .shared to .count file
+||- indicator_analysis.Rmd					#Tables 3-5 in manuscript
+||- make_pdf_figures.R						#Generates pdfs for figures in manuscript
+||- MO-NTL_paper_supplemental.pdf				#Markdown output of supplemental document
+||- MO-NTL_paper_supplemental.Rmd				#Script for generating supplemental figures
