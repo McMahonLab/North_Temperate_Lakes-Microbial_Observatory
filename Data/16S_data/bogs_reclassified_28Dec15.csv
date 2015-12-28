@@ -353,7 +353,7 @@ Otu0351,k__Bacteria(100);p__Armatimonadetes(100);c__SJA-176(100);o__RB046(100);f
 Otu0352,k__Bacteria(100);p__Firmicutes(88);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0353,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(100);o__Pseudomonadales(100);f__Moraxellaceae(100);g__Acinetobacter(100);s__lwoffii(91);
 Otu0354,k__Bacteria(100);p__Verrucomicrobia(91);c__[Pedosphaerae](91);o__[Pedosphaerales](89);unclassified;unclassified;unclassified;
-Otu0355,k__Bacteria(100);p__Actinobacteria(95);c__Acidimicrobiia(66);o__Acidimicrobiales(66);unclassified;unclassified;unclassified;
+Otu0355,k__Bacteria(100);p__Actinobacteria(95);c__Acidimicrobia(66);o__Acidimicrobiales(66);unclassified;unclassified;unclassified;
 Otu0356,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0357,k__Bacteria(100);p__Firmicutes(83);c__Clostridia(76);o__Clostridiales(76);unclassified;unclassified;unclassified;
 Otu0358,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -491,7 +491,7 @@ Otu0489,k__Bacteria(100);p__Proteobacteria(99);c__Gammaproteobacteria(79);unclas
 Otu0490,k__Bacteria(100);p__Proteobacteria(93);c__Deltaproteobacteria(89);unclassified;unclassified;unclassified;unclassified;
 Otu0491,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0492,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu0493,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(95);o__Acidimicrobiales(95);f__C111(93);g__(93);s__(93);
+Otu0493,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(95);o__Acidimicrobiales(95);f__C111(93);g__(93);s__(93);
 Otu0494,k__Bacteria(100);p__Proteobacteria(99);c__Alphaproteobacteria(99);o__Caulobacterales(90);f__Caulobacteraceae(90);g__Phenylobacterium(73);s__(73);
 Otu0495,k__Bacteria(100);p__Bacteroidetes(93);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0496,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhodospirillales(100);f__Rhodospirillaceae(100);g__Telmatospirillum(100);s__siberiense(74);
@@ -604,7 +604,7 @@ Otu0602,k__Bacteria(100);p__Proteobacteria(96);c__Gammaproteobacteria(80);unclas
 Otu0603,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(99);o__Methylococcales(85);f__Methylococcaceae(84);g__Methylomicrobium(84);s__buryatense(84);
 Otu0604,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0605,k__Bacteria(100);p__TM6(63);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu0606,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(96);o__Acidimicrobiales(96);f__(96);g__(96);s__(96);
+Otu0606,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(96);o__Acidimicrobiales(96);f__(96);g__(96);s__(96);
 Otu0607,k__Bacteria(100);p__TM6(62);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0608,k__Bacteria(100);p__Firmicutes(93);c__Clostridia(72);o__Clostridiales(72);f__[Mogibacteriaceae](67);g__(65);s__(65);
 Otu0609,k__Bacteria(100);p__Cyanobacteria(72);c__4C0d-2(69);o__MLE1-12(65);f__(65);g__(65);s__(65);
@@ -627,7 +627,7 @@ Otu0625,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu0626,k__Bacteria(100);p__Proteobacteria(99);c__Deltaproteobacteria(99);o__Syntrophobacterales(97);f__Syntrophaceae(97);g__Syntrophus(90);s__(90);
 Otu0627,k__Bacteria(100);p__Chlamydiae(91);c__Chlamydiia(91);o__Chlamydiales(91);f__Parachlamydiaceae(77);unclassified;unclassified;
 Otu0628,k__Bacteria(100);p__TM6(68);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu0629,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);f__Microthrixaceae(99);g__(99);s__(99);
+Otu0629,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);f__Microthrixaceae(99);g__(99);s__(99);
 Otu0630,k__Bacteria(100);p__Proteobacteria(99);c__Deltaproteobacteria(99);o__Syntrophobacterales(79);f__Syntrophaceae(79);unclassified;unclassified;
 Otu0631,k__Bacteria(100);p__Proteobacteria(87);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0632,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -700,7 +700,7 @@ Otu0698,k__Bacteria(100);p__Proteobacteria(82);c__Deltaproteobacteria(67);unclas
 Otu0699,k__Bacteria(100);p__Proteobacteria(94);c__Deltaproteobacteria(78);o__Myxococcales(60);unclassified;unclassified;unclassified;
 Otu0700,k__Bacteria(100);p__Bacteroidetes(100);c__[Saprospirae](99);o__[Saprospirales](99);f__Chitinophagaceae(99);g__(66);s__(66);
 Otu0701,k__Bacteria(100);p__Chlorobi(84);c__Ignavibacteria(83);o__Ignavibacteriales(83);f__Ignavibacteriaceae(71);g__Ignavibacterium(65);s__(65);
-Otu0702,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(97);o__Acidimicrobiales(97);f__AKIW874(68);g__(68);s__(68);
+Otu0702,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(97);o__Acidimicrobiales(97);f__AKIW874(68);g__(68);s__(68);
 Otu0703,k__Bacteria(100);p__Verrucomicrobia(98);c__[Pedosphaerae](98);o__[Pedosphaerales](98);unclassified;unclassified;unclassified;
 Otu0704,k__Bacteria(100);p__Proteobacteria(95);c__Deltaproteobacteria(82);o__Desulfobacterales(67);f__Desulfobacteraceae(67);g__Desulfofaba(61);s__(61);
 Otu0705,k__Bacteria(100);p__Proteobacteria(92);c__Deltaproteobacteria(81);unclassified;unclassified;unclassified;unclassified;
@@ -724,7 +724,7 @@ Otu0722,k__Bacteria(100);p__Planctomycetes(80);c__Planctomycetia(80);o__Gemmatal
 Otu0723,k__Bacteria(100);p__Proteobacteria(89);c__Alphaproteobacteria(88);o__Caulobacterales(69);f__Caulobacteraceae(69);unclassified;unclassified;
 Otu0724,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0725,k__Bacteria(100);p__Proteobacteria(99);c__Gammaproteobacteria(97);o__Legionellales(86);f__Legionellaceae(86);unclassified;unclassified;
-Otu0726,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(99);o__Acidimicrobiales(99);acV(99);acV-A(94);acV-A2(64);unclassified;
+Otu0726,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(99);o__Acidimicrobiales(99);acV(99);acV-A(94);acV-A2(64);unclassified;
 Otu0727,k__Bacteria(100);p__Proteobacteria(95);c__Alphaproteobacteria(87);unclassified;unclassified;unclassified;unclassified;
 Otu0728,k__Bacteria(100);p__Bacteroidetes(97);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0729,k__Bacteria(100);p__Proteobacteria(95);unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -750,7 +750,7 @@ Otu0748,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__R
 Otu0749,k__Bacteria(100);p__Chlamydiae(98);c__Chlamydiia(98);o__Chlamydiales(98);f__Parachlamydiaceae(98);g__Parachlamydia(69);s__acanthamoebae(69);
 Otu0750,k__Bacteria(100);p__Proteobacteria(89);c__Alphaproteobacteria(79);o__Rickettsiales(76);f__(71);g__(71);s__(71);
 Otu0751,k__Bacteria(100);p__Proteobacteria(73);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu0752,k__Bacteria(100);p__Actinobacteria(99);c__Acidimicrobiia(93);o__Acidimicrobiales(93);f__(72);g__(72);s__(72);
+Otu0752,k__Bacteria(100);p__Actinobacteria(99);c__Acidimicrobia(93);o__Acidimicrobiales(93);f__(72);g__(72);s__(72);
 Otu0753,k__Bacteria(100);p__Spirochaetes(62);c__Spirochaetes(62);o__Spirochaetales(62);f__Spirochaetaceae(62);g__Treponema(60);s__phagedenis(60);
 Otu0754,k__Bacteria(100);p__Bacteroidetes(100);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu0755,k__Bacteria(100);p__Verrucomicrobia(91);c__[Pedosphaerae](70);o__[Pedosphaerales](67);f__auto67_4W(64);g__(64);s__(64);
@@ -1111,7 +1111,7 @@ Otu1109,k__Bacteria(100);p__Verrucomicrobia(81);c__Verruco-5(78);unclassified;un
 Otu1110,k__Bacteria(100);p__Proteobacteria(92);c__Betaproteobacteria(92);o__SBla14(70);f__(70);g__(70);s__(70);
 Otu1111,k__Bacteria(100);p__Proteobacteria(94);c__Gammaproteobacteria(81);unclassified;unclassified;unclassified;unclassified;
 Otu1112,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu1113,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
+Otu1113,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
 Otu1114,k__Bacteria(100);p__Proteobacteria(94);c__Gammaproteobacteria(92);unclassified;unclassified;unclassified;unclassified;
 Otu1115,k__Bacteria(100);p__Proteobacteria(91);c__Alphaproteobacteria(84);unclassified;unclassified;unclassified;unclassified;
 Otu1116,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhodospirillales(100);f__Acetobacteraceae(100);g__(69);s__(69);
@@ -1165,7 +1165,7 @@ Otu1163,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu1164,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1165,k__Bacteria(100);p__Proteobacteria(100);c__Deltaproteobacteria(100);o__Syntrophobacterales(100);f__Syntrophaceae(100);g__Syntrophus(95);s__(95);
 Otu1166,k__Bacteria(100);p__Actinobacteria(100);c__Actinobacteria(99);o__Actinomycetales(98);acI(98);acI-A(94);unclassified;unclassified;
-Otu1167,k__Bacteria(100);p__Actinobacteria(96);c__Acidimicrobiia(73);o__Acidimicrobiales(73);acV(72);acV-A(72);acV-A1(72);unclassified;
+Otu1167,k__Bacteria(100);p__Actinobacteria(96);c__Acidimicrobia(73);o__Acidimicrobiales(73);acV(72);acV-A(72);acV-A1(72);unclassified;
 Otu1168,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhizobiales(100);f__Bradyrhizobiaceae(100);g__Afipia(100);s__(100);
 Otu1169,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1170,k__Bacteria(100);p__Proteobacteria(100);c__Betaproteobacteria(99);o__Burkholderiales(90);f__Oxalobacteraceae(90);g__Oxalobacter(63);s__(63);
@@ -1183,7 +1183,7 @@ Otu1181,k__Bacteria(100);p__Firmicutes(65);c__Clostridia(62);o__Clostridiales(62
 Otu1182,k__Bacteria(100);p__Cyanobacteria(100);c__Synechococcophycideae(100);o__Synechococcales(100);f__Synechococcaceae(100);g__Synechococcus(100);s__(100);
 Otu1183,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1184,k__Bacteria(100);p__Firmicutes(78);c__Clostridia(76);o__Clostridiales(76);f__Christensenellaceae(61);unclassified;unclassified;
-Otu1185,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acIV(100);acIV-D(100);Iamia(100);unclassified;
+Otu1185,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acIV(100);acIV-D(100);Iamia(100);unclassified;
 Otu1186,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhizobiales(100);alfI-B(95);unclassified;unclassified;unclassified;
 Otu1187,k__Bacteria(100);p__Proteobacteria(98);c__Alphaproteobacteria(97);o__Rhodospirillales(97);f__Acetobacteraceae(97);unclassified;unclassified;
 Otu1188,k__Bacteria(100);p__Proteobacteria(73);c__Gammaproteobacteria(61);unclassified;unclassified;unclassified;unclassified;
@@ -1671,7 +1671,7 @@ Otu1669,k__Bacteria(100);p__Proteobacteria(85);c__Alphaproteobacteria(77);unclas
 Otu1670,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1671,k__Bacteria(100);p__Proteobacteria(70);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1672,k__Bacteria(100);p__Firmicutes(66);c__Clostridia(64);o__Clostridiales(64);unclassified;unclassified;unclassified;
-Otu1673,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A2(100);unclassified;
+Otu1673,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A2(100);unclassified;
 Otu1674,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(89);unclassified;unclassified;unclassified;unclassified;
 Otu1675,k__Bacteria(100);p__Proteobacteria(86);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1676,k__Bacteria(100);p__Proteobacteria(100);c__Deltaproteobacteria(100);o__Myxococcales(100);f__Haliangiaceae(100);g__(100);s__(100);
@@ -1753,7 +1753,7 @@ Otu1754,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu1755,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1756,k__Bacteria(100);p__Proteobacteria(100);c__Betaproteobacteria(93);o__Burkholderiales(68);unclassified;unclassified;unclassified;
 Otu1757,k__Bacteria(100);p__Proteobacteria(100);c__Betaproteobacteria(100);o__Burkholderiales(100);betI(95);betI-A(94);Lhab-A2(89);unclassified;
-Otu1758,k__Bacteria(100);p__Actinobacteria(94);c__Acidimicrobiia(84);o__Acidimicrobiales(84);f__(82);g__(82);s__(82);
+Otu1758,k__Bacteria(100);p__Actinobacteria(94);c__Acidimicrobia(84);o__Acidimicrobiales(84);f__(82);g__(82);s__(82);
 Otu1759,k__Bacteria(100);p__Proteobacteria(93);c__Epsilonproteobacteria(78);o__Campylobacterales(73);unclassified;unclassified;unclassified;
 Otu1760,k__Bacteria(100);p__Actinobacteria(72);c__Actinobacteria(65);o__Actinomycetales(65);unclassified;unclassified;unclassified;
 Otu1761,k__Bacteria(100);p__Actinobacteria(64);c__Actinobacteria(64);o__Actinomycetales(62);unclassified;unclassified;unclassified;
@@ -1846,7 +1846,7 @@ Otu1849,k__Bacteria(100);p__Bacteroidetes(97);unclassified;unclassified;unclassi
 Otu1850,k__Bacteria(100);p__Actinobacteria(97);c__Actinobacteria(97);o__Actinomycetales(97);unclassified;unclassified;unclassified;
 Otu1851,k__Bacteria(100);p__Chlamydiae(61);c__Chlamydiia(61);o__Chlamydiales(61);unclassified;unclassified;unclassified;
 Otu1852,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu1853,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A2(100);unclassified;
+Otu1853,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A2(100);unclassified;
 Otu1854,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu1855,k__Bacteria(100);p__Bacteroidetes(97);c__Cytophagia(91);o__Cytophagales(91);f__(77);g__(77);s__(77);
 Otu1856,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -2062,7 +2062,7 @@ Otu2068,k__Bacteria(100);p__Armatimonadetes(99);c__[Fimbriimonadia](99);o__[Fimb
 Otu2069,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhizobiales(100);alfI-A(88);unclassified;unclassified;unclassified;
 Otu2070,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2071,k__Bacteria(100);p__Planctomycetes(100);c__Planctomycetia(100);o__Planctomycetales(100);f__Planctomycetaceae(100);g__Planctomyces(100);s__(100);
-Otu2072,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);f__Iamiaceae(74);g__Iamia(74);s__(74);
+Otu2072,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);f__Iamiaceae(74);g__Iamia(74);s__(74);
 Otu2073,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2074,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Caulobacterales(100);f__Caulobacteraceae(100);g__Phenylobacterium(72);s__(72);
 Otu2075,k__Bacteria(100);p__Chloroflexi(94);c__Dehalococcoidetes(94);o__Dehalococcoidales(94);f__Dehalococcoidaceae(94);g__(94);s__(94);
@@ -2165,7 +2165,7 @@ Otu2174,k__Bacteria(100);p__Verrucomicrobia(97);c__[Pedosphaerae](97);o__[Pedosp
 Otu2175,k__Bacteria(100);p__Proteobacteria(88);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2176,k__Bacteria(100);p__Cyanobacteria(85);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2177,k__Bacteria(100);p__Cyanobacteria(81);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu2178,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);f__Microthrixaceae(97);g__(97);s__(97);
+Otu2178,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);f__Microthrixaceae(97);g__(97);s__(97);
 Otu2179,k__Bacteria(100);p__TM6(82);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2180,k__Bacteria(100);p__Cyanobacteria(99);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2181,k__Bacteria(100);p__Chloroflexi(88);c__Anaerolineae(88);unclassified;unclassified;unclassified;unclassified;
@@ -2631,7 +2631,7 @@ Otu2651,k__Bacteria(100);p__Proteobacteria(93);c__Gammaproteobacteria(82);unclas
 Otu2652,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2653,k__Bacteria(100);p__Actinobacteria(100);c__Actinobacteria(100);o__Actinomycetales(100);f__Corynebacteriaceae(100);g__Corynebacterium(100);s__aurimucosum(93);
 Otu2654,k__Bacteria(100);p__Chlamydiae(68);c__Chlamydiia(68);o__Chlamydiales(68);unclassified;unclassified;unclassified;
-Otu2655,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobiia(96);o__Acidimicrobiales(96);f__(76);g__(76);s__(76);
+Otu2655,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobia(96);o__Acidimicrobiales(96);f__(76);g__(76);s__(76);
 Otu2656,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2657,k__Bacteria(100);p__Actinobacteria(100);c__Actinobacteria(100);o__Actinomycetales(100);f__ACK-M1(100);g__(100);s__(100);
 Otu2658,k__Bacteria(100);p__Proteobacteria(80);c__Alphaproteobacteria(67);unclassified;unclassified;unclassified;unclassified;
@@ -2721,7 +2721,7 @@ Otu2741,k__Bacteria(100);p__Acidobacteria(100);c__Solibacteres(100);o__Solibacte
 Otu2742,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2743,k__Bacteria(100);p__Verrucomicrobia(98);c__[Pedosphaerae](94);o__[Pedosphaerales](79);f__(74);g__(74);s__(74);
 Otu2744,k__Bacteria(100);p__Proteobacteria(78);c__Deltaproteobacteria(60);unclassified;unclassified;unclassified;unclassified;
-Otu2745,k__Bacteria(100);p__Actinobacteria(87);c__Acidimicrobiia(64);o__Acidimicrobiales(64);f__(61);g__(61);s__(61);
+Otu2745,k__Bacteria(100);p__Actinobacteria(87);c__Acidimicrobia(64);o__Acidimicrobiales(64);f__(61);g__(61);s__(61);
 Otu2746,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2747,k__Bacteria(100);p__Actinobacteria(97);c__Actinobacteria(97);o__Actinomycetales(97);f__(68);g__(68);s__(68);
 Otu2748,k__Bacteria(100);p__Planctomycetes(72);c__Phycisphaerae(68);o__(62);f__(62);g__(62);s__(62);
@@ -2909,7 +2909,7 @@ Otu2935,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(99);o__Le
 Otu2936,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhizobiales(100);f__Methylobacteriaceae(100);g__(87);s__(87);
 Otu2937,k__Bacteria(100);p__Bacteroidetes(99);c__[Saprospirae](92);o__[Saprospirales](92);f__Chitinophagaceae(92);g__(89);s__(89);
 Otu2938,k__Bacteria(100);p__Cyanobacteria(65);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu2939,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(99);o__Acidimicrobiales(99);acIV(99);acIV-C(96);unclassified;unclassified;
+Otu2939,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(99);o__Acidimicrobiales(99);acIV(99);acIV-C(96);unclassified;unclassified;
 Otu2940,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu2941,k__Bacteria(100);p__Verrucomicrobia(86);c__[Pedosphaerae](77);o__[Pedosphaerales](76);unclassified;unclassified;unclassified;
 Otu2942,k__Bacteria(100);p__NKB19(92);c__(78);o__(78);f__(78);g__(78);s__(78);
@@ -3573,7 +3573,7 @@ Otu3613,k__Bacteria(100);p__Proteobacteria(99);c__Deltaproteobacteria(97);o__Bde
 Otu3614,k__Bacteria(100);p__TM6(66);c__SJA-4(64);unclassified;unclassified;unclassified;unclassified;
 Otu3615,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu3616,k__Bacteria(100);p__Chloroflexi(82);c__Dehalococcoidetes(66);o__Dehalococcoidales(65);unclassified;unclassified;unclassified;
-Otu3617,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
+Otu3617,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
 Otu3618,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu3619,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu3620,k__Bacteria(100);p__OP8(60);c__OP8_1(60);unclassified;unclassified;unclassified;unclassified;
@@ -3727,7 +3727,7 @@ Otu3770,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu3771,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu3772,k__Bacteria(100);p__Bacteroidetes(99);c__[Saprospirae](80);o__[Saprospirales](80);f__(70);g__(70);s__(70);
 Otu3773,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu3774,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acIV(100);acIV-A(100);Iluma-A2(100);unclassified;
+Otu3774,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acIV(100);acIV-A(100);Iluma-A2(100);unclassified;
 Otu3775,k__Bacteria(100);p__Proteobacteria(99);c__Deltaproteobacteria(97);o__Myxococcales(95);f__(75);g__(75);s__(75);
 Otu3776,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu3777,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhodospirillales(100);f__Acetobacteraceae(100);unclassified;unclassified;
@@ -4080,7 +4080,7 @@ Otu4129,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu4130,k__Bacteria(100);p__Fibrobacteres(70);c__TG3(70);o__(68);f__(68);g__(68);s__(68);
 Otu4131,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Rhizobiales(80);unclassified;unclassified;unclassified;
 Otu4132,k__Bacteria(100);p__Firmicutes(92);c__Clostridia(81);o__Clostridiales(70);f__Veillonellaceae(70);unclassified;unclassified;
-Otu4133,k__Bacteria(100);p__Actinobacteria(85);c__Acidimicrobiia(75);o__Acidimicrobiales(75);f__(60);g__(60);s__(60);
+Otu4133,k__Bacteria(100);p__Actinobacteria(85);c__Acidimicrobia(75);o__Acidimicrobiales(75);f__(60);g__(60);s__(60);
 Otu4134,k__Bacteria(100);p__Acidobacteria(92);c__BPC102(91);o__MVS-40(91);f__(91);g__(91);s__(91);
 Otu4136,k__Bacteria(100);p__TM6(69);c__SJA-4(63);o__(63);f__(63);g__(63);s__(63);
 Otu4137,k__Bacteria(100);p__Proteobacteria(78);c__Deltaproteobacteria(72);o__Desulfuromonadales(64);f__Geobacteraceae(62);g__Geobacter(62);unclassified;
@@ -4089,7 +4089,7 @@ Otu4139,k__Bacteria(100);p__Proteobacteria(99);c__Alphaproteobacteria(98);o__Rho
 Otu4140,k__Bacteria(100);p__Cyanobacteria(62);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4141,k__Bacteria(100);p__TM6(80);c__SBRH58(69);o__(69);f__(69);g__(69);s__(69);
 Otu4142,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu4143,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobiia(94);o__Acidimicrobiales(94);f__(68);g__(68);s__(68);
+Otu4143,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobia(94);o__Acidimicrobiales(94);f__(68);g__(68);s__(68);
 Otu4144,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4145,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4146,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Caulobacterales(100);alfII(100);alfII-A(100);Brev(100);unclassified;
@@ -4345,7 +4345,7 @@ Otu4399,k__Bacteria(100);p__Verrucomicrobia(100);c__Opitutae(100);o__Opitutales(
 Otu4400,k__Bacteria(100);p__Actinobacteria(100);c__Actinobacteria(100);o__Actinomycetales(100);unclassified;unclassified;unclassified;
 Otu4401,k__Bacteria(100);p__Actinobacteria(92);c__Actinobacteria(91);o__Actinomycetales(91);unclassified;unclassified;unclassified;
 Otu4402,k__Bacteria(100);p__Verrucomicrobia(90);c__[Pedosphaerae](83);o__[Pedosphaerales](83);unclassified;unclassified;unclassified;
-Otu4404,k__Bacteria(100);p__Actinobacteria(84);c__Acidimicrobiia(62);o__Acidimicrobiales(62);unclassified;unclassified;unclassified;
+Otu4404,k__Bacteria(100);p__Actinobacteria(84);c__Acidimicrobia(62);o__Acidimicrobiales(62);unclassified;unclassified;unclassified;
 Otu4405,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4406,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4407,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -4360,7 +4360,7 @@ Otu4415,k__Bacteria(100);p__Bacteroidetes(100);c__Sphingobacteriia(94);o__Sphing
 Otu4416,k__Bacteria(100);p__Acidobacteria(80);c__Acidobacteriia(78);o__Acidobacteriales(78);f__Koribacteraceae(76);g__(75);s__(75);
 Otu4417,k__Bacteria(100);p__Verrucomicrobia(97);c__[Pedosphaerae](97);o__[Pedosphaerales](97);unclassified;unclassified;unclassified;
 Otu4418,k__Bacteria(100);p__Bacteroidetes(94);c__Cytophagia(80);o__Cytophagales(80);f__(66);g__(66);s__(66);
-Otu4419,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
+Otu4419,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
 Otu4420,k__Bacteria(100);p__WWE1(98);c__[Cloacamonae](98);o__[Cloacamonales](98);f__SHA-116(96);g__(96);s__(96);
 Otu4421,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(94);o__Legionellales(88);f__Legionellaceae(88);g__Legionella(80);unclassified;
 Otu4422,k__Bacteria(100);p__Tenericutes(74);c__Mollicutes(74);o__RF39(70);f__(70);g__(70);s__(70);
@@ -4806,7 +4806,7 @@ Otu4870,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu4871,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4872,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu4873,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(100);o__Legionellales(98);f__Legionellaceae(98);g__(77);s__(77);
-Otu4874,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);f__C111(100);g__(100);s__(100);
+Otu4874,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);f__C111(100);g__(100);s__(100);
 Otu4875,k__Bacteria(100);p__Proteobacteria(96);c__Deltaproteobacteria(96);o__Myxococcales(90);f__Polyangiaceae(83);g__Chondromyces(66);s__(66);
 Otu4876,k__Bacteria(100);p__Chlamydiae(67);c__Chlamydiia(67);o__Chlamydiales(67);f__Parachlamydiaceae(63);g__Parachlamydia(61);s__acanthamoebae(61);
 Otu4877,k__Bacteria(100);p__Bacteroidetes(74);unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5106,7 +5106,7 @@ Otu5175,k__Bacteria(100);p__Bacteroidetes(100);c__Flavobacteriia(100);o__Flavoba
 Otu5176,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5177,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5178,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5179,k__Bacteria(100);p__Actinobacteria(92);c__Acidimicrobiia(69);o__Acidimicrobiales(69);unclassified;unclassified;unclassified;
+Otu5179,k__Bacteria(100);p__Actinobacteria(92);c__Acidimicrobia(69);o__Acidimicrobiales(69);unclassified;unclassified;unclassified;
 Otu5180,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5181,k__Bacteria(100);p__Proteobacteria(88);c__Betaproteobacteria(88);unclassified;unclassified;unclassified;unclassified;
 Otu5182,k__Bacteria(100);p__Proteobacteria(73);unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5190,7 +5190,7 @@ Otu5260,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu5261,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5262,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5263,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5264,k__Bacteria(100);p__Actinobacteria(95);c__Acidimicrobiia(91);o__Acidimicrobiales(91);f__(89);g__(89);s__(89);
+Otu5264,k__Bacteria(100);p__Actinobacteria(95);c__Acidimicrobia(91);o__Acidimicrobiales(91);f__(89);g__(89);s__(89);
 Otu5265,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5266,k__Bacteria(100);p__Proteobacteria(100);c__Gammaproteobacteria(100);o__Legionellales(98);f__Coxiellaceae(98);g__Aquicella(98);s__(98);
 Otu5267,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5218,7 +5218,7 @@ Otu5288,k__Bacteria(100);p__Bacteroidetes(97);unclassified;unclassified;unclassi
 Otu5289,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5290,k__Bacteria(100);p__Proteobacteria(61);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5291,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5292,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
+Otu5292,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
 Otu5293,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5294,k__Bacteria(100);p__Verrucomicrobia(70);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5295,k__Bacteria(100);p__Bacteroidetes(93);c__Sphingobacteriia(73);o__Sphingobacteriales(73);bacVI(73);unclassified;unclassified;unclassified;
@@ -5266,7 +5266,7 @@ Otu5337,k__Bacteria(100);p__Firmicutes(66);unclassified;unclassified;unclassifie
 Otu5338,k__Bacteria(100);p__Bacteroidetes(98);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5339,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5340,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5341,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);unclassified;unclassified;unclassified;
+Otu5341,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);unclassified;unclassified;unclassified;
 Otu5342,k__Bacteria(100);p__Proteobacteria(99);c__Alphaproteobacteria(99);o__Rhodospirillales(99);f__Acetobacteraceae(96);unclassified;unclassified;
 Otu5343,k__Bacteria(100);p__Proteobacteria(98);c__Gammaproteobacteria(90);unclassified;unclassified;unclassified;unclassified;
 Otu5344,k__Bacteria(100);p__Bacteroidetes(82);unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5462,7 +5462,7 @@ Otu5538,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu5539,k__Bacteria(100);p__Bacteroidetes(69);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5540,k__Bacteria(100);p__Chlorobi(71);c__Ignavibacteria(70);o__Ignavibacteriales(69);unclassified;unclassified;unclassified;
 Otu5541,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5542,k__Bacteria(100);p__Actinobacteria(90);c__Acidimicrobiia(72);o__Acidimicrobiales(72);unclassified;unclassified;unclassified;
+Otu5542,k__Bacteria(100);p__Actinobacteria(90);c__Acidimicrobia(72);o__Acidimicrobiales(72);unclassified;unclassified;unclassified;
 Otu5543,k__Bacteria(100);p__Proteobacteria(60);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5544,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5545,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5490,7 +5490,7 @@ Otu5566,k__Bacteria(100);p__Proteobacteria(99);unclassified;unclassified;unclass
 Otu5567,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5568,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5569,k__Bacteria(100);p__Firmicutes(64);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5570,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobiia(94);o__Acidimicrobiales(94);f__(64);g__(64);s__(64);
+Otu5570,k__Bacteria(100);p__Actinobacteria(98);c__Acidimicrobia(94);o__Acidimicrobiales(94);f__(64);g__(64);s__(64);
 Otu5571,k__Bacteria(100);p__Verrucomicrobia(99);c__[Pedosphaerae](98);o__[Pedosphaerales](98);f__auto67_4W(95);g__(95);s__(95);
 Otu5572,k__Bacteria(100);p__Bacteroidetes(100);c__Bacteroidia(99);o__Bacteroidales(99);f__Bacteroidaceae(99);g__Bacteroides(99);s__acidifaciens(91);
 Otu5573,k__Bacteria(100);p__OP11(100);c__OP11-2(100);o__WCHB1-07(100);f__(100);g__(100);s__(100);
@@ -5537,7 +5537,7 @@ Otu5614,k__Bacteria(100);p__Firmicutes(100);c__Clostridia(100);o__Clostridiales(
 Otu5615,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5616,k__Bacteria(100);p__Proteobacteria(71);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5617,k__Bacteria(100);p__Proteobacteria(97);c__Betaproteobacteria(84);unclassified;unclassified;unclassified;unclassified;
-Otu5618,k__Bacteria(100);p__Actinobacteria(89);c__Acidimicrobiia(69);o__Acidimicrobiales(69);f__C111(62);g__(62);s__(62);
+Otu5618,k__Bacteria(100);p__Actinobacteria(89);c__Acidimicrobia(69);o__Acidimicrobiales(69);f__C111(62);g__(62);s__(62);
 Otu5619,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5620,k__Bacteria(100);p__Proteobacteria(85);c__Deltaproteobacteria(78);unclassified;unclassified;unclassified;unclassified;
 Otu5621,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__Caulobacterales(100);f__Caulobacteraceae(100);g__Asticcacaulis(100);s__(100);
@@ -5567,7 +5567,7 @@ Otu5644,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu5645,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5646,k__Bacteria(100);p__Proteobacteria(64);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5647,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5648,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);f__C111(94);g__(94);s__(94);
+Otu5648,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);f__C111(94);g__(94);s__(94);
 Otu5649,k__Bacteria(100);p__Proteobacteria(99);c__Betaproteobacteria(94);unclassified;unclassified;unclassified;unclassified;
 Otu5650,k__Bacteria(100);p__Firmicutes(100);c__Bacilli(100);o__Lactobacillales(100);f__Streptococcaceae(100);g__Lactococcus(100);s__(97);
 Otu5651,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5682,7 +5682,7 @@ Otu5763,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu5764,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5765,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5766,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5767,k__Bacteria(100);p__Actinobacteria(99);c__Acidimicrobiia(94);o__Acidimicrobiales(94);f__(71);g__(71);s__(71);
+Otu5767,k__Bacteria(100);p__Actinobacteria(99);c__Acidimicrobia(94);o__Acidimicrobiales(94);f__(71);g__(71);s__(71);
 Otu5768,k__Bacteria(100);p__Proteobacteria(82);c__Alphaproteobacteria(72);unclassified;unclassified;unclassified;unclassified;
 Otu5769,k__Bacteria(100);p__Proteobacteria(88);c__Deltaproteobacteria(80);o__Bdellovibrionales(77);f__Bacteriovoracaceae(77);unclassified;unclassified;
 Otu5770,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -5901,7 +5901,7 @@ Otu5986,k__Bacteria(100);p__Actinobacteria(100);c__Actinobacteria(100);o__Actino
 Otu5987,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5988,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5989,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu5990,k__Bacteria(100);p__Actinobacteria(93);c__Acidimicrobiia(86);o__Acidimicrobiales(86);f__(85);g__(85);s__(85);
+Otu5990,k__Bacteria(100);p__Actinobacteria(93);c__Acidimicrobia(86);o__Acidimicrobiales(86);f__(85);g__(85);s__(85);
 Otu5991,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5992,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu5993,k__Bacteria(100);p__Verrucomicrobia(99);c__[Pedosphaerae](98);o__[Pedosphaerales](97);f__[Pedosphaeraceae](79);g__Pedosphaera(79);s__(79);
@@ -5978,7 +5978,7 @@ Otu6064,k__Bacteria(100);p__Bacteroidetes(100);c__Flavobacteriia(66);o__Flavobac
 Otu6065,k__Bacteria(100);p__Proteobacteria(64);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6066,k__Bacteria(100);p__Proteobacteria(81);c__Gammaproteobacteria(75);unclassified;unclassified;unclassified;unclassified;
 Otu6067,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu6068,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(97);o__Acidimicrobiales(97);f__(97);g__(97);s__(97);
+Otu6068,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(97);o__Acidimicrobiales(97);f__(97);g__(97);s__(97);
 Otu6069,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6070,k__Bacteria(100);p__Actinobacteria(96);c__Actinobacteria(95);o__Actinomycetales(93);unclassified;unclassified;unclassified;
 Otu6071,k__Bacteria(100);p__Proteobacteria(63);unclassified;unclassified;unclassified;unclassified;unclassified;
@@ -6054,7 +6054,7 @@ Otu6142,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu6143,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6144,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6145,k__Bacteria(100);p__Chlorobi(74);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu6146,k__Bacteria(100);p__Actinobacteria(82);c__Acidimicrobiia(69);o__Acidimicrobiales(69);f__(66);g__(66);s__(66);
+Otu6146,k__Bacteria(100);p__Actinobacteria(82);c__Acidimicrobia(69);o__Acidimicrobiales(69);f__(66);g__(66);s__(66);
 Otu6147,k__Bacteria(100);p__Proteobacteria(89);c__Alphaproteobacteria(64);unclassified;unclassified;unclassified;unclassified;
 Otu6148,k__Bacteria(100);p__Cyanobacteria(82);c__Oscillatoriophycideae(70);unclassified;unclassified;unclassified;unclassified;
 Otu6150,k__Bacteria(100);p__Proteobacteria(86);c__Deltaproteobacteria(66);o__Spirobacillales(61);f__(61);g__(61);s__(61);
@@ -6094,7 +6094,7 @@ Otu6183,k__Bacteria(100);p__Proteobacteria(100);c__Alphaproteobacteria(100);o__R
 Otu6184,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6185,k__Bacteria(100);p__TM6(80);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6186,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu6187,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acIV(100);acIV-B(100);Iluma-B1(100);unclassified;
+Otu6187,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acIV(100);acIV-B(100);Iluma-B1(100);unclassified;
 Otu6188,k__Bacteria(100);p__Proteobacteria(83);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6189,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6190,k__Bacteria(100);p__Chlamydiae(84);c__Chlamydiia(84);o__Chlamydiales(84);f__Parachlamydiaceae(84);g__Parachlamydia(66);s__acanthamoebae(66);
@@ -6178,7 +6178,7 @@ Otu6267,k__Bacteria(100);unclassified;unclassified;unclassified;unclassified;unc
 Otu6268,k__Bacteria(100);p__Proteobacteria(70);unclassified;unclassified;unclassified;unclassified;unclassified;
 Otu6269,k__Bacteria(100);p__Chlamydiae(88);c__Chlamydiia(88);o__Chlamydiales(88);unclassified;unclassified;unclassified;
 Otu6270,k__Bacteria(100);p__Proteobacteria(85);unclassified;unclassified;unclassified;unclassified;unclassified;
-Otu6272,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobiia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
+Otu6272,k__Bacteria(100);p__Actinobacteria(100);c__Acidimicrobia(100);o__Acidimicrobiales(100);acV(100);acV-A(100);acV-A1(100);unclassified;
 Otu6273,k__Bacteria(100);p__Chlamydiae(69);c__Chlamydiia(69);o__Chlamydiales(69);f__Parachlamydiaceae(61);g__Parachlamydia(60);s__acanthamoebae(60);
 Otu6274,k__Bacteria(100);p__Proteobacteria(97);c__Alphaproteobacteria(87);unclassified;unclassified;unclassified;unclassified;
 Otu6275,k__Bacteria(100);p__Verrucomicrobia(100);c__[Spartobacteria](100);o__[Chthoniobacterales](100);f__[Chthoniobacteraceae](100);g__Chthoniobacter(75);s__(75);
