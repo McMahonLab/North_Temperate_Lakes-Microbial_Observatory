@@ -8,6 +8,7 @@ library(vegan)
 library(ggplot2)
 library(reshape2)
 library(grid)
+library(indicspecies)
 
 #Load data from OTUtable
 data(otu_table)
@@ -26,6 +27,7 @@ phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
 clade_table <- reduce_names(clade_table)
 phylum_table <- reduce_names(phylum_table)
 
+clade_table07 <- year_subset("07", clade_table)
 #Set the multiplot function (from user on Stack Overflow). Used to output multiple plots in one pdf
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   plots <- c(list(...), plotlist)
@@ -48,70 +50,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 
 ###############
-#Figure 1A
-#Sum total observations of each phylum in the full dataset and sort by abundance
-totals <- rowSums(phylum_table)
-totals <- sort(totals)
-
-#Remove the "p__" phylum designation from phylum names. This looks better for plotting.
-get.names <- strsplit(names(totals), "p__")
-phyla.names <- c()
-for(i in 1:length(get.names)){
-  phyla.names[i] <- get.names[[i]][2]
-}
-phyla.names[which(is.na(phyla.names) == T)] <- "unclassified"
-
-#Set up a dataframe for plotting in ggplot2. Set the phyla.names to factors, with levels in order of abundance.
-phylum_totals <- data.frame(phyla.names, totals)
-phylum_totals$phyla.names <- factor(phylum_totals$phyla.names, levels = phylum_totals$phyla.names[order(phylum_totals$totals)])
-
-#Plot as a bar graph
-pdf(file = "Phylum_bar_chart.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
-dev.off()
-
-#Figure 1B
-#Specify the sampled layers
-layer <- c("CBE", "FBE", "WSE", "NSE", "TBE", "SSE", "HKE", "MAE", "CBH", "FBH", "WSH", "NSH", "TBH",  "SSH", "HKH", "MAH")
-
-#Set up a dataframe with the totals of each phylum for each sampling site
-layer.phyla <- rep(NA, dim(phylum_table)[1])
-
-for(i in 1:length(layer)){
-  dataset <- bog_subset(layer[i], phylum_table)
-  layer.phyla <- cbind(layer.phyla, rowSums(dataset)) 
-}
-
-layer.phyla <- layer.phyla[,2:dim(layer.phyla)[2]]
-colnames(layer.phyla) <- layer
-
-#Combine low abundance phyla into a single category called "other"
-abun <- layer.phyla[which(rowSums(layer.phyla) >= 10000),]
-other <- layer.phyla[which(rowSums(layer.phyla) < 10000),]
-new.layer <- rbind(abun, colSums(other))
-
-#Shorten up those names again and remove extraneous rownames
-get.names <- strsplit(rownames(new.layer), "p__")
-phyla.names <- c()
-for(i in 1:length(get.names)){
-  phyla.names[i] <- get.names[[i]][2]
-}
-phyla.names[7] <- "unclassifed"
-phyla.names[12] <- "other"
-phyla.names <- factor(phyla.names, levels=rev(phyla.names))
-rownames(new.layer) <- NULL
-
-#Convert data into a long format dataframe for use in ggplot
-phyla_by_bog <- data.frame(phyla.names, new.layer)
-phyla_by_bog2 <- melt(phyla_by_bog)
-
-#Create color palette that can handle the large number of categories
-pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400")
-
-#Plot data as a stacked barplot
-pdf(file = "Phylum_stacked_bars.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
-dev.off()
 
 ##############
 #Figure 2
@@ -137,12 +75,12 @@ epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 #2A
-pdf(file = "epi_boxplot.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/epi_boxplot.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14))
 dev.off()
 
 #2B
-pdf(file = "hypo_boxplot.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/hypo_boxplot.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14)) 
 dev.off()
 
@@ -225,10 +163,10 @@ colnames(FB_richness) <- c("date", "richness")
 p4 <- ggplot() + geom_line(data=FB_richness, aes(x=date, y=richness), size=1.2) + labs(title = "Forestry Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(FBHmixes), linetype = "dashed") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
 
 #Use multiplot to plot 2 of these graphs at once. They'll be pasted together in Illustrator (helps with margins)
-pdf(file = "richness_over_time1.pdf", width = 3.3125, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/richness_over_time1.pdf", width = 3.3125, height = 4.625)
 multiplot(p1, p2)
 dev.off()
-pdf(file = "richness_over_time2.pdf", width = 3.3125, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/richness_over_time2.pdf", width = 3.3125, height = 4.625)
 multiplot(p3, p4)
 dev.off()
 
@@ -262,7 +200,7 @@ dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
-pdf(file = "TBH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed") + labs(y = "1 - Bray-Curtis Dissimilarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.8), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 
@@ -294,7 +232,7 @@ scores <- scores(pcoa)
 plot.pcoa <- data.frame(groups, as.numeric(dates - dates[78]), scores)
 colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
 
-pdf(file = "TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
 dev.off()
 #Trajectory and group labels added in Illustrator
@@ -393,7 +331,7 @@ epi <- epi[order(epi$stat, decreasing=T),]
 #Manually pick the top 10. Because groups from the same phylogeny are competing, choose the best indicator (by correlation coefficient) for an evolutionary branch.
 #For example, if phylum Actinobacteria is a better indicator than acI-B, report only Actinobacteria
 #But if acI_B is the better indicator, report both.
-epi.indicators <- epi[c(1, 4, 6, 7, 11, 18, 19, 20, 27, 39), ]
+epi.indicators <- epi[c(1, 2, 4, 6, 11, 16, 17, 20, 26, 39), ]
 
 #Add a column of abundance as % community for these indicators
 epi_table <- bog_subset("..E", t(input_table))
@@ -404,7 +342,7 @@ epi.indicators$abundance <- rowSums(epi_table[hits,])/sum(rowSums(epi_table)) * 
 rownames(epi.indicators) <- substr(rownames(epi.indicators), start=13, stop = 100)
 epi.indicators$groups <- factor(rownames(epi.indicators), levels=rownames(epi.indicators))
 
-pdf(file = "Epi_indicators.pdf", width = 3.3125*2, height = 4.625/2)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/Epi_indicators.pdf", width = 3.3125*2, height = 4.625/2)
 ggplot(data=epi.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 90, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 6), legend.text = element_text(size=6)) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "lightgrey", high= "black")
 dev.off()
 
@@ -412,7 +350,7 @@ dev.off()
 hypo <- results[which(results$index == 2),]
 
 hypo <- hypo[order(hypo$stat, decreasing=T),]
-hypo.indicators <- hypo[c(1, 3, 4, 6, 8, 9, 10, 16, 18, 20), ]
+hypo.indicators <- hypo[c(1, 3, 4, 5, 6, 7, 10, 16, 17, 21), ]
 
 hypo_table <- bog_subset("..H", t(input_table))
 hits <- match(rownames(hypo.indicators), rownames(hypo_table))
@@ -420,6 +358,6 @@ hypo.indicators$abundance <- rowSums(hypo_table[hits,])/sum(rowSums(hypo_table))
 rownames(hypo.indicators) <- substr(rownames(hypo.indicators), start=13, stop = 150)
 hypo.indicators$groups <- factor(rownames(hypo.indicators), levels=rownames(hypo.indicators))
 
-pdf(file = "Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
+pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
 ggplot(data=hypo.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 90, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 6), legend.text = element_text(size=6)) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "lightgrey", high= "black")
 dev.off()
