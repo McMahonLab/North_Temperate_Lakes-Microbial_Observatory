@@ -1,7 +1,7 @@
 ---
 title: "Supplemental Figures"
 author: "Alexandra Linz"
-date: "Monday, December 07, 2015"
+date: "Tuesday, December 29, 2015"
 output: pdf_document
 ---
 ###Supplemental figures accompanying the paper "Seasonal mixing frequency and historical mixing regime determine hypolimnion bacterial community dynamics in bog lakes"
@@ -45,6 +45,77 @@ phylum_table <- reduce_names(phylum_table)
 
 ```
 
+```{r, Phylum_abundance, echo=FALSE}
+#Sum total observations of each phylum in the full dataset and sort by abundance
+totals <- rowSums(phylum_table)
+totals <- sort(totals)
+
+#Remove the "p__" phylum designation from phylum names. This looks better for plotting.
+get.names <- strsplit(names(totals), "p__")
+phyla.names <- c()
+for(i in 1:length(get.names)){
+  phyla.names[i] <- get.names[[i]][2]
+}
+phyla.names[which(is.na(phyla.names) == T)] <- "unclassified"
+
+#Set up a dataframe for plotting in ggplot2. Set the phyla.names to factors, with levels in order of abundance.
+phylum_totals <- data.frame(phyla.names, totals)
+phylum_totals$phyla.names <- factor(phylum_totals$phyla.names, levels = phylum_totals$phyla.names[order(phylum_totals$totals)])
+
+#Plot as a bar graph
+ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+```
+
+####Figure S1. Forty phyla were identified over the entire NTL-MO time series. See Table 1 for lake abbrevations; the third letter indicates the sampling depth as "E" for epilimnion and "H" for hypolimnion. A) The most abundant phyla were Proteobacteria, Actinobacteria, Bacteriodetes, and Verrucomicrobia. Reads that could not be classified into a phylum were the fourth most abundant category. Candidate phyla members such as OP3 and SR1 are present in this dataset. 
+***
+
+```{r, Phylum_barchart, echo=FALSE, message=FALSE, warning=FALSE}
+#Specify the sampled layers
+layer <- c("CBE", "FBE", "WSE", "NSE", "TBE", "SSE", "HKE", "MAE", "CBH", "FBH", "WSH", "NSH", "TBH",  "SSH", "HKH", "MAH")
+
+#Set up a dataframe with the totals of each phylum for each sampling site
+layer.phyla <- rep(NA, dim(phylum_table)[1])
+
+for(i in 1:length(layer)){
+  dataset <- bog_subset(layer[i], phylum_table)
+  layer.phyla <- cbind(layer.phyla, rowSums(dataset)) 
+}
+
+layer.phyla <- layer.phyla[,2:dim(layer.phyla)[2]]
+colnames(layer.phyla) <- layer
+
+#Combine low abundance phyla into a single category called "other"
+abun <- layer.phyla[which(rowSums(layer.phyla) >= 10000),]
+other <- layer.phyla[which(rowSums(layer.phyla) < 10000),]
+new.layer <- rbind(abun, colSums(other))
+
+#Shorten up those names again and remove extraneous rownames
+get.names <- strsplit(rownames(new.layer), "p__")
+phyla.names <- c()
+for(i in 1:length(get.names)){
+  phyla.names[i] <- get.names[[i]][2]
+}
+phyla.names[7] <- "unclassifed"
+phyla.names[12] <- "other"
+phyla.names <- factor(phyla.names, levels=rev(phyla.names))
+rownames(new.layer) <- NULL
+
+#Convert data into a long format dataframe for use in ggplot
+phyla_by_bog <- data.frame(phyla.names, new.layer)
+phyla_by_bog2 <- melt(phyla_by_bog)
+
+#Create color palette that can handle the large number of categories
+pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400")
+
+#Plot data as a stacked barplot
+ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
+
+```
+
+####Figure S2. Phylum-level community differences were compared between layers and lakes. Epilimnion samples were relatively similar across all lakes, with the exception of the presence of Planctomyces in HKE and MAE, the epilimnia of the two meromictic lakes included in this study. Hypolimnion samples showed a trend of decreasing Actinobacteria with total lake depth, while the numbers of unclassified bacteria and other phyla (those comprising less than 8,000 reads in the dataset) increase with total lake depth. The sampled communities in hypolimnia of dimictic lakes (NSH, TBH, and SSH) contained higher levels of Acidobacteria than the other categories.
+***
+
 ```{r, Rank_abundance:epilimnia, echo=FALSE, warning=FALSE, message=FALSE}
 #Keep only epilimnion samples
 epi_clade_table <- bog_subset("..E", clade_table)
@@ -72,7 +143,7 @@ plot_epi_clades$Clade <- factor(plot_epi_clades$Clade, levels=plot_epi_clades$Cl
 ggplot(data=plot_epi_clades, aes(x=Clade, y=Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads in Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-####Figure S1. Rank abundance of the 20 most abundant clades in epilimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant groups in epilimnia are Pnec, acI-B, betI-A, and bacI-A. 
+####Figure S3. Rank abundance of the 20 most abundant clades in epilimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant groups in epilimnia are Pnec, acI-B, betI-A, and bacI-A. 
 ***
 ```{r, Rank_abundance:hypolimnia, echo=FALSE, warning=FALSE, message=FALSE}
 #Repeat the same analysis as above on hypolimnion samples, but remove samples where the water column was mixed, as well as all polymictic lake samples.
@@ -122,7 +193,7 @@ plot_hypo_clades$Clade <- factor(plot_hypo_clades$Clade, levels=plot_hypo_clades
 ggplot(data=plot_hypo_clades, aes(x=Clade, y=Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads in Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-####Figure S2. Rank abundance of 20 most abundant clades in hypolimnia (mixed dates and polymictic lake samples removed). As in Fig. S1, clade names reflect the last classified taxonomic level; therefore, the clade labeled "Bacteria" represents all clades that could not be classified into a phylum. Pnec, unclassified *Bacteria*, *Geothrix*, and unclassified *Bacteroidetes* are the most abundant clades in hypolimnia.  
+####Figure S4. Rank abundance of 20 most abundant clades in hypolimnia (mixed dates and polymictic lake samples removed). As in Fig. S1, clade names reflect the last classified taxonomic level; therefore, the clade labeled "Bacteria" represents all clades that could not be classified into a phylum. Pnec, unclassified *Bacteria*, *Geothrix*, and unclassified *Bacteroidetes* are the most abundant clades in hypolimnia.  
 ***
 ```{r, CoV:epilimnia, echo=FALSE, warning=FALSE, message=FALSE}
 #Function to calculate coefficient of variance (standard deviation/mean)
@@ -145,7 +216,7 @@ plot_cov_epi$Clade <- factor(plot_cov_epi$Clade, levels=plot_cov_epi$Clade)
 ggplot(data=plot_cov_epi, aes(x=Clade, y=CoV)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "CoV in Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-####Figure S3. Coefficient of Variance for the top 20 clades in epilimnia. A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, acI-B, betI-A, and bacI-A) have low CoV values, while *Cyanobacteria*, gamI, and *Geothrix* have high CoV values, indicating more variability in their abundance measurements. 
+####Figure S5. Coefficient of Variance for the top 20 clades in epilimnia. A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, acI-B, betI-A, and bacI-A) have low CoV values, while *Cyanobacteria*, gamI, and *Geothrix* have high CoV values, indicating more variability in their abundance measurements. 
 ***
 ```{r, CoV: hypolimnia, echo=FALSE, warning=FALSE, message=FALSE}
 #Repeat above analysis for hypo
@@ -157,7 +228,7 @@ plot_cov_hypo$Clade <- factor(plot_cov_hypo$Clade, levels=plot_cov_hypo$Clade)
 ggplot(data=plot_cov_hypo, aes(x=Clade, y=CoV)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "CoV in hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-####Figure S4. Coefficient of variance for the top 20 clades in hypolimnia (mixing dates and polymictic lake samples removed). A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, unclassified Bacteria, Geothrix, and unclassified Bacteroidetes) have low CoV values, while gamIII-A has a very high CoV value, indicating more variability in its abundance measurements.   
+####Figure S6. Coefficient of variance for the top 20 clades in hypolimnia (mixing dates and polymictic lake samples removed). A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, unclassified Bacteria, Geothrix, and unclassified Bacteroidetes) have low CoV values, while gamIII-A has a very high CoV value, indicating more variability in its abundance measurements.   
 ***
 ```{r, CoV:hypolimnion+mixing, echo=FALSE, warning=FALSE, message=FALSE}
 #Compute difference in CoV when mixing is included vs when it is not included in the hypolimnion analysis.
@@ -210,7 +281,7 @@ plot.diff$Clade <- factor(plot.diff$Clade, levels=plot.diff$Clade)
 ggplot(data=plot.diff, aes(x=Clade, y=Covariance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Difference in CoV") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0), limits = c(-2, 2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + geom_hline(aes(yintercept=0))
 ```
 
-####Figure S5. Difference in the coefficient of variance for the top 20 clades between hypolimnia (mixing dates and polymictic lake samples removed) and hypolimnia (mixing dates and polymictic lake samples included). A negative ratio of CoV indicates that a clade was more variable when mixed samples were included, and a positive ratio of CoV indicates that a clade was less variable when mixed samples were included. Clades of gamI and *Desulfobulbaceae* were less variable in mixed samples, while *Desulfobulbus* and *Deltaproteobacteria* were more variable in mixed samples.
+####Figure S7. Difference in the coefficient of variance for the top 20 clades between hypolimnia (mixing dates and polymictic lake samples removed) and hypolimnia (mixing dates and polymictic lake samples included). A negative ratio of CoV indicates that a clade was more variable when mixed samples were included, and a positive ratio of CoV indicates that a clade was less variable when mixed samples were included. Clades of gamI and *Desulfobulbaceae* were less variable in mixed samples, while *Desulfobulbus* and *Deltaproteobacteria* were more variable in mixed samples.
 ***
 ```{r, PCoA:hypolimnia2007, echo=FALSE, warning=FALSE, message=FALSE}
 #Make table of just samples from 2007 at the clade level
@@ -241,7 +312,7 @@ colnames(plot.pcoa) <- c("Lake", "PCoA1", "PCoA2", "Regime")
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Lake, shape = Regime)) + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")
 ```
 
-####Figure S6a. Principle coordinates analysis of hypolimnia in all lakes. The color of each point indicates which lake it was sampled from, and the shape of each point indicates the mixing regime of that lake. Samples cluster by mixing regime, as well as by lake. Meromictic samples in particular are tightly clustered. 
+####Figure S8a. Principle coordinates analysis of hypolimnia in all lakes. The color of each point indicates which lake it was sampled from, and the shape of each point indicates the mixing regime of that lake. Samples cluster by mixing regime, as well as by lake. Meromictic samples in particular are tightly clustered. 
 ***
 ```{r, PCoA:dispersion, echo=FALSE}
 #Plot dispersion of each lakes' cluster.
@@ -250,7 +321,7 @@ boxplot(pcoa)
 #anosim(t(all.hypo), groups, permutations = 999, distance = "bray")
 ```
 
-####Figure S6b. Distance from the centroid was calculated for each lake as a measure of dispersion. Lakes are arranged by order of increasing depth from left to right. Meromictic hypolimnia (MA and HK) are observed to have the lowest levels of dispersion, indicating a more stable community composition on long time scales. Polymictic hypolimnia (CB, FB, and WS) have increasing dispersion with depth. NS and TB, both dimictic have a wide range of dispersion, while dimictic SS appears more similar in dispersion to meromictic lakes.
+####Figure S8b. Distance from the centroid was calculated for each lake as a measure of dispersion. Lakes are arranged by order of increasing depth from left to right. Meromictic hypolimnia (MA and HK) are observed to have the lowest levels of dispersion, indicating a more stable community composition on long time scales. Polymictic hypolimnia (CB, FB, and WS) have increasing dispersion with depth. NS and TB, both dimictic have a wide range of dispersion, while dimictic SS appears more similar in dispersion to meromictic lakes.
 ***
 ```{r, PCoA:hypolimnia+years, echo=FALSE, warning=FALSE, message=FALSE}
 #Plot PCoA of hypolimnia samples of each lake over all years of sampling available. The method is the same as above. This analysis is performed on lakes with multiple years of sampling: CB, TB, NS, SS, and MA. An example anosim() signficance test for clustering by year is included with TB: this takes a long time to run and prints directly to the markdown document. When this command was run for all lakes, all were significant at p=0.0001. 
@@ -338,7 +409,7 @@ colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "South Sparkling Bog")
 ```
 
-####Figure S7. Principle coordinates analysis of epilimnion and hypolimnion samples over four years in all lakes. The shape of each point indicates whether it was collected from the epilimnion or hypolimnion, and the color indicates the year in which it was collected. Epilimnion samples look similar each year, while hypolimnion samples cluster by year. Mary Lake hypolimnion samples are highly similar each year, while Crystal Bog hypolimnion samples are more similar to epilimnion samples. However, all lakes and layers showed significant clustering by year (p=0.0001) using an analysis of similarity test (anosim()).
+####Figure S9. Principle coordinates analysis of epilimnion and hypolimnion samples over four years in all lakes. The shape of each point indicates whether it was collected from the epilimnion or hypolimnion, and the color indicates the year in which it was collected. Epilimnion samples look similar each year, while hypolimnion samples cluster by year. Mary Lake hypolimnion samples are highly similar each year, while Crystal Bog hypolimnion samples are more similar to epilimnion samples. However, all lakes and layers showed significant clustering by year (p=0.0001) using an analysis of similarity test (anosim()).
 ***
 
 ```{r, Phenology, echo=FALSE, warning=FALSE, message=FALSE}
@@ -587,5 +658,5 @@ plot.data <- data.frame(dates, mean.bc)
 
 ```
 
-####Figure S8. Bray-Curtis Similarity between each dimictic bog lake and Mary Lake . Each point represents the average similarity between the NSB sample taken on that date and every Mary lake sample taken that year. Dashed lines represent days when the water column was mixed, defined as less than one degree difference in temperature between 0.5 m and the maximum sampling depth.   
+####Figure S10. Bray-Curtis Similarity between each dimictic bog lake and Mary Lake . Each point represents the average similarity between the NSB sample taken on that date and every Mary lake sample taken that year. Dashed lines represent days when the water column was mixed, defined as less than one degree difference in temperature between 0.5 m and the maximum sampling depth.   
 ***
