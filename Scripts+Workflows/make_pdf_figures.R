@@ -232,7 +232,7 @@ scores <- scores(pcoa)
 plot.pcoa <- data.frame(groups, as.numeric(dates - dates[78]), scores)
 colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
 
-pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625, useDingbats=FALSE)
 ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
 dev.off()
 #Trajectory and group labels added in Illustrator
@@ -350,7 +350,7 @@ dev.off()
 hypo <- results[which(results$index == 2),]
 
 hypo <- hypo[order(hypo$stat, decreasing=T),]
-hypo.indicators <- hypo[c(1, 3, 4, 5, 6, 7, 10, 16, 17, 21), ]
+hypo.indicators <- hypo[c(1, 3, 4, 5, 6, 7, 10, 17, 21, 22), ]
 
 hypo_table <- bog_subset("..H", t(input_table))
 hits <- match(rownames(hypo.indicators), rownames(hypo_table))
@@ -358,6 +358,6 @@ hypo.indicators$abundance <- rowSums(hypo_table[hits,])/sum(rowSums(hypo_table))
 rownames(hypo.indicators) <- substr(rownames(hypo.indicators), start=13, stop = 150)
 hypo.indicators$groups <- factor(rownames(hypo.indicators), levels=rownames(hypo.indicators))
 
-pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
+pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
 ggplot(data=hypo.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 90, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 6), legend.text = element_text(size=6)) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "lightgrey", high= "black")
 dev.off()
