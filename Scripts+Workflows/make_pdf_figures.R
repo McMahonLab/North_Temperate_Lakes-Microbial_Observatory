@@ -204,12 +204,42 @@ pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_s
 ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed") + labs(y = "1 - Bray-Curtis Dissimilarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.8), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 
-#Figure 4B
-#PCoA of Trout Bog vs Mary Lake hypolimnia, 2007
+#Figure 4B (old analysis)
+# #PCoA of Trout Bog vs Mary Lake hypolimnia, 2007
+# 
+# #Select samples
+# clade_table07 <- year_subset("07", clade_table)
+# all.hypo <- bog_subset("..H", clade_table07)
+# TBH <- bog_subset("TBH", all.hypo)
+# MAH <- bog_subset("MAH", all.hypo)
+# 
+# #Label which lake each sample comes from
+# groups <- c(rep("Trout", dim(TBH)[2]), rep("Mary", dim(MAH)[2]))
+# input <- cbind(TBH, MAH)
+# dates <- extract_date(colnames(input))
+# 
+# #Remove January samples
+# dates <- dates[c(1:32, 35:130)]
+# input <- input[,c(1:32, 35:130)]
+# groups <- groups[c(1:32, 35:130)]
+# 
+# #Run PCoA using Bray-Curtis Similarity as distance metric
+# distance <- vegdist(t(input), method="bray")
+# pcoa <- betadisper(distance, groups)
+# #Extract scores for plotting
+# scores <- scores(pcoa)
+# #Make dataframe for plotting
+# plot.pcoa <- data.frame(groups, as.numeric(dates - dates[78]), scores)
+# colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
+# 
+# pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625, useDingbats=FALSE)
+# ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
+# dev.off()
+#Trajectory and group labels added in Illustrator
 
+#Figure 4B (new analysis)
 #Select samples
-clade_table07 <- year_subset("07", clade_table)
-all.hypo <- bog_subset("..H", clade_table07)
+all.hypo <- bog_subset("..H", clade_table)
 TBH <- bog_subset("TBH", all.hypo)
 MAH <- bog_subset("MAH", all.hypo)
 
@@ -217,11 +247,19 @@ MAH <- bog_subset("MAH", all.hypo)
 groups <- c(rep("Trout", dim(TBH)[2]), rep("Mary", dim(MAH)[2]))
 input <- cbind(TBH, MAH)
 dates <- extract_date(colnames(input))
+years <- factor(substr(colnames(input), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+subtract <- as.Date(c("01Jan05", "01Jan07", "01Jan08", "01Jan09"), format = "%d%B%y")
+julian.dates <- c()
+julian.dates[which(years == "05")] <- dates[which(years == "05")] - subtract[1]
+julian.dates[which(years == "07")] <- dates[which(years == "07")] - subtract[2]
+julian.dates[which(years == "08")] <- dates[which(years == "08")] - subtract[3]
+julian.dates[which(years == "09")] <- dates[which(years == "09")] - subtract[4]
+julian.dates <- as.numeric(julian.dates)
 
-#Remove January samples
-dates <- dates[c(1:32, 35:130)]
-input <- input[,c(1:32, 35:130)]
-groups <- groups[c(1:32, 35:130)]
+#Remove winter samples
+julian.dates <- julian.dates[c(1:10, 13:26, 39:74, 77:269)]
+input <- input[,c(1:10, 13:26, 39:74, 77:269)]
+groups <- groups[c(1:10, 13:26, 39:74, 77:269)]
 
 #Run PCoA using Bray-Curtis Similarity as distance metric
 distance <- vegdist(t(input), method="bray")
@@ -229,14 +267,12 @@ pcoa <- betadisper(distance, groups)
 #Extract scores for plotting
 scores <- scores(pcoa)
 #Make dataframe for plotting
-plot.pcoa <- data.frame(groups, as.numeric(dates - dates[78]), scores)
+plot.pcoa <- data.frame(groups, julian.dates, scores$sites)
 colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
 
 pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/TBH_v_MAH_PCoA.pdf", width = 3.3125*2, height = 4.625, useDingbats=FALSE)
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red", space = "Lab", limits = c(121, 322), midpoint = 175) + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
 dev.off()
-#Trajectory and group labels added in Illustrator
-
 #################
 #Figure 5A
 #Indicator analysis of epilimnia vs hypolimnia habitat preference

@@ -340,10 +340,12 @@ colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2") + labs(title = "Trout Bog")
 #anosim(t(TB), groups, permutations = 999, distance = "bray")
+#TBH <- bog_subset("TBH", clade_table)
+#group2 <- factor(substr(colnames(TBH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(TBH), group2, permutations = 999, distance = "bray")
 #TBE <- bog_subset("TBE", clade_table)
 #group2 <- factor(substr(colnames(TBE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
 #anosim(t(TBE), group2, permutations = 999, distance = "bray")
-
 ############
 MA <- bog_subset("MA.", clade_table)
 
@@ -358,41 +360,61 @@ plot.pcoa <- data.frame(groups, coord$sites, layer)
 colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "Mary Lake")
-
+#anosim(t(MA), groups, permutations = 999, distance = "bray")
+#MAH <- bog_subset("MAH", clade_table)
+#group2 <- factor(substr(colnames(MAH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(MAH), group2, permutations = 999, distance = "bray")
+#MAE <- bog_subset("MAE", clade_table)
+#group2 <- factor(substr(colnames(MAE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(MAE), group2, permutations = 999, distance = "bray")
 ###########
 CB <- bog_subset("CB.", clade_table)
 
 groups <- factor(substr(colnames(CB), start = 9, stop = 10), levels = c("07", "09"))
 layer <- factor(substr(colnames(CB[,which(is.na(groups) == F)]), start=3, stop=3), levels = c("E", "H"))
 distance <- vegdist(t(CB[,which(is.na(groups) == F)]), method = "bray")
-groups <- groups[which(is.na(groups) == F)]
+groups2 <- groups[which(is.na(groups) == F)]
 
 
-pcoa <- betadisper(distance, groups)
+pcoa <- betadisper(distance, groups2)
 coord <- scores(pcoa)
 
-plot.pcoa <- data.frame(groups, coord$sites, layer)
+plot.pcoa <- data.frame(groups2, coord$sites, layer)
 colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "Crystal Bog")
-
+#anosim(t(CB[,which(is.na(groups) == F)]), groups2, permutations = 999, distance = "bray")
+#CBH <- bog_subset("CBH", clade_table)
+#group2 <- factor(substr(colnames(CBH), start = 9, stop = 10), levels = c("07", "09"))
+#anosim(t(CBH), group2, permutations = 999, distance = "bray")
+#CBE <- bog_subset("CBE", clade_table)
+#group2 <- factor(substr(colnames(CBE), start = 9, stop = 10), levels = c("07", "09"))
+#anosim(t(CBE), group2, permutations = 999, distance = "bray")
 ############
 NS <- bog_subset("NS.", clade_table)
 
 groups <- factor(substr(colnames(NS), start = 9, stop = 10), levels = c("07", "08", "09"))
 distance <- vegdist(t(NS[,which(is.na(groups) == F)]), method = "bray")
 layer <- factor(substr(colnames(NS[,which(is.na(groups) == F)]), start=3, stop=3), levels = c("E", "H"))
-groups <- groups[which(is.na(groups) == F)]
+groups2 <- groups[which(is.na(groups) == F)]
 
-pcoa <- betadisper(distance, groups)
+pcoa <- betadisper(distance, groups2)
 coord <- scores(pcoa)
 
 
-plot.pcoa <- data.frame(groups, coord$sites, layer)
+plot.pcoa <- data.frame(groups2, coord$sites, layer)
 colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "North Sparkling Bog")
-
+#anosim(t(NS[,which(is.na(groups) == F)]), groups2, permutations = 999, distance = "bray")
+#NSH <- bog_subset("NSH", clade_table)
+#group2 <- factor(substr(colnames(NSH), start = 9, stop = 10), levels = c("07", "08", "09"))
+#NSH <- NSH[,which(is.na(group2) == F)]
+#group2 <- group2[which(is.na(group2) == F)]
+#anosim(t(NSH), group2 permutations = 999, distance = "bray")
+#NSE <- bog_subset("NSE", clade_table)
+#group2 <- factor(substr(colnames(NSE), start = 9, stop = 10), levels = c("07", "08", "09"))
+#anosim(t(NSE), group2, permutations = 999, distance = "bray")
 ##########
 SS <- bog_subset("SS.", clade_table)
 
@@ -407,9 +429,16 @@ plot.pcoa <- data.frame(groups, coord$sites, layer)
 colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
 
 ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "South Sparkling Bog")
+#anosim(t(SS), groups, permutations = 999, distance = "bray")
+#SSH <- bog_subset("SSH", clade_table)
+#group2 <- factor(substr(colnames(SSH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(SSH), group2, permutations = 999, distance = "bray")
+#SSE <- bog_subset("SSE", clade_table)
+#group2 <- factor(substr(colnames(SSE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(SSE), group2, permutations = 999, distance = "bray")
 ```
 
-####Figure S9. Principle coordinates analysis of epilimnion and hypolimnion samples over four years in all lakes. The shape of each point indicates whether it was collected from the epilimnion or hypolimnion, and the color indicates the year in which it was collected. Epilimnion samples look similar each year, while hypolimnion samples cluster by year. Mary Lake hypolimnion samples are highly similar each year, while Crystal Bog hypolimnion samples are more similar to epilimnion samples. However, all lakes and layers showed significant clustering by year (p=0.0001) using an analysis of similarity test (anosim()).
+####Figure S9. Principle coordinates analysis of epilimnion and hypolimnion samples over four years in all lakes. The shape of each point indicates whether it was collected from the epilimnion or hypolimnion, and the color indicates the year in which it was collected. Epilimnion samples look similar each year, while hypolimnion samples cluster by year. Mary Lake hypolimnion samples are highly similar each year, while Crystal Bog hypolimnion samples are more similar to epilimnion samples. However, all lakes and layers showed significant clustering by year (p less than or equal to 0.001) using an analysis of similarity test (anosim()).
 ***
 
 ```{r, Phenology, echo=FALSE, warning=FALSE, message=FALSE}
@@ -503,7 +532,7 @@ plot.data <- data.frame(dates, mean.bc)
 #####
 metaSSH <- metadata[which(metalakes == "SSH" & metayears == "08"), c(1,2,4)]
 metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
-SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"4" < 1)]
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
 
 bog1 <- "SSH"
 bog2 <- "MAH"
@@ -529,7 +558,7 @@ plot.data <- data.frame(dates, mean.bc)
 #####
 metaSSH <- metadata[which(metalakes == "SSH" & metayears == "07"), c(1,2,4)]
 metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
-SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"4" < 1)]
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
 
 bog1 <- "SSH"
 bog2 <- "MAH"
@@ -555,7 +584,7 @@ plot.data <- data.frame(dates, mean.bc)
 #####
 metaSSH <- metadata[which(metalakes == "SSH" & metayears == "09"), c(1,2,4)]
 metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
-SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"4" < 1)]
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
 
 bog1 <- "SSH"
 bog2 <- "MAH"
@@ -581,7 +610,7 @@ plot.data <- data.frame(dates, mean.bc)
 ######
 metaTBH <- metadata[which(metalakes == "TBH" & metayears == "08"), c(1,2,4)]
 metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
-TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"4" < 1)]
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
 
 bog1 <- "TBH"
 bog2 <- "MAH"
@@ -607,7 +636,7 @@ plot.data <- data.frame(dates, mean.bc)
 ######
 metaTBH <- metadata[which(metalakes == "TBH" & metayears == "05"), c(1,2,4)]
 metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
-TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"4" < 1)]
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
 
 bog1 <- "TBH"
 bog2 <- "MAH"
@@ -633,7 +662,7 @@ plot.data <- data.frame(dates, mean.bc)
 ######
 metaTBH <- metadata[which(metalakes == "TBH" & metayears == "09"), c(1,2,4)]
 metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
-TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"4" < 1)]
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
 
 bog1 <- "TBH"
 bog2 <- "MAH"
@@ -656,7 +685,112 @@ plot.data <- data.frame(dates, mean.bc)
   colnames(plot.data) <- c("Dates", "BrayCurtis")
   ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Trout Bog vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
 
+######
+metaCBH <- metadata[which(metalakes == "CBH" & metayears == "07"), c(1,2,4)]
+metaCBH <- dcast(metaCBH, Sample_Name~Depth, fun.aggregate=mean)
+CBHmixes <- metaCBH$Sample_Name[which(metaCBH$"0.5" - metaCBH$"2" < 1)]
+
+bog1 <- "CBH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Crystal Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaCBH <- metadata[which(metalakes == "CBH" & metayears == "09"), c(1,2,4)]
+metaCBH <- dcast(metaCBH, Sample_Name~Depth, fun.aggregate=mean)
+CBHmixes <- metaCBH$Sample_Name[which(metaCBH$"0.5" - metaCBH$"2" < 1)]
+
+bog1 <- "CBH"
+bog2 <- "MAH"
+table <- year_subset("09", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Crystal Bog vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaFBH <- metadata[which(metalakes == "FBH" & metayears == "07"), c(1,2,4)]
+metaFBH <- dcast(metaFBH, Sample_Name~Depth, fun.aggregate=mean)
+FBHmixes <- metaFBH$Sample_Name[which(metaFBH$"0.5" - metaFBH$"2" < 1)]
+
+bog1 <- "FBH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Forestry Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaWSH <- metadata[which(metalakes == "WSH" & metayears == "07"), c(1,2,4)]
+metaWSH <- dcast(metaWSH, Sample_Name~Depth, fun.aggregate=mean)
+WSHmixes <- metaWSH$Sample_Name[which(metaWSH$"0.5" - metaWSH$"4" < 1)]
+
+bog1 <- "WSH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="West Sparkling Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
 ```
 
-####Figure S10. Bray-Curtis Similarity between each dimictic bog lake and Mary Lake . Each point represents the average similarity between the NSB sample taken on that date and every Mary lake sample taken that year. Dashed lines represent days when the water column was mixed, defined as less than one degree difference in temperature between 0.5 m and the maximum sampling depth.   
+####Figure S10. Bray-Curtis Similarity between each dimictic bog lake and Mary Lake . Each point represents the average similarity between the dimictic or polymictic lake sample taken on that date and every Mary lake sample taken that year. Dashed lines represent days when the water column was mixed, defined as less than one degree difference in temperature between 0.5 m and the maximum sampling depth.   
 ***
