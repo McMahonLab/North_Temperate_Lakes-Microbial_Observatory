@@ -1,0 +1,222 @@
+---
+title: "Connectivity over Time"
+author: "Alexandra Linz"
+date: "Thursday, January 28, 2016"
+output: html_document
+---
+Key:
+CB == Crystal Bog == polymictic
+NS == North Sparkling == dimictic + artificial mixing July 1 - July 11 2008
+TB == Trout Bog == dimictic
+SS == South Sparkling == dimictic
+MA == Mary Lake == meromictic
+
+E == epilimnion
+H == hypolimnion
+
+
+```{r, Setup, echo=FALSE}
+setwd("C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis")
+TBH.network <- read.table(file = "TBH_network_25Jan16.txt", header=T)
+CBH.network <- read.table(file = "CBH_network_25Jan16.txt", header=T)
+NSH.network <- read.table(file = "NSH_network_25Jan16.txt", header=T)
+SSH.network <- read.table(file = "SSH_network_25Jan16.txt", header=T)
+MAH.network <- read.table(file = "MAH_network_25Jan16.txt", header=T)
+TBE.network <- read.table(file = "TBE_network_25Jan16.txt", header=T)
+CBE.network <- read.table(file = "CBE_network_25Jan16.txt", header=T)
+NSE.network <- read.table(file = "NSE_network_25Jan16.txt", header=T)
+SSE.network <- read.table(file = "SSE_network_25Jan16.txt", header=T)
+MAE.network <- read.table(file = "MAE_network_25Jan16.txt", header=T)
+all.network <- read.table(file = "allsamples_network_28Jan16.txt", header=T)
+
+library(ggplot2)
+library(grid)
+library(OTUtable)
+data(otu_table)
+TBH <- bog_subset("TBH", otu_table)
+CBH <- bog_subset("CBH", otu_table)
+NSH <- bog_subset("NSH", otu_table)
+SSH <- bog_subset("SSH", otu_table)
+MAH <- bog_subset("MAH", otu_table)
+TBE <- bog_subset("TBE", otu_table)
+CBE <- bog_subset("CBE", otu_table)
+NSE <- bog_subset("NSE", otu_table)
+SSE <- bog_subset("SSE", otu_table)
+MAE <- bog_subset("MAE", otu_table)
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  plots <- c(list(...), plotlist)
+  numPlots = length(plots)
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  if (numPlots==1) {
+    print(plots[[1]])   
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+```
+
+
+
+```{r, echo=FALSE}
+TBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+nodes <- match(names(TBH.edges), rownames(TBH))
+TBH.conn <- TBH[nodes,]
+metric <- colSums(sweep(TBH.conn, 1, TBH.edges, "*"))
+TBH.dates <- extract_date(colnames(TBH))
+plot.conn <- data.frame(TBH.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=TBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBH15May05", "TBH25Nov05"))) + ggtitle("TBH Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=TBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBH15May07", "TBH25Nov07")), ylim=c(0,500))
+p3 <- ggplot(data=plot.conn, aes(x=TBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBH15May08", "TBH25Nov08")), ylim=c(0,500))
+p4 <- ggplot(data=plot.conn, aes(x=TBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBH15May09", "TBH25Nov09")), ylim=c(0,500))
+
+multiplot(p1, p2, p3, p4)
+```
+
+```{r, echo=FALSE}
+CBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+nodes <- match(names(CBH.edges), rownames(CBH))
+CBH.conn <- CBH[nodes,]
+metric <- colSums(sweep(CBH.conn, 1, CBH.edges, "*"))
+CBH.dates <- extract_date(colnames(CBH))
+plot.conn <- data.frame(CBH.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=CBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("CBH15May07", "CBH25Nov07"))) + ggtitle("CBH Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=CBH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("CBH15May09", "CBH25Nov09")))
+
+multiplot(p1, p2)
+```
+
+```{r, echo=FALSE}
+NSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+nodes <- match(names(NSH.edges), rownames(NSH))
+NSH.conn <- NSH[nodes,]
+metric <- colSums(sweep(NSH.conn, 1, NSH.edges, "*"))
+NSH.dates <- extract_date(colnames(NSH))
+plot.conn <- data.frame(NSH.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=NSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSH15May07", "NSH25Nov07")))  + ggtitle("NSH Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=NSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSH15May08", "NSH25Nov08")))
+p3 <- ggplot(data=plot.conn, aes(x=NSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSH15May09", "NSH25Nov09")))
+
+multiplot(p1, p2, p3)
+```
+
+```{r, echo=FALSE}
+SSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+nodes <- match(names(SSH.edges), rownames(SSH))
+SSH.conn <- SSH[nodes,]
+metric <- colSums(sweep(SSH.conn, 1, SSH.edges, "*"))
+SSH.dates <- extract_date(colnames(SSH))
+plot.conn <- data.frame(SSH.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=SSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSH15May07", "SSH25Nov07"))) + ggtitle("SSH Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=SSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSH15May08", "SSH25Nov08")))
+p3 <- ggplot(data=plot.conn, aes(x=SSH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSH15May09", "SSH25Nov09")))
+
+multiplot(p1, p2, p3)
+```
+
+```{r, echo=FALSE}
+MAH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+nodes <- match(names(MAH.edges), rownames(MAH))
+MAH.conn <- MAH[nodes,]
+metric <- colSums(sweep(MAH.conn, 1, MAH.edges, "*"))
+MAH.dates <- extract_date(colnames(MAH))
+plot.conn <- data.frame(MAH.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=MAH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAH15May05", "MAH25Nov05"))) + ggtitle("MAH Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=MAH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAH15May07", "MAH25Nov07")))
+p3 <- ggplot(data=plot.conn, aes(x=MAH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAH15May08", "MAH25Nov08")))
+p4 <- ggplot(data=plot.conn, aes(x=MAH.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAH15May09", "MAH25Nov09")))
+
+multiplot(p1, p2, p3, p4)
+```
+
+```{r, echo=FALSE}
+TBE.edges <- table(c(as.character(TBE.network$index1), as.character(TBE.network$index2)))
+nodes <- match(names(TBE.edges), rownames(TBE))
+TBE.conn <- TBE[nodes,]
+metric <- colSums(sweep(TBE.conn, 1, TBE.edges, "*"))
+TBE.dates <- extract_date(colnames(TBE))
+plot.conn <- data.frame(TBE.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=TBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBE15May05", "TBE25Nov05"))) + ggtitle("TBE Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=TBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBE15May07", "TBE25Nov07")))
+p3 <- ggplot(data=plot.conn, aes(x=TBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBE15May08", "TBE25Nov08")))
+p4 <- ggplot(data=plot.conn, aes(x=TBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("TBE15May09", "TBE25Nov09")))
+
+multiplot(p1, p2, p3, p4)
+```
+
+```{r, echo=FALSE}
+CBE.edges <- table(c(as.character(CBE.network$index1), as.character(CBE.network$index2)))
+nodes <- match(names(CBE.edges), rownames(CBE))
+CBE.conn <- CBE[nodes,]
+metric <- colSums(sweep(CBE.conn, 1, CBE.edges, "*"))
+CBE.dates <- extract_date(colnames(CBE))
+plot.conn <- data.frame(CBE.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=CBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("CBE15May07", "CBE25Nov07")))  + ggtitle("CBE Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=CBE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("CBE15May09", "CBE25Nov09")))
+
+multiplot(p1, p2)
+```
+
+```{r, echo=FALSE}
+NSE.edges <- table(c(as.character(NSE.network$index1), as.character(NSE.network$index2)))
+nodes <- match(names(NSE.edges), rownames(NSE))
+NSE.conn <- NSE[nodes,]
+metric <- colSums(sweep(NSE.conn, 1, NSE.edges, "*"))
+NSE.dates <- extract_date(colnames(NSE))
+plot.conn <- data.frame(NSE.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=NSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSE15May07", "NSE25Nov07"))) + ggtitle("NSE Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=NSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSE15May08", "NSE25Nov08")))
+p3 <- ggplot(data=plot.conn, aes(x=NSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("NSE15May09", "NSE25Nov09")))
+
+multiplot(p1, p2, p3)
+```
+
+```{r, echo=FALSE}
+SSE.edges <- table(c(as.character(SSE.network$index1), as.character(SSE.network$index2)))
+nodes <- match(names(SSE.edges), rownames(SSE))
+SSE.conn <- SSE[nodes,]
+metric <- colSums(sweep(SSE.conn, 1, SSE.edges, "*"))
+SSE.dates <- extract_date(colnames(SSE))
+plot.conn <- data.frame(SSE.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=SSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSE15May07", "SSE25Nov07"))) + ggtitle("SSE Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=SSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSE15May08", "SSE25Nov08")))
+p3 <- ggplot(data=plot.conn, aes(x=SSE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("SSE15May09", "SSE25Nov09")))
+
+multiplot(p1, p2, p3)
+```
+
+```{r, echo=FALSE}
+MAE.edges <- table(c(as.character(MAE.network$index1), as.character(MAE.network$index2)))
+nodes <- match(names(MAE.edges), rownames(MAE))
+MAE.conn <- MAE[nodes,]
+metric <- colSums(sweep(MAE.conn, 1, MAE.edges, "*"))
+MAE.dates <- extract_date(colnames(MAE))
+plot.conn <- data.frame(MAE.dates, metric)
+
+p1 <- ggplot(data=plot.conn, aes(x=MAE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAE15May05", "MAE25Nov05")), ylim=c(0, 5000)) + ggtitle("MAE Connectivity")
+p2 <- ggplot(data=plot.conn, aes(x=MAE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAE15May07", "MAE25Nov07")), ylim=c(0, 5000))
+p3 <- ggplot(data=plot.conn, aes(x=MAE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAE15May08", "MAE25Nov08")), ylim=c(0, 5000))
+p4 <- ggplot(data=plot.conn, aes(x=MAE.dates, y=metric)) + geom_line() + coord_cartesian(xlim=extract_date(c("MAE15May09", "MAE25Nov09")), ylim=c(0, 5000))
+
+multiplot(p1, p2, p3, p4)
+```
+

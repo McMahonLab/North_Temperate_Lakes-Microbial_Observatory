@@ -1,0 +1,873 @@
+---
+title: "Supplemental Figures"
+author: "Alexandra Linz"
+date: "Thursday, January 28, 2016"
+output: pdf_document
+---
+###Supplemental figures accompanying the paper "Seasonal mixing frequency and historical mixing regime determine hypolimnion bacterial community dynamics in bog lakes"
+
+```{r, Setting_up_the_environoment, echo=F, warning=FALSE, message=FALSE}
+
+library(OTUtable)
+
+if(!require(vegan)){
+    install.packages("vegan")
+    library(vegan)
+ }
+
+if(!require(ggplot2)){
+    install.packages("ggplot2")
+    library(ggplot2)
+ }
+
+if(!require(reshape2)){
+    install.packages("reshape2")
+    library(reshape2)
+ }
+
+if(!require(RColorBrewer)){
+    install.packages("RColorBrewer")
+    library(RColorBrewer)
+}
+
+#Load data from package OTUtable
+data(otu_table)
+data(taxonomy)
+data(metadata)
+
+#Make tables at the clade and phylum level
+clade_table <- combine_otus("Clade", otu_table, taxonomy)
+phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
+
+#Report only last classified taxonomy level of group names
+phylum_table <- reduce_names(phylum_table)
+
+```
+
+```{r, Phylum_abundance, echo=FALSE}
+#Sum total observations of each phylum in the full dataset and sort by abundance
+totals <- rowSums(phylum_table)
+totals <- sort(totals)
+
+#Remove the "p__" phylum designation from phylum names. This looks better for plotting.
+get.names <- strsplit(names(totals), "p__")
+phyla.names <- c()
+for(i in 1:length(get.names)){
+  phyla.names[i] <- get.names[[i]][2]
+}
+phyla.names[which(is.na(phyla.names) == T)] <- "unclassified"
+
+#Set up a dataframe for plotting in ggplot2. Set the phyla.names to factors, with levels in order of abundance.
+phylum_totals <- data.frame(phyla.names, totals)
+phylum_totals$phyla.names <- factor(phylum_totals$phyla.names, levels = phylum_totals$phyla.names[order(phylum_totals$totals)])
+
+#Plot as a bar graph
+ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+```
+
+####Figure S1. Forty phyla were identified over the entire NTL-MO time series. See Table 1 for lake abbrevations; the third letter indicates the sampling depth as "E" for epilimnion and "H" for hypolimnion. A) The most abundant phyla were Proteobacteria, Actinobacteria, Bacteriodetes, and Verrucomicrobia. Reads that could not be classified into a phylum were the fourth most abundant category. Candidate phyla members such as OP3 and SR1 are present in this dataset. 
+***
+
+```{r, Phylum_barchart, echo=FALSE, message=FALSE, warning=FALSE}
+#Specify the sampled layers
+layer <- c("CBE", "FBE", "WSE", "NSE", "TBE", "SSE", "HKE", "MAE", "CBH", "FBH", "WSH", "NSH", "TBH",  "SSH", "HKH", "MAH")
+
+#Set up a dataframe with the totals of each phylum for each sampling site
+layer.phyla <- rep(NA, dim(phylum_table)[1])
+
+for(i in 1:length(layer)){
+  dataset <- bog_subset(layer[i], phylum_table)
+  layer.phyla <- cbind(layer.phyla, rowSums(dataset)) 
+}
+
+layer.phyla <- layer.phyla[,2:dim(layer.phyla)[2]]
+colnames(layer.phyla) <- layer
+
+#Combine low abundance phyla into a single category called "other"
+abun <- layer.phyla[which(rowSums(layer.phyla) >= 10000),]
+other <- layer.phyla[which(rowSums(layer.phyla) < 10000),]
+new.layer <- rbind(abun, colSums(other))
+
+#Shorten up those names again and remove extraneous rownames
+get.names <- strsplit(rownames(new.layer), "p__")
+phyla.names <- c()
+for(i in 1:length(get.names)){
+  phyla.names[i] <- get.names[[i]][2]
+}
+phyla.names[7] <- "unclassifed"
+phyla.names[12] <- "other"
+phyla.names <- factor(phyla.names, levels=rev(phyla.names))
+rownames(new.layer) <- NULL
+
+#Convert data into a long format dataframe for use in ggplot
+phyla_by_bog <- data.frame(phyla.names, new.layer)
+phyla_by_bog2 <- melt(phyla_by_bog)
+
+#Create color palette that can handle the large number of categories
+pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400")
+
+#Plot data as a stacked barplot
+ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
+
+```
+
+####Figure S2. Phylum-level community differences were compared between layers and lakes. Epilimnion samples were relatively similar across all lakes, with the exception of the presence of Planctomyces in HKE and MAE, the epilimnia of the two meromictic lakes included in this study. Hypolimnion samples showed a trend of decreasing Actinobacteria with total lake depth, while the numbers of unclassified bacteria and other phyla (those comprising less than 8,000 reads in the dataset) increase with total lake depth. The sampled communities in hypolimnia of dimictic lakes (NSH, TBH, and SSH) contained higher levels of Acidobacteria than the other categories.
+***
+
+```{r, Rank_abundance:epilimnia, echo=FALSE, warning=FALSE, message=FALSE}
+#Keep only epilimnion samples
+epi_clade_table <- bog_subset("..E", clade_table)
+
+#Remove taxonomic level tags at the beginning of some names (present in Greengenes classified clades)
+rownames(epi_clade_table) <- make.unique(gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(epi_clade_table)))
+
+#Keep only clades that are completely classified
+splitnames<- strsplit(rownames(epi_clade_table), ";")
+clades_only <- c()
+for(i in 1:length(splitnames)){
+  clades_only[i] <- splitnames[[i]][5]
+}
+
+epi_clade_table2 <- epi_clade_table[which(clades_only != "unclassified" & is.na(clades_only) == F),]
+epi_clade_table2 <- reduce_names(epi_clade_table2)
+#Sum total abundances of epilimnion clades
+epi_clade_sums <- sort(rowSums(epi_clade_table2), decreasing = T)
+
+#Make dataframe of the 20 most abundant epilimnion clades for plotting
+plot_epi_clades <- data.frame(names(epi_clade_sums)[1:20], epi_clade_sums[1:20])
+colnames(plot_epi_clades) <- c("Clade", "Abundance")
+plot_epi_clades$Clade <- factor(plot_epi_clades$Clade, levels=plot_epi_clades$Clade)
+ggplot(data=plot_epi_clades, aes(x=Clade, y=Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads in Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+####Figure S3. Rank abundance of the 20 most abundant clades in epilimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant groups in epilimnia are Pnec, acI-B, betI-A, and bacI-A. 
+***
+```{r, Rank_abundance:hypolimnia, echo=FALSE, warning=FALSE, message=FALSE}
+#Repeat the same analysis as above on hypolimnion samples, but remove samples where the water column was mixed, as well as all polymictic lake samples.
+#I use the metadata file to find samples from mixed days. I define a mixed day as less than 1 degree of temperature difference between 0.5 meters and the maximum sampling depth.
+
+metadata$Sample_Name <- as.character(metadata$Sample_Name)
+metalakes <- substr(metadata$Sample_Name, start=1, stop=3)
+metayears <- substr(metadata$Sample_Name, start=9, stop=10)
+
+#Identify mixed dates from dimictic lakes
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "07"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"7" < 1)]
+
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "07"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+NSHmixes <- metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)]
+
+metaSSH <- metadata[which(metalakes == "SSH" & metayears == "07"), c(1,2,4)]
+metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
+
+mixes <- c(TBHmixes, NSHmixes, SSHmixes)
+
+#Remove mixed dates from table of dimictic and meromictic hypolimnion samples
+hypo_clade_table <- bog_subset("TBH|SSH|NSH|MAH|HKH", clade_table)
+hits <- match(mixes, substr(colnames(hypo_clade_table), start = 1, stop = 10))
+hypo_clade_table <- hypo_clade_table[,-hits]
+
+#Remove taxonomic level tags at the beginning of some names (present in Greengenes classified clades)
+rownames(hypo_clade_table) <- gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(hypo_clade_table))
+
+#Keep only clades that are completely classified
+splitnames<- strsplit(rownames(hypo_clade_table), ";")
+clades_only <- c()
+for(i in 1:length(splitnames)){
+  clades_only[i] <- splitnames[[i]][5]
+}
+
+hypo_clade_table2 <- hypo_clade_table[which(clades_only != "unclassified" & is.na(clades_only) == F),]
+hypo_clade_table2 <- reduce_names(hypo_clade_table2)
+
+#Plot rank abundance curve for 20 most abundant hypolimnion clades
+hypo_clade_sums <- sort(rowSums(hypo_clade_table2), decreasing = T)
+plot_hypo_clades <- data.frame(names(hypo_clade_sums)[1:20], hypo_clade_sums[1:20])
+colnames(plot_hypo_clades) <- c("Clade", "Abundance")
+plot_hypo_clades$Clade <- factor(plot_hypo_clades$Clade, levels=plot_hypo_clades$Clade)
+ggplot(data=plot_hypo_clades, aes(x=Clade, y=Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads in Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+####Figure S4. Rank abundance of 20 most abundant clades in hypolimnia (mixed dates and polymictic lake samples removed). As in Fig. S1, clade names reflect the last classified taxonomic level; therefore, the clade labeled "Bacteria" represents all clades that could not be classified into a phylum. Pnec, unclassified *Bacteria*, *Geothrix*, and unclassified *Bacteroidetes* are the most abundant clades in hypolimnia.  
+***
+```{r, CoV:epilimnia, echo=FALSE, warning=FALSE, message=FALSE}
+#Function to calculate coefficient of variance (standard deviation/mean)
+CoV <- function(vector){
+  sample <- as.numeric(vector)
+  m <- mean(sample)
+  s <- sd(sample)
+  return(s/m)
+}
+
+#Sort epilimnion clades by abundance
+sorted_epi_clade_table <- epi_clade_table2[match(names(epi_clade_sums), rownames(epi_clade_table2)),]
+#Calculate CoV
+Cov_epi <- apply(sorted_epi_clade_table, 1, CoV)
+
+#Make dataframe of top 20 clades by abundance for plotting
+plot_cov_epi <- data.frame(names(Cov_epi)[1:20], Cov_epi[1:20])
+colnames(plot_cov_epi) <- c("Clade", "CoV")
+plot_cov_epi$Clade <- factor(plot_cov_epi$Clade, levels=plot_cov_epi$Clade)
+ggplot(data=plot_cov_epi, aes(x=Clade, y=CoV)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "CoV in Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+####Figure S5. Coefficient of Variance for the top 20 clades in epilimnia. A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, acI-B, betI-A, and bacI-A) have low CoV values, while *Cyanobacteria*, gamI, and *Geothrix* have high CoV values, indicating more variability in their abundance measurements. 
+***
+```{r, CoV: hypolimnia, echo=FALSE, warning=FALSE, message=FALSE}
+#Repeat above analysis for hypo
+sorted_hypo_clade_table <- hypo_clade_table2[match(names(hypo_clade_sums), rownames(hypo_clade_table2)),]
+Cov_hypo <- apply(sorted_hypo_clade_table, 1, CoV)
+plot_cov_hypo <- data.frame(names(Cov_hypo)[1:20], Cov_hypo[1:20])
+colnames(plot_cov_hypo) <- c("Clade", "CoV")
+plot_cov_hypo$Clade <- factor(plot_cov_hypo$Clade, levels=plot_cov_hypo$Clade)
+ggplot(data=plot_cov_hypo, aes(x=Clade, y=CoV)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "CoV in hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+```
+
+####Figure S6. Coefficient of variance for the top 20 clades in hypolimnia (mixing dates and polymictic lake samples removed). A low CoV indicates low varability in abundance, while a high CoV indicates high variability in abundance. In epilimnia, some of the most abundant clades (Pnec, unclassified Bacteria, Geothrix, and unclassified Bacteroidetes) have low CoV values, while gamIII-A has a very high CoV value, indicating more variability in its abundance measurements.   
+***
+```{r, CoV:hypolimnion+mixing, echo=FALSE, warning=FALSE, message=FALSE}
+#Compute difference in CoV when mixing is included vs when it is not included in the hypolimnion analysis.
+
+#Make clade table with mixing dates removed
+hypo_clade_table <- bog_subset("TBH|SSH|NSH|MAH|HKH", clade_table)
+hits <- match(mixes, substr(colnames(hypo_clade_table), start = 1, stop = 10))
+hypo_clade_table <- hypo_clade_table[,-hits]
+
+
+#Remove taxonomic level tags at the beginning of some names (present in Greengenes classified clades)
+rownames(hypo_clade_table) <- gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(hypo_clade_table))
+
+#Keep only clades that are completely classified
+splitnames<- strsplit(rownames(hypo_clade_table), ";")
+clades_only <- c()
+for(i in 1:length(splitnames)){
+  clades_only[i] <- splitnames[[i]][5]
+}
+
+hypo_clade_table2 <- hypo_clade_table[which(clades_only != "unclassified" & is.na(clades_only) == F),]
+hypo_clade_table2 <- reduce_names(hypo_clade_table2)
+
+#Make clade table of mixing dates only
+w_mixing <- bog_subset("..H", clade_table)
+hits <- match(mixes, substr(colnames(w_mixing), start = 1, stop = 10))
+hits <- hits[which(is.na(hits) == F)]
+w_mixing <- w_mixing[,hits]
+
+
+#Remove taxonomic level tags at the beginning of some names (present in Greengenes classified clades)
+rownames(w_mixing) <- gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(w_mixing))
+
+#Keep only clades that are completely classified
+splitnames<- strsplit(rownames(w_mixing), ";")
+clades_only <- c()
+for(i in 1:length(splitnames)){
+  clades_only[i] <- splitnames[[i]][5]
+}
+
+w_mixing2 <- w_mixing[which(clades_only != "unclassified" & is.na(clades_only) == F),]
+w_mixing2 <- reduce_names(w_mixing2)
+
+#Subtract CoV of mixing dates from CoV of no mixing dates
+Cov_no_mixing <- apply(hypo_clade_table2, 1, CoV)
+Cov_w_mixing <- apply(w_mixing2, 1, CoV)
+diff <- Cov_no_mixing - Cov_w_mixing
+diff.top <- diff[match(names(hypo_clade_sums)[1:20], names(diff))]
+
+#Make dataframe for plotting
+plot.diff <- data.frame(names(diff.top), diff.top)
+colnames(plot.diff) <- c("Clade", "Covariance")
+plot.diff$Clade <- factor(plot.diff$Clade, levels=plot.diff$Clade)
+ggplot(data=plot.diff, aes(x=Clade, y=Covariance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Difference in CoV") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0), limits = c(-2, 2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + geom_hline(aes(yintercept=0))
+```
+
+####Figure S7. Difference in the coefficient of variance for the top 20 clades between hypolimnia (mixing dates and polymictic lake samples removed) and hypolimnia (mixing dates and polymictic lake samples included). A negative ratio of CoV indicates that a clade was more variable when mixed samples were included, and a positive ratio of CoV indicates that a clade was less variable when mixed samples were included. Clades of gamI and *Desulfobulbaceae* were less variable in mixed samples, while *Desulfobulbus* and *Deltaproteobacteria* were more variable in mixed samples.
+***
+```{r, PCoA:hypolimnia2007, echo=FALSE, warning=FALSE, message=FALSE}
+#Make table of just samples from 2007 at the clade level
+clade_table07 <- year_subset("07", clade_table)
+
+#Make table of 2007 hypolimnion samples
+all.hypo <- bog_subset("..H", clade_table07)
+
+#Calculate distance matrix between samples using Bray-Curtis Similarity
+distance <- vegdist(t(all.hypo), method = "bray")
+#Label each point by its sampling location
+lakes <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
+groups <- factor(substr(colnames(all.hypo), start = 1, stop = 2), levels = lakes)
+#Run PCoA
+pcoa <- betadisper(distance, groups)
+#Extract scores for plotting
+coord <- scores(pcoa)
+
+#Make a vector to label each point by its mixing regime
+regime <- c()
+regime[which(groups == "CB" | groups == "FB" | groups == "WS")] <- "polymictic"
+regime[which(groups == "NS" | groups == "TB" | groups == "SS")] <- "dimictic"
+regime[which(groups == "HK" | groups == "MA")] <- "meromictic"
+
+#Make dataframe for plotting
+plot.pcoa <- data.frame(groups, coord$sites, regime)
+colnames(plot.pcoa) <- c("Lake", "PCoA1", "PCoA2", "Regime")
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Lake, shape = Regime)) + geom_point(size=4) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")
+```
+
+####Figure S8a. Principle coordinates analysis of hypolimnia in all lakes. The color of each point indicates which lake it was sampled from, and the shape of each point indicates the mixing regime of that lake. Samples cluster by mixing regime, as well as by lake. Meromictic samples in particular are tightly clustered. 
+***
+```{r, PCoA:dispersion, echo=FALSE}
+#Plot dispersion of each lakes' cluster.
+boxplot(pcoa)
+#Optional: run significance testing on clustering by lake. Takes a long time and will print straight to the markdown document.
+#anosim(t(all.hypo), groups, permutations = 999, distance = "bray")
+```
+
+####Figure S8b. Distance from the centroid was calculated for each lake as a measure of dispersion. Lakes are arranged by order of increasing depth from left to right. Meromictic hypolimnia (MA and HK) are observed to have the lowest levels of dispersion, indicating a more stable community composition on long time scales. Polymictic hypolimnia (CB, FB, and WS) have increasing dispersion with depth. NS and TB, both dimictic have a wide range of dispersion, while dimictic SS appears more similar in dispersion to meromictic lakes.
+***
+```{r, PCoA:hypolimnia+years, echo=FALSE, warning=FALSE, message=FALSE}
+#Plot PCoA of hypolimnia samples of each lake over all years of sampling available. The method is the same as above. This analysis is performed on lakes with multiple years of sampling: CB, TB, NS, SS, and MA. An example anosim() signficance test for clustering by year is included with TB: this takes a long time to run and prints directly to the markdown document. When this command was run for all lakes, all were significant at p=0.0001. 
+
+TB <- bog_subset("TB.", clade_table)
+
+distance <- vegdist(t(TB), method = "bray")
+groups <- factor(substr(colnames(TB), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+
+pcoa <- betadisper(distance, groups)
+coord <- scores(pcoa)
+
+layer <- factor(substr(colnames(TB), start=3, stop=3), levels = c("E", "H"))
+plot.pcoa <- data.frame(groups, coord$sites, layer)
+colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
+
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2") + labs(title = "Trout Bog")
+#anosim(t(TB), groups, permutations = 999, distance = "bray")
+#TBH <- bog_subset("TBH", clade_table)
+#group2 <- factor(substr(colnames(TBH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(TBH), group2, permutations = 999, distance = "bray")
+#TBE <- bog_subset("TBE", clade_table)
+#group2 <- factor(substr(colnames(TBE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(TBE), group2, permutations = 999, distance = "bray")
+############
+MA <- bog_subset("MA.", clade_table)
+
+distance <- vegdist(t(MA), method = "bray")
+groups <- factor(substr(colnames(MA), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+
+pcoa <- betadisper(distance, groups)
+coord <- scores(pcoa)
+
+layer <- factor(substr(colnames(MA), start=3, stop=3), levels = c("E", "H"))
+plot.pcoa <- data.frame(groups, coord$sites, layer)
+colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
+
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "Mary Lake")
+#anosim(t(MA), groups, permutations = 999, distance = "bray")
+#MAH <- bog_subset("MAH", clade_table)
+#group2 <- factor(substr(colnames(MAH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(MAH), group2, permutations = 999, distance = "bray")
+#MAE <- bog_subset("MAE", clade_table)
+#group2 <- factor(substr(colnames(MAE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(MAE), group2, permutations = 999, distance = "bray")
+###########
+CB <- bog_subset("CB.", clade_table)
+
+groups <- factor(substr(colnames(CB), start = 9, stop = 10), levels = c("07", "09"))
+layer <- factor(substr(colnames(CB[,which(is.na(groups) == F)]), start=3, stop=3), levels = c("E", "H"))
+distance <- vegdist(t(CB[,which(is.na(groups) == F)]), method = "bray")
+groups2 <- groups[which(is.na(groups) == F)]
+
+
+pcoa <- betadisper(distance, groups2)
+coord <- scores(pcoa)
+
+plot.pcoa <- data.frame(groups2, coord$sites, layer)
+colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
+
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "Crystal Bog")
+#anosim(t(CB[,which(is.na(groups) == F)]), groups2, permutations = 999, distance = "bray")
+#CBH <- bog_subset("CBH", clade_table)
+#group2 <- factor(substr(colnames(CBH), start = 9, stop = 10), levels = c("07", "09"))
+#anosim(t(CBH), group2, permutations = 999, distance = "bray")
+#CBE <- bog_subset("CBE", clade_table)
+#group2 <- factor(substr(colnames(CBE), start = 9, stop = 10), levels = c("07", "09"))
+#anosim(t(CBE), group2, permutations = 999, distance = "bray")
+############
+NS <- bog_subset("NS.", clade_table)
+
+groups <- factor(substr(colnames(NS), start = 9, stop = 10), levels = c("07", "08", "09"))
+distance <- vegdist(t(NS[,which(is.na(groups) == F)]), method = "bray")
+layer <- factor(substr(colnames(NS[,which(is.na(groups) == F)]), start=3, stop=3), levels = c("E", "H"))
+groups2 <- groups[which(is.na(groups) == F)]
+
+pcoa <- betadisper(distance, groups2)
+coord <- scores(pcoa)
+
+
+plot.pcoa <- data.frame(groups2, coord$sites, layer)
+colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
+
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "North Sparkling Bog")
+#anosim(t(NS[,which(is.na(groups) == F)]), groups2, permutations = 999, distance = "bray")
+#NSH <- bog_subset("NSH", clade_table)
+#group2 <- factor(substr(colnames(NSH), start = 9, stop = 10), levels = c("07", "08", "09"))
+#NSH <- NSH[,which(is.na(group2) == F)]
+#group2 <- group2[which(is.na(group2) == F)]
+#anosim(t(NSH), group2 permutations = 999, distance = "bray")
+#NSE <- bog_subset("NSE", clade_table)
+#group2 <- factor(substr(colnames(NSE), start = 9, stop = 10), levels = c("07", "08", "09"))
+#anosim(t(NSE), group2, permutations = 999, distance = "bray")
+##########
+SS <- bog_subset("SS.", clade_table)
+
+distance <- vegdist(t(SS), method = "bray")
+groups <- factor(substr(colnames(SS), start = 9, stop = 10), levels = c("07", "08", "09"))
+
+pcoa <- betadisper(distance, groups)
+coord <- scores(pcoa)
+
+layer <- factor(substr(colnames(SS), start=3, stop=3), levels = c("E", "H"))
+plot.pcoa <- data.frame(groups, coord$sites, layer)
+colnames(plot.pcoa) <- c("Year", "PCoA1", "PCoA2", "Layer")
+
+ggplot(data=plot.pcoa, aes(x=PCoA1, y=PCoA2, colour=Year, shape=Layer)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=.7), axis.text.y = element_text(colour="black", size=12)) + scale_colour_brewer(palette = "Dark2")  + labs(title = "South Sparkling Bog")
+#anosim(t(SS), groups, permutations = 999, distance = "bray")
+#SSH <- bog_subset("SSH", clade_table)
+#group2 <- factor(substr(colnames(SSH), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(SSH), group2, permutations = 999, distance = "bray")
+#SSE <- bog_subset("SSE", clade_table)
+#group2 <- factor(substr(colnames(SSE), start = 9, stop = 10), levels = c("05", "07", "08", "09"))
+#anosim(t(SSE), group2, permutations = 999, distance = "bray")
+```
+
+####Figure S9. Principle coordinates analysis of epilimnion and hypolimnion samples over four years in all lakes. The shape of each point indicates whether it was collected from the epilimnion or hypolimnion, and the color indicates the year in which it was collected. Epilimnion samples look similar each year, while hypolimnion samples cluster by year. Mary Lake hypolimnion samples are highly similar each year, while Crystal Bog hypolimnion samples are more similar to epilimnion samples. However, all lakes and layers showed significant clustering by year (p less than or equal to 0.001) using an analysis of similarity test (anosim()).
+***
+
+```{r, Phenology, echo=FALSE, warning=FALSE, message=FALSE}
+#Plot the phenological trend in similarity between dimictic and meromictic lakes. Trout Bog vs Mary Lake, 2007 is included in the main text of the paper. Below are phenologies between Mary Lake and other dimictic lakes and years.
+
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "07"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+NSHmixes <- metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)]
+
+bog1 <- "NSH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+colnames(plot.data) <- c("Dates", "BrayCurtis")
+ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(NSHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="North Sparkling vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+######
+
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "09"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+NSHmixes <- metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)]
+
+bog1 <- "NSH"
+bog2 <- "MAH"
+table <- year_subset("09", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+#Only mix is in May when there is no sampling - not plotting for this graph
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="North Sparkling vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaSSH <- metadata[which(metalakes == "SSH" & metayears == "08"), c(1,2,4)]
+metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
+
+bog1 <- "SSH"
+bog2 <- "MAH"
+table <- year_subset("08", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(SSHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="South Sparkling vs Mary, 2008") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaSSH <- metadata[which(metalakes == "SSH" & metayears == "07"), c(1,2,4)]
+metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
+
+bog1 <- "SSH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(SSHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="South Sparkling vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaSSH <- metadata[which(metalakes == "SSH" & metayears == "09"), c(1,2,4)]
+metaSSH <- dcast(metaSSH, Sample_Name~Depth, fun.aggregate=mean)
+SSHmixes <- metaSSH$Sample_Name[which(metaSSH$"0.5" - metaSSH$"8" < 1)]
+
+bog1 <- "SSH"
+bog2 <- "MAH"
+table <- year_subset("09", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(SSHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="South Sparkling vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+######
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "08"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
+
+bog1 <- "TBH"
+bog2 <- "MAH"
+table <- year_subset("08", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(TBHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="Trout Bog vs Mary, 2008") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+######
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "05"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
+
+bog1 <- "TBH"
+bog2 <- "MAH"
+table <- year_subset("05", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(extract_date(TBHmixes)), linetype = "dashed", colour="black") + labs(y = "Bray-Curtis Similarity", title="Trout Bog vs Mary, 2005") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+######
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "09"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"6" < 1)]
+
+bog1 <- "TBH"
+bog2 <- "MAH"
+table <- year_subset("09", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Trout Bog vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+######
+metaCBH <- metadata[which(metalakes == "CBH" & metayears == "07"), c(1,2,4)]
+metaCBH <- dcast(metaCBH, Sample_Name~Depth, fun.aggregate=mean)
+CBHmixes <- metaCBH$Sample_Name[which(metaCBH$"0.5" - metaCBH$"2" < 1)]
+
+bog1 <- "CBH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Crystal Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaCBH <- metadata[which(metalakes == "CBH" & metayears == "09"), c(1,2,4)]
+metaCBH <- dcast(metaCBH, Sample_Name~Depth, fun.aggregate=mean)
+CBHmixes <- metaCBH$Sample_Name[which(metaCBH$"0.5" - metaCBH$"2" < 1)]
+
+bog1 <- "CBH"
+bog2 <- "MAH"
+table <- year_subset("09", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Crystal Bog vs Mary, 2009") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaFBH <- metadata[which(metalakes == "FBH" & metayears == "07"), c(1,2,4)]
+metaFBH <- dcast(metaFBH, Sample_Name~Depth, fun.aggregate=mean)
+FBHmixes <- metaFBH$Sample_Name[which(metaFBH$"0.5" - metaFBH$"2" < 1)]
+
+bog1 <- "FBH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="Forestry Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+metaWSH <- metadata[which(metalakes == "WSH" & metayears == "07"), c(1,2,4)]
+metaWSH <- dcast(metaWSH, Sample_Name~Depth, fun.aggregate=mean)
+WSHmixes <- metaWSH$Sample_Name[which(metaWSH$"0.5" - metaWSH$"4" < 1)]
+
+bog1 <- "WSH"
+bog2 <- "MAH"
+table <- year_subset("07", clade_table)
+query <- bog_subset(bog1, table)
+database <- bog_subset(bog2, table)
+
+mean.bc <- c()
+for(i in 1:dim(query)[2]){
+  bc.dis <- c()
+  for(j in 1:dim(database)[2]){
+    test <- cbind(query[,i], database[,j])
+    bc.dis[j] <- 1- vegdist(t(test), method="bray")
+  }
+  mean.bc[i] <- mean(bc.dis) 
+}
+
+dates <- extract_date(colnames(query))
+plot.data <- data.frame(dates, mean.bc)
+  colnames(plot.data) <- c("Dates", "BrayCurtis")
+  ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + labs(y = "Bray-Curtis Similarity", title="West Sparkling Bog vs Mary, 2007") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(vjust = 1.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15), axis.text.y = element_text(colour="black", size=10), axis.title.y = element_text(size = 15, vjust=.5), axis.title.y = element_text(colour="black", size=15))
+
+#####
+```
+
+####Figure S10. Bray-Curtis Similarity between each dimictic bog lake and Mary Lake . Each point represents the average similarity between the dimictic or polymictic lake sample taken on that date and every Mary lake sample taken that year. Dashed lines represent days when the water column was mixed, defined as less than one degree difference in temperature between 0.5 m and the maximum sampling depth.   
+***
+
+```{r, Evenness, echo=FALSE}
+#List lake categories
+lakes <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
+
+#Split epilimnion and hypolimnion into separate tables
+epilimnia <- bog_subset("..E", otu_table)
+hypolimnia <- bog_subset("..H", otu_table)
+
+#Calculate observed richness
+epi.evenness <- apply(epilimnia, 2, pielou)
+hypo.evenness <- apply(hypolimnia, 2, pielou)
+
+#Extract sampling location from sample names
+epi.lakes <- substr(names(epi.evenness), start=1, stop=2)
+hypo.lakes <- substr(names(hypo.evenness), start=1, stop=2)
+
+#Make dataframe for plotting
+epi.data <- data.frame(epi.lakes, epi.evenness)
+hypo.data <- data.frame(hypo.lakes, hypo.evenness)
+epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
+hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
+
+#2A
+ggplot(data=epi.data, aes(y=epi.evenness, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14))
+
+
+#2B
+ggplot(data=hypo.data, aes(y=hypo.evenness, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14)) 
+
+
+#Check significance (not output as pdf, indicated as symbols in Illustrator)
+
+pairwise.t.test(epi.data$epi.evenness, epi.data$epi.lakes, paired = F)
+pairwise.t.test(hypo.data$hypo.evenness, hypo.data$hypo.lakes, paired = F)
+
+#Identify mixing dates (less than 1 degree of temperature difference between 0.5 meters and maximum sampling depth)
+metalakes <- substr(metadata$Sample_Name, start=1, stop=3)
+metayears <- substr(metadata$Sample_Name, start=9, stop=10)
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "07"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- extract_date(metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"7" < 1)])
+
+#Make dataset of Trout Bog hypolimion samples from 2007
+hypo <- bog_subset(paste("TBH", sep = ""), otu_table)
+hypo <- year_subset("07", hypo)
+#Calculate observed richness
+hypo.even <- apply(hypo, 2, pielou)
+#Extract sampling date from sample names
+hypo.date <- extract_date(colnames(hypo))
+#Remove January samples - large gap distracts in plot, and winter samples are not considered in this study
+hypo.even <- hypo.even[c(1:32, 35:80)]
+hypo.date <- hypo.date[c(1:32, 35:80)]
+
+#Make dataframe for plotting
+TB_evenness <- data.frame(hypo.date, hypo.even)
+colnames(TB_evenness) <- c("date", "evenness")
+#Save plot for input into mulitplot() later
+ggplot() + geom_line(data=TB_evenness, aes(x=date, y=evenness), size=1) + labs(title = "Trout Bog", x = NULL, y = "Observed evenness") + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+
+#Repeat with North Sparkling, 2008
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "08"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+NSHmixes <- extract_date(metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)])
+
+hypo <- bog_subset(paste("NSH", sep = ""), otu_table)
+hypo <- year_subset("08", hypo)
+hypo.even <- apply(hypo, 2, pielou)
+hypo.date <- extract_date(colnames(hypo))
+
+NS_evenness <- data.frame(hypo.date, hypo.even)
+colnames(NS_evenness) <- c("date", "evenness")
+
+ggplot() + geom_line(data=NS_evenness, aes(x=date, y=evenness), size=1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed evenness") + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+
+#Repeat with Crystal Bog, 2007
+metaCBH <- metadata[which(metalakes == "CBH" & metayears == "07"), c(1,2,4)]
+metaCBH <- dcast(metaCBH, Sample_Name~Depth, fun.aggregate=mean)
+CBHmixes <- extract_date(metaCBH$Sample_Name[which(metaCBH$"0.5" - metaCBH$"2" < 1)])
+
+hypo <- bog_subset(paste("CBH", sep = ""), otu_table)
+hypo <- year_subset("07", hypo)
+hypo.even <- apply(hypo, 2, pielou)
+hypo.date <- extract_date(colnames(hypo))
+
+CB_evenness <- data.frame(hypo.date, hypo.even)
+colnames(CB_evenness) <- c("date", "evenness")
+
+ggplot() + geom_line(data=CB_evenness, aes(x=date, y=evenness), size=1.2) + labs(title = "Crystal Bog", x = NULL, y = "Observed evenness") + geom_vline(xintercept = as.numeric(CBHmixes), linetype = "dashed") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+
+#Repeat with Forestry Bog, 2007
+metaFBH <- metadata[which(metalakes == "FBH" & metayears == "07"), c(1,2,4)]
+metaFBH <- dcast(metaFBH, Sample_Name~Depth, fun.aggregate=mean)
+FBHmixes <- extract_date(metaFBH$Sample_Name[which(metaFBH$"0.5" - metaFBH$"1.5" < 1)])
+
+hypo <- bog_subset(paste("FBH", sep = ""), otu_table)
+hypo <- year_subset("07", hypo)
+hypo.even <- apply(hypo, 2, pielou)
+hypo.date <- extract_date(colnames(hypo))
+
+FB_evenness <- data.frame(hypo.date, hypo.even)
+colnames(FB_evenness) <- c("date", "evenness")
+
+ggplot() + geom_line(data=FB_evenness, aes(x=date, y=evenness), size=1.2) + labs(title = "Forestry Bog", x = NULL, y = "Observed evenness") + geom_vline(xintercept = as.numeric(FBHmixes), linetype = "dashed") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+
+```
+
