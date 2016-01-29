@@ -75,13 +75,13 @@ epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 #1A
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/epi_boxplot.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14))
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/epi_boxplot.pdf", width = 3.3125, height = 3)
+ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10))
 dev.off()
 
 #1B
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/hypo_boxplot.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14)) 
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/hypo_boxplot.pdf", width = 3.3125, height = 3)
+ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.y = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10)) 
 dev.off()
 
 #Check significance (not output as pdf, indicated as symbols in Illustrator)
@@ -116,8 +116,8 @@ hypo.date <- hypo.date[c(1:32, 35:80)]
 TB_richness <- data.frame(hypo.date, hypo.rich)
 colnames(TB_richness) <- c("date", "richness")
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time1.pdf", width = 3.3125, height = 2.3125)
-ggplot() + geom_line(data=TB_richness, aes(x=date, y=richness), size=1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed", size=0.2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time1.pdf", width = 3.3125, height = 2.3125)
+ggplot() + geom_line(data=TB_richness, aes(x=date, y=richness), size=1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed", size=0.5) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2)) 
 dev.off()
 
 #Repeat with North Sparkling, 2008
@@ -133,8 +133,8 @@ hypo.date <- extract_date(colnames(hypo))
 NS_richness <- data.frame(hypo.date, hypo.rich)
 colnames(NS_richness) <- c("date", "richness")
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time2.pdf", width = 3.3125, height = 2.3125)
-ggplot() + geom_line(data=NS_richness, aes(x=date, y=richness), size=1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed", size=0.2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black", size=8), plot.title = element_text(size=12, vjust = 2)) 
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time2.pdf", width = 3.3125, height = 2.3125)
+ggplot() + geom_line(data=NS_richness, aes(x=date, y=richness), size=1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed", size=0.5) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2)) 
 dev.off()
 
 ###################
@@ -167,7 +167,7 @@ dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed", size=0.5) + labs(y = "Bray-Curtis Similarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.3), axis.title.y=element_text(size=15, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 
@@ -197,7 +197,7 @@ dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/NSH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/NSH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
 ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed", size=0.5) + labs(y = "Bray-Curtis Similarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.3), axis.title.y=element_text(size=15, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 #############
@@ -309,7 +309,7 @@ rownames(epi.indicators) <- substr(rownames(epi.indicators), start=13, stop = 10
 rownames(epi.indicators) <- gsub("p__|c__|o__|\\[|\\]", "", rownames(epi.indicators))
 epi.indicators$groups <- factor(rownames(epi.indicators), levels=rownames(epi.indicators))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Epi_indicators.pdf", width = 3.3125*2, height = 4.625/2)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Epi_indicators.pdf", width = 3.3125*2, height = 4.625/2)
 ggplot(data=epi.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 6), legend.text = element_text(size=6), axis.ticks=element_line(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "lightgrey", high= "black")
 dev.off()
 
@@ -326,6 +326,6 @@ rownames(hypo.indicators) <- substr(rownames(hypo.indicators), start=13, stop = 
 rownames(hypo.indicators) <- gsub("p__|c__|o__|g__|f__|;g__;s__1||\\[|\\]", "", rownames(hypo.indicators))
 hypo.indicators$groups <- factor(rownames(hypo.indicators), levels=rownames(hypo.indicators))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Hypo_indicators.pdf", width = 3.3125*2, height = 4.625/2)
 ggplot(data=hypo.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 6), legend.text = element_text(size=6), axis.ticks=element_line(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "lightgrey", high= "black")
 dev.off()
