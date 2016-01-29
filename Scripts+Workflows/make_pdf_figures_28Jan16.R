@@ -202,7 +202,52 @@ ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_
 dev.off()
 #############
 #Figure 4 - Network analysis
+all.network <- read.table(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header=T)
+TBH <- bog_subset("TBH", otu_table)
+NSH <- bog_subset("NSH", otu_table)
+MAH <- bog_subset("MAH", otu_table)
 
+TBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+TBH.nodes <- match(names(TBH.edges), rownames(TBH))
+TBH.conn <- TBH[TBH.nodes,]
+TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.edges, "*"))
+TBH.dates <- extract_date(colnames(TBH))
+
+NSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+NSH.nodes <- match(names(NSH.edges), rownames(NSH))
+NSH.conn <- NSH[NSH.nodes,]
+NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.edges, "*"))
+NSH.dates <- extract_date(colnames(NSH))
+
+MAH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+MAH.nodes <- match(names(MAH.edges), rownames(MAH))
+MAH.conn <- MAH[MAH.nodes,]
+MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.edges, "*"))
+MAH.dates <- extract_date(colnames(MAH))
+
+all.metric <- c(TBH.metric, NSH.metric, MAH.metric)
+all.dates <- c(TBH.dates, NSH.dates, MAH.dates)
+lakekey <- c(rep("TBH", length(TBH.metric)), rep("NSH", length(NSH.metric)), rep("MAH", length(MAH.metric)))
+plot.conn <- data.frame(lakekey, all.dates, all.metric)
+colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
+pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2007.pdf", width = 3.3125*2, height = 2.3)
+ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line(size=1) + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+dev.off()
+
+pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2008.pdf", width = 3.3125*2, height = 2.3)
+ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line() + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+dev.off()
+
+
+#Use GLM
+
+summary(glm(Connectivity ~ Lake + Date, family = "gaussian", data = plot.conn))
+
+#Try looking at date in each lake individually
+summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "TBH"),]))
+summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "NSH"),]))
+summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "MAH"),]))
+#Date is now significant in all three, although far less significant in Mary
 #################
 #Figure 5A
 #Indicator analysis of epilimnia vs hypolimnia habitat preference
