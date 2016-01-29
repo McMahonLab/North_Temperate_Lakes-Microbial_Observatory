@@ -76,12 +76,12 @@ hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 #1A
 pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/epi_boxplot.pdf", width = 3.3125, height = 3)
-ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10))
+ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes, fill=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10), legend.position = "none") + scale_fill_brewer(palette="Set3")
 dev.off()
 
 #1B
 pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/hypo_boxplot.pdf", width = 3.3125, height = 3)
-ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.y = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10)) 
+ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes, fill=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.y = element_text(size = 10, hjust=0.5, vjust=0.1), axis.text.y = element_text(colour="black", size = 10), legend.position="none") + scale_fill_brewer(palette="Set3")
 dev.off()
 
 #Check significance (not output as pdf, indicated as symbols in Illustrator)
@@ -117,8 +117,9 @@ TB_richness <- data.frame(hypo.date, hypo.rich)
 colnames(TB_richness) <- c("date", "richness")
 
 pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time1.pdf", width = 3.3125, height = 2.3125)
-ggplot() + geom_line(data=TB_richness, aes(x=date, y=richness), size=1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed", size=0.5) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2)) 
+ggplot() + geom_line(data=TB_richness, aes(x=date, y=richness), size=1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2), legend.position="none") + geom_point(data=TB_richness[match(TBHmixes, TB_richness$date),], aes(x=date, y=richness), size=2, colour = "red")
 dev.off()
+
 
 #Repeat with North Sparkling, 2008
 metaNSH <- metadata[which(metalakes == "NSH" & metayears == "08"), c(1,2,4)]
@@ -134,7 +135,7 @@ NS_richness <- data.frame(hypo.date, hypo.rich)
 colnames(NS_richness) <- c("date", "richness")
 
 pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time2.pdf", width = 3.3125, height = 2.3125)
-ggplot() + geom_line(data=NS_richness, aes(x=date, y=richness), size=1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed", size=0.5) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2)) 
+ggplot() + geom_line(data=NS_richness, aes(x=date, y=richness), size=1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2), legend.position = "none") + geom_point(data=NS_richness[match(NSHmixes, NS_richness$date),], aes(x=date, y=richness), size=2, colour = "red")
 dev.off()
 
 ###################
@@ -167,8 +168,26 @@ dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(TBHmixes), linetype = "dashed", size=0.5) + labs(y = "Bray-Curtis Similarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.3), axis.title.y=element_text(size=15, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+TBHmat <- make_temp_matrix("TBH.....07", metadata)
+TBHmat <- melt(TBHmat)
+colnames(TBHmat) <- c("Depth", "Date", "Temperature")
+TBHmat$Date <- as.Date(TBHmat$Date, format = "%Y-%m-%d")
+TBHmat$Depth <- -TBHmat$Depth/18.04 + 0.388
+
+#Need to close polygons - add 0 or max values at top and bottom of graph
+TBHmat <- TBHmat[which(is.na(TBHmat$Temperature) == F),]
+#For each date, add a hidden -1 value
+add <- TBHmat[which(TBHmat$Depth == 0.388),]
+add$Depth <- rep(-1, length(add$Depth))
+add$Temperature <- rep(4, length(add$Temperature))
+add2 <- add
+add2$Depth <- rep(3, length(add2$Depth))
+add2$Temperature <- rep(28, length(add2$Temperature))
+TBHmat2 <- rbind(TBHmat, add, add2)
+
+
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_v_MAH_bray_curtis.pdf", width = 3.3125, height = 2.5)
+ggplot() + stat_contour(data=TBHmat2, aes(y=Depth, x=Date, z=Temperature, fill=..level..), geom="polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits=c(4, 28)) + geom_line(data=plot.data, aes(x=Dates, y=BrayCurtis), size=1.5) + labs(y = "Bray-Curtis Similarity", x=NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.2), axis.title.y=element_text(size=15, vjust=1.6), axis.text.y = element_text(colour="black", size=10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim=c(0.07, 0.372))
 dev.off()
 
 #3B
@@ -197,8 +216,27 @@ dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/NSH_v_MAH_bray_curtis.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=plot.data, aes(x=Dates, y=BrayCurtis)) + geom_line(size=1.5) + geom_vline(xintercept = as.numeric(NSHmixes), linetype = "dashed", size=0.5) + labs(y = "Bray-Curtis Similarity") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.3), axis.title.y=element_text(size=15, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+NSHmat <- make_temp_matrix("NSH.....08", metadata)
+#Remove columns with NAs
+NSHmat <- NSHmat[,c(1:14, 16:30, 32:54)]
+NSHmat <- melt(NSHmat)
+colnames(NSHmat) <- c("Depth", "Date", "Temperature")
+NSHmat$Date <- as.Date(NSHmat$Date, format = "%Y-%m-%d")
+NSHmat$Depth <- -NSHmat$Depth/10.71 + 0.43
+#Need to close polygons - add 0 or max values at top and bottom of graph
+NSHmat <- NSHmat[which(is.na(NSHmat$Temperature) == F),]
+#For each date, add a hidden -1 value
+add <- NSHmat[which(NSHmat$Depth == 0.43),]
+add$Depth <- rep(-1, length(add$Depth))
+add$Temperature <- rep(4, length(add$Temperature))
+add2 <- add
+add2$Depth <- rep(3, length(add2$Depth))
+add2$Temperature <- rep(28, length(add2$Temperature))
+NSHmat2 <- rbind(NSHmat, add, add2)
+#Remove dates with missing depth measurements
+
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/NSH_v_MAH_bray_curtis.pdf", width = 3.3125, height = 2.5)
+ggplot() + stat_contour(data=NSHmat2, aes(y=Depth, x=Date, z=Temperature, fill=..level..), geom="polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH01Nov08")), ylim=c(0.05, 0.42)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits=c(4, 28)) + geom_line(data=plot.data, aes(x=Dates, y=BrayCurtis), size=1.5) + labs(y = "Bray-Curtis Similarity", x=NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.2), axis.title.y=element_text(size=15, vjust=1.6), axis.text.y = element_text(colour="black", size=10)) 
 dev.off()
 #############
 #Figure 4 - Network analysis
