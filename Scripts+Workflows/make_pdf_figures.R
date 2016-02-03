@@ -9,6 +9,7 @@ library(ggplot2)
 library(reshape2)
 library(grid)
 library(indicspecies)
+library(RColorBrewer)
 
 #Load data from OTUtable
 data(otu_table)
@@ -75,13 +76,13 @@ epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 #2A
-pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/epi_boxplot.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14))
+pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/epi_boxplot.pdf", width = 3.3125*2, height = 4.625)
+ggplot(data=epi.data, aes(y=epi.chao1, x=epi.lakes, fill=epi.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14), legend.position = "none") + scale_fill_brewer(palette="Set3")
 dev.off()
 
 #2B
-pdf(file = "C:/Users/amlinz16/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/hypo_boxplot.pdf", width = 3.3125*2, height = 4.625)
-ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14)) 
+pdf(file = "C:/Users/Alex/Dropbox/Deblurred Bog Tags/Bog_paper_figures_and_scripts/Figures Nov15/hypo_boxplot.pdf", width = 3.3125*2, height = 4.625)
+ggplot(data=hypo.data, aes(y=hypo.chao1, x=hypo.lakes, fill=hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust=2), axis.text.y = element_text(colour="black", size = 14), legend.position = "none") + scale_fill_brewer(palette="Set3")
 dev.off()
 
 #Check significance (not output as pdf, indicated as symbols in Illustrator)
