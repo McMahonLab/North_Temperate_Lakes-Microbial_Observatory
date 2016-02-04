@@ -297,7 +297,7 @@ input <- remove_reps(TBH)
 month <- substr(colnames(input), start=6, stop=8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start=4, stop=10)
-h <- hclust(dist(t(input)))
+h <- hclust(dist(t(input)), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
@@ -311,8 +311,7 @@ input <- remove_reps(MAH)
 month <- substr(colnames(input), start=6, stop=8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start=4, stop=10)
-h <- hclust(dist(t(input)))
-plot(h)
+h <- hclust(dist(t(input)), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
