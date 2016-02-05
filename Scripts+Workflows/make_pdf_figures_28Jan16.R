@@ -242,7 +242,7 @@ ggplot() + stat_contour(data=NSHmat2, aes(y=Depth, x=Date, z=Temperature, fill=.
 dev.off()
 #############
 #Figure 4 - Network analysis
-all.network <- read.table(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header=T)
+all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header=T)
 TBH <- bog_subset("TBH", otu_table)
 NSH <- bog_subset("NSH", otu_table)
 MAH <- bog_subset("MAH", otu_table)
@@ -270,11 +270,11 @@ all.dates <- c(TBH.dates, NSH.dates, MAH.dates)
 lakekey <- c(rep("TBH", length(TBH.metric)), rep("NSH", length(NSH.metric)), rep("MAH", length(MAH.metric)))
 plot.conn <- data.frame(lakekey, all.dates, all.metric)
 colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2007.pdf", width = 3.3125*2, height = 2.3)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2007.pdf", width = 3.3125*2, height = 2.3)
 ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line(size=1) + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2008.pdf", width = 3.3125*2, height = 2.3)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2008.pdf", width = 3.3125*2, height = 2.3)
 ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line() + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
 dev.off()
 
