@@ -293,31 +293,33 @@ summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plo
 #Figure of dendograms?
 
 TBH <- bog_subset("TBH", otu_table)
+TBH <- TBH[which(rowSums(TBH) > 5000),]
 input <- remove_reps(TBH)
 month <- substr(colnames(input), start=6, stop=8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start=4, stop=10)
-h <- hclust(dist(t(input)), method = "ward")
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_dendrogram.pdf", width = 3.3125*2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90) + coord_cartesian(ylim = c(-500, 950))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))                                                                                 
+pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_dendrogram_abundancecutoff.pdf", width = 3.3125*2, height = 2.3)
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6))
 dev.off()
 
 MAH <- bog_subset("MAH", otu_table)
+MAH <- MAH[which(rowSums(MAH) > 5000),]
 input <- remove_reps(MAH)
 month <- substr(colnames(input), start=6, stop=8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start=4, stop=10)
-h <- hclust(dist(t(input)), method = "ward")
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/MAH_dendrogram.pdf", width = 3.3125*2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90) + coord_cartesian(ylim = c(-750, 1850))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))                                                                                 
+pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/MAH_dendrogram_abundancecutoff.pdf", width = 3.3125*2, height = 2.3)
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6)) 
 dev.off()
 
 
