@@ -1,6 +1,8 @@
 # Script to generate figures for NTL-MO manuscript
 # Plots are saved as pdfs. For many figures, further processing is performed in Adobe Illustrator
 ###########
+# Input your path to the North_Temperate_Lakes-Microbial_Observatory/Figures folder in the GitHub repo, or whereever you would like the figures to be saved
+path2repo <- "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
 
 # Load packages
 library(OTUtable)
@@ -77,12 +79,12 @@ epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 # plot 1A
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/epi_boxplot.pdf", width = 3.3125, height = 3)
+pdf(file = paste(path2repo, "epi_boxplot.pdf", sep = ""), width = 3.3125, height = 3)
 ggplot(data = epi.data, aes(y = epi.obs, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), legend.position = "none") + scale_fill_brewer(palette = "Set3")
 dev.off()
 
 # plot 1B
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/hypo_boxplot.pdf", width = 3.3125, height = 3)
+pdf(file = paste(path2repo, "hypo_boxplot.pdf", sep = ""), width = 3.3125, height = 3)
 ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.y = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), legend.position="none") + scale_fill_brewer(palette = "Set3")
 dev.off()
 
@@ -118,7 +120,7 @@ hypo.date <- hypo.date[c(1:32, 35:80)]
 TB_richness <- data.frame(hypo.date, hypo.rich)
 colnames(TB_richness) <- c("date", "richness")
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time1.pdf", width = 3.3125, height = 2.3125)
+pdf(file = paste(path2repo, "richness_over_time1.pdf", sep = ""), width = 3.3125, height = 2.3125)
 ggplot() + geom_line(data = TB_richness, aes(x = date, y = richness), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust = 2), axis.text.y = element_text(colour = "black", size=10), plot.title = element_text(size = 12, vjust = 2), legend.position = "none") + geom_point(data = TB_richness[match(TBHmixes, TB_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
 dev.off()
 
@@ -136,36 +138,36 @@ hypo.date <- extract_date(colnames(hypo))
 NS_richness <- data.frame(hypo.date, hypo.rich)
 colnames(NS_richness) <- c("date", "richness")
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/richness_over_time2.pdf", width = 3.3125, height = 2.3125)
-ggplot() + geom_line(data = NS_richness, aes(x = date, y = richness), size = 1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour="black", size=10), plot.title = element_text(size=12, vjust = 2), legend.position = "none") + geom_point(data = NS_richness[match(NSHmixes, NS_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
+pdf(file = paste(path2repo, "richness_over_time2.pdf", sep = ""), width = 3.3125, height = 2.3125)
+ggplot() + geom_line(data = NS_richness, aes(x = date, y = richness), size = 1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour = "black", size = 10), plot.title = element_text(size=12, vjust = 2), legend.position = "none") + geom_point(data = NS_richness[match(NSHmixes, NS_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
 dev.off()
 
 ###################
-#Figure 3A
-#Calculate Bray-Curtis Similarity for Trout Bog vs Mary Lake hypolimnia, 2007
+# Figure 3A
+# Calculate Bray-Curtis Similarity for Trout Bog vs Mary Lake hypolimnia, 2007
 
-#Select data
+# Select data
 bog1 <- "TBH"
 bog2 <- "MAH"
 table <- clade_table07
 query <- bog_subset(bog1, table)
 database <- bog_subset(bog2, table)
-#Remove January samples
+# Remove January samples
 query <- query[, c(1:32, 35:80)]
 
-#Calculate Bray-Curtis Similarity between every dimictic and meromictic sample in the given subset, then average by dimictic sample
+# Calculate Bray-Curtis Similarity between every dimictic and meromictic sample in the given subset, then average by dimictic sample
 mean.bc <- c()
 for (i in 1:dim(query)[2]) {
   bc.dis <- c()
   for (j in 1:dim(database)[2]) {
     test <- cbind(query[, i], database[, j])
-    #Subtract from 1 to convert dissimilarity to similarity
+    # Subtract from 1 to convert dissimilarity to similarity
     bc.dis[j] <- 1 - vegdist(t(test), method = "bray")
   }
   mean.bc[i] <- mean(bc.dis) 
 }
 
-#Make dataframe for plotting
+# Make dataframe for plotting
 dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
@@ -176,9 +178,9 @@ colnames(TBHmat) <- c("Depth", "Date", "Temperature")
 TBHmat$Date <- as.Date(TBHmat$Date, format = "%Y-%m-%d")
 TBHmat$Depth <- -TBHmat$Depth / 18.04 + 0.388
 
-#Need to close polygons - add 0 or max values at top and bottom of graph
+# Need to close polygons - add 0 or max values at top and bottom of graph
 TBHmat <- TBHmat[which(is.na(TBHmat$Temperature) == F), ]
-#For each date, add a hidden value outside of the plotting range
+# For each date, add a hidden value outside of the plotting range
 add <- TBHmat[which(TBHmat$Depth == 0.388), ]
 add$Depth <- rep(-1, length(add$Depth))
 add$Temperature <- rep(4, length(add$Temperature))
@@ -188,12 +190,12 @@ add2$Temperature <- rep(28, length(add2$Temperature))
 TBHmat2 <- rbind(TBHmat, add, add2)
 
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_v_MAH_bray_curtis.pdf", width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size=1.5) + labs(y = "Bray-Curtis Similarity", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 15, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.372))
+pdf(file = paste(path2repo, "TBH_v_MAH_bray_curtis.pdf", sep = ""), width = 3.3125, height = 2.5)
+ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Bray-Curtis Similarity", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 15, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.372))
 dev.off()
 
-#3B
-#Select data
+# 3B
+# Select data
 clade_table08 <- year_subset("08", clade_table)
 bog1 <- "NSH"
 bog2 <- "MAH"
@@ -201,19 +203,19 @@ table <- clade_table08
 query <- bog_subset(bog1, table)
 database <- bog_subset(bog2, table)
 
-#Calculate Bray-Curtis Similarity between every dimictic and meromictic sample in the given subset, then average by dimictic sample
+# Calculate Bray-Curtis Similarity between every dimictic and meromictic sample in the given subset, then average by dimictic sample
 mean.bc <- c()
 for(i in 1:dim(query)[2]){
   bc.dis <- c()
   for(j in 1:dim(database)[2]){
-    test <- cbind(query[,i], database[,j])
+    test <- cbind(query[, i], database[, j])
     #Subtract from 1 to convert dissimilarity to similarity
     bc.dis[j] <- 1 - vegdist(t(test), method="bray")
   }
   mean.bc[i] <- mean(bc.dis) 
 }
 
-#Make dataframe for plotting
+# Make dataframe for plotting
 dates <- extract_date(colnames(query))
 plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
@@ -224,9 +226,9 @@ NSHmat <- NSHmat[,c(1:14, 16:30, 32:54)]
 NSHmat <- melt(NSHmat)
 colnames(NSHmat) <- c("Depth", "Date", "Temperature")
 NSHmat$Date <- as.Date(NSHmat$Date, format = "%Y-%m-%d")
-NSHmat$Depth <- -NSHmat$Depth/10.71 + 0.43
+NSHmat$Depth <- -NSHmat$Depth / 10.71 + 0.43
 #Need to close polygons - add 0 or max values at top and bottom of graph
-NSHmat <- NSHmat[which(is.na(NSHmat$Temperature) == F),]
+NSHmat <- NSHmat[which(is.na(NSHmat$Temperature) == F), ]
 #For each date, add a hidden -1 value
 add <- NSHmat[which(NSHmat$Depth == 0.43),]
 add$Depth <- rep(-1, length(add$Depth))
@@ -235,33 +237,33 @@ add2 <- add
 add2$Depth <- rep(3, length(add2$Depth))
 add2$Temperature <- rep(28, length(add2$Temperature))
 NSHmat2 <- rbind(NSHmat, add, add2)
-#Remove dates with missing depth measurements
+# Remove dates with missing depth measurements
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/NSH_v_MAH_bray_curtis.pdf", width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data=NSHmat2, aes(y=Depth, x=Date, z=Temperature, fill=..level..), geom="polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH01Nov08")), ylim=c(0.05, 0.42)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits=c(4, 28)) + geom_line(data=plot.data, aes(x=Dates, y=BrayCurtis), size=1.5) + labs(y = "Bray-Curtis Similarity", x=NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust=0.2), axis.title.y=element_text(size=15, vjust=1.6), axis.text.y = element_text(colour="black", size=10)) 
+pdf(file = paste(path2repo, "NSH_v_MAH_bray_curtis.pdf", sep = ""), width = 3.3125, height = 2.5)
+ggplot() + stat_contour(data = NSHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH01Nov08")), ylim = c(0.05, 0.42)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Bray-Curtis Similarity", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 15, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) 
 dev.off()
 #############
-#Figure 4 - Network analysis
-all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header=T)
+# Figure 4 - Network analysis - Change this to not point directly to file once 
+all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
 TBH <- bog_subset("TBH", otu_table)
 NSH <- bog_subset("NSH", otu_table)
 MAH <- bog_subset("MAH", otu_table)
 
 TBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
 TBH.nodes <- match(names(TBH.edges), rownames(TBH))
-TBH.conn <- TBH[TBH.nodes,]
+TBH.conn <- TBH[TBH.nodes, ]
 TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.edges, "*"))
 TBH.dates <- extract_date(colnames(TBH))
 
 NSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
 NSH.nodes <- match(names(NSH.edges), rownames(NSH))
-NSH.conn <- NSH[NSH.nodes,]
+NSH.conn <- NSH[NSH.nodes, ]
 NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.edges, "*"))
 NSH.dates <- extract_date(colnames(NSH))
 
 MAH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
 MAH.nodes <- match(names(MAH.edges), rownames(MAH))
-MAH.conn <- MAH[MAH.nodes,]
+MAH.conn <- MAH[MAH.nodes, ]
 MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.edges, "*"))
 MAH.dates <- extract_date(colnames(MAH))
 
@@ -270,68 +272,61 @@ all.dates <- c(TBH.dates, NSH.dates, MAH.dates)
 lakekey <- c(rep("TBH", length(TBH.metric)), rep("NSH", length(NSH.metric)), rep("MAH", length(MAH.metric)))
 plot.conn <- data.frame(lakekey, all.dates, all.metric)
 colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2007.pdf", width = 3.3125*2, height = 2.3)
-ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line(size=1) + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+pdf(file = paste(path2repo, "connectivity2007.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line(size = 1) + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust = 0.3), axis.title.y = element_text(size=12, vjust=1.3), axis.text.y = element_text(colour = "black", size = 10))
 dev.off()
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/connectivity2008.pdf", width = 3.3125*2, height = 2.3)
-ggplot(data=plot.conn, aes(x=Date, y=Connectivity, colour=Lake)) + geom_line() + scale_y_log10() + coord_cartesian(xlim=extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y=element_text(size=12, vjust=1.3), axis.text.y = element_text(colour="black", size=10))
+pdf(file = paste(path2repo, "connectivity2008.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line() + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y = element_text(size = 12, vjust = 1.3), axis.text.y = element_text(colour = "black", size = 10))
 dev.off()
 
 
-#Use GLM
+# Insert model here
 
-summary(glm(Connectivity ~ Lake + Date, family = "gaussian", data = plot.conn))
-
-#Try looking at date in each lake individually
-summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "TBH"),]))
-summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "NSH"),]))
-summary(glm(Connectivity ~ Date, family = "gaussian", data = plot.conn[which(plot.conn$Lake == "MAH"),]))
-#Date is now significant in all three, although far less significant in Mary
 
 #############
-#Figure of dendograms?
+# Figure 5 - dendograms
 
 TBH <- bog_subset("TBH", otu_table)
-TBH <- TBH[which(rowSums(TBH) > 5000),]
+TBH <- TBH[which(rowSums(TBH) > 5000), ]
 input <- remove_reps(TBH)
-month <- substr(colnames(input), start=6, stop=8)
-input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
-colnames(input) <- substr(colnames(input), start=4, stop=10)
+month <- substr(colnames(input), start = 6, stop = 8)
+input <- input[, which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
+colnames(input) <- substr(colnames(input), start = 4, stop = 10)
 h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
-ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
+ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/TBH_dendrogram_abundancecutoff.pdf", width = 3.3125*2, height = 2.3)
+pdf(file = paste(path2repo, "TBH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
 ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6))
 dev.off()
 
 MAH <- bog_subset("MAH", otu_table)
-MAH <- MAH[which(rowSums(MAH) > 5000),]
+MAH <- MAH[which(rowSums(MAH) > 5000), ]
 input <- remove_reps(MAH)
-month <- substr(colnames(input), start=6, stop=8)
+month <- substr(colnames(input), start = 6, stop = 8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
-colnames(input) <- substr(colnames(input), start=4, stop=10)
+colnames(input) <- substr(colnames(input), start = 4, stop = 10)
 h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
 
 ddata <- dendro_data(h, type = "rectangle")
-ddata$year <- factor(substr(ddata$label$label, start=6, stop=7), levels = c("05", "07", "08", "09"))
+ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
 
-pdf(file = "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/MAH_dendrogram_abundancecutoff.pdf", width = 3.3125*2, height = 2.3)
+pdf(file = paste(path2repo, "MAH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
 ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6)) 
 dev.off()
 
 
 
 #################
-#Figure 5A
-#Indicator analysis of epilimnia vs hypolimnia habitat preference
+# Figure 6A
+# Indicator analysis of epilimnia vs hypolimnia habitat preference
 
-#Make a table that has OTUs grouped at every taxonomic level possible. This is so that groups at different levels will compete in the analyis.
-#For example, I want to know if clade acI-B is a better or worse indicator than its phylum, Actinobacteria, so I run the analysis on both levels at once.
+# Make a table that has OTUs grouped at every taxonomic level possible. This is so that groups at different levels will compete in the analyis.
+# For example, I want to know if clade acI-B is a better or worse indicator than its phylum, Actinobacteria, so I run the analysis on both levels at once.
 
-#Rename the OTUs with their full taxonomic assignment
+# Rename the OTUs with their full taxonomic assignment
 named_otu_table <- otu_table
 fullnames <- c()
 for(i in 1:dim(taxonomy)[1]){
@@ -340,19 +335,19 @@ for(i in 1:dim(taxonomy)[1]){
 fullnames <- make.unique(fullnames)
 rownames(named_otu_table) <- fullnames
 
-#Re-run clade and phylum tables so that names are no longer shortened.
+# Re-run clade and phylum tables so that names are no longer shortened.
 clade_table <- combine_otus("Clade", otu_table, taxonomy)
 phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
 
-#Combine the tables at all taxonomic levels into one giant table
+# Combine the tables at all taxonomic levels into one giant table
 full_table <- rbind(named_otu_table, tribe_table, clade_table, lineage_table, order_table, class_table, phylum_table)
 
-#Remove unclassified groups - I'm not interested in these for this analysis
+# Remove unclassified groups - I'm not interested in these for this analysis
 classified <- grep("unclassified", rownames(full_table))
 classified1 <- grep("__$", rownames(full_table))
 parsed_table <- full_table[-c(classified, classified1),]
 
-#Identify mixing dates
+# Identify mixing dates
 metadata$Sample_Name <- as.character(metadata$Sample_Name)
 metalakes <- substr(metadata$Sample_Name, start=1, stop=3)
 metayears <- substr(metadata$Sample_Name, start=9, stop=10)
@@ -382,24 +377,23 @@ FBHmixes <- metaFBH$Sample_Name[which(metaFBH$"0.5" - metaFBH$"1.5" < 1)]
 
 mixes <- c(CBHmixes, FBHmixes, WSHmixes, TBHmixes, NSHmixes, SSHmixes)
 
-#
-#Use the full dataset for epi vs hypo  (minus polymictic lakes and mixing dates)
-#Note: not using "NS." because there are some "NSU" (layer unknown) samples from that lake
+# Use the full dataset for epi vs hypo  (minus polymictic lakes and mixing dates)
+# Note: not using "NS." because there are some "NSU" (layer unknown) samples from that lake
 input_table <- bog_subset("NSE|NSH|SS.|TB.|HK.|MA.", parsed_table)
 mixing_dates <- match(mixes, substr(colnames(input_table), start=1, stop=10))
 remove <- mixing_dates[which(is.na(mixing_dates) == F)]
 input_table <- input_table[,-remove]
 
-#Keep only groups with abundances in the top quantile (75th or higher)
+# Keep only groups with abundances in the top quantile (75th or higher)
 threshold <- quantile(rowSums(input_table))[4]
 input_table <- input_table[which(rowSums(input_table) >= threshold),]
 
-#Format table for input into indicspecies analysis
+# Format table for input into indicspecies analysis
 input_table <- t(input_table)
 input_table <- as.data.frame(input_table)
-#Group by layer identifier
+# Group by layer identifier
 sampleids <- rownames(input_table)
-layer <- substr(sampleids, start=3, stop=3)
+lav yer <- substr(sampleids, start = 3, stop = 3)
 layerid <- c("E", "H")
 
 epi_v_hypo <- c()
@@ -407,34 +401,34 @@ for(i in 1:length(layerid)){
   epi_v_hypo[which(layer == layerid[i])] <- i
 }
 
-#Run multipatt(), specifing the the index of choice is group-normalized correlation
+# Run multipatt(), specifing the the index of choice is group-normalized correlation
 clade_by_layer <- multipatt(x = input_table, cluster = epi_v_hypo, func = "r.g", control = how(nperm = 9999))
 
-#Sort results
+# Sort results
 results <- clade_by_layer$sign
-epi <- results[which(results$index == 1),]
-epi <- epi[order(epi$stat, decreasing=T),]
+epi <- results[which(results$index == 1), ]
+epi <- epi[order(epi$stat, decreasing=T), ]
 
-#Manually pick the top 10. Because groups from the same phylogeny are competing, choose the best indicator (by correlation coefficient) for an evolutionary branch.
-#For example, if phylum Actinobacteria is a better indicator than acI-B, report only Actinobacteria
-#But if acI_B is the better indicator, report both.
+# Manually pick the top 10. Because groups from the same phylogeny are competing, choose the best indicator (by correlation coefficient) for an evolutionary branch.
+# For example, if phylum Actinobacteria is a better indicator than acI-B, report only Actinobacteria
+# But if acI_B is the better indicator, report both.
 epi.indicators <- epi[c(1, 2, 4, 6, 11, 16, 17, 20, 26, 39), ]
 
-#Add a column of abundance as % community for these indicators
+# Add a column of abundance as % community for these indicators
 epi_table <- bog_subset("..E", t(input_table))
 hits <- match(rownames(epi.indicators), rownames(epi_table))
-epi.indicators$abundance <- rowSums(epi_table[hits,])/sum(rowSums(epi_table)) * 100
+epi.indicators$abundance <- rowSums(epi_table[hits,]) / sum(rowSums(epi_table)) * 100
 
-#Format for plotting
-rownames(epi.indicators) <- substr(rownames(epi.indicators), start=13, stop = 100)
+# Format for plotting
+rownames(epi.indicators) <- substr(rownames(epi.indicators), start = 13, stop = 100)
 rownames(epi.indicators) <- gsub("p__|c__|o__|\\[|\\]", "", rownames(epi.indicators))
 epi.indicators$groups <- factor(rownames(epi.indicators), levels=rownames(epi.indicators))
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Epi_indicators.pdf", width = 3.3125*2, height = 4.625/2)
-ggplot(data=epi.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 10), legend.text = element_text(size=6), axis.ticks=element_line(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "cyan", high= "darkblue")
+pdf(file = paste(path2repo, "Epi_indicators.pdf", sep = ""), width = 3.3125 * 2, height = 4.625 / 2)
+ggplot(data = epi.indicators, aes(x = groups, y = abundance, fill = stat)) + geom_bar(stat = "identity", colour = "black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust = -0.5), axis.text.y = element_text(colour="black", size = 10), legend.text = element_text(size = 6), axis.ticks=element_line(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low = "cyan", high = "darkblue")
 dev.off()
 
-#Repeat with hypolimnion results
+# Repeat with hypolimnion results
 hypo <- results[which(results$index == 2),]
 
 hypo <- hypo[order(hypo$stat, decreasing=T),]
@@ -447,6 +441,6 @@ rownames(hypo.indicators) <- substr(rownames(hypo.indicators), start=13, stop = 
 rownames(hypo.indicators) <- gsub("p__|c__|o__|g__|f__|;g__;s__1||\\[|\\]", "", rownames(hypo.indicators))
 hypo.indicators$groups <- factor(rownames(hypo.indicators), levels=rownames(hypo.indicators))
 
-pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/Hypo_indicators.pdf", width = 3.3125*2 + 2, height = 4.625/2)
-ggplot(data=hypo.indicators, aes(x=groups, y=abundance, fill=stat)) + geom_bar(stat="identity", colour="black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust=-0.5), axis.text.y = element_text(colour="black", size = 10), legend.text = element_text(size=6), axis.ticks=element_line(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low= "cyan", high= "darkblue")
+pdf(file = paste(path2repo, "Hypo_indicators.pdf", sep = ""), width = 3.3125 * 2 + 2, height = 4.625 / 2)
+ggplot(data = hypo.indicators, aes(x = groups, y = abundance, fill = stat)) + geom_bar(stat = "identity", colour = "black") + coord_flip() + labs(x = NULL, y = "% of Community") + theme(axis.text.x = element_text(angle = 0, size = 6, colour = "black"), axis.title = element_text(size = 10, vjust = -0.5), axis.text.y = element_text(colour = "black", size = 10), legend.text = element_text(size = 6), axis.ticks = element_line(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + scale_fill_gradient(low = "cyan", high = "darkblue")
 dev.off()
