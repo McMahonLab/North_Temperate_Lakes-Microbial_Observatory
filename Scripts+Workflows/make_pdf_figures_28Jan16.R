@@ -267,15 +267,15 @@ plot.data <- data.frame(dates, mean.bc)
 colnames(plot.data) <- c("Dates", "BrayCurtis")
 
 NSHmat <- make_temp_matrix("NSH.....08", metadata)
-#Remove columns with NAs
+# Remove columns with NAs
 NSHmat <- NSHmat[,c(1:14, 16:30, 32:54)]
 NSHmat <- melt(NSHmat)
 colnames(NSHmat) <- c("Depth", "Date", "Temperature")
 NSHmat$Date <- as.Date(NSHmat$Date, format = "%Y-%m-%d")
 NSHmat$Depth <- -NSHmat$Depth / 10.71 + 0.43
-#Need to close polygons - add 0 or max values at top and bottom of graph
+# Need to close polygons - add 0 or max values at top and bottom of graph
 NSHmat <- NSHmat[which(is.na(NSHmat$Temperature) == F), ]
-#For each date, add a hidden -1 value
+# For each date, add a hidden -1 value
 add <- NSHmat[which(NSHmat$Depth == 0.43),]
 add$Depth <- rep(-1, length(add$Depth))
 add$Temperature <- rep(4, length(add$Temperature))
