@@ -2,16 +2,17 @@
 # Plots are saved as pdfs. For many figures, further processing is performed in Adobe Illustrator
 ###########
 # Input your path to the North_Temperate_Lakes-Microbial_Observatory/Figures folder in the GitHub repo, or whereever you would like the figures to be saved
-path2repo <- "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
+path2repo <- "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
 
 # Load packages
-library(OTUtable)
-library(vegan)
-library(ggplot2)
-library(reshape2)
-library(grid)
-library(ggdendro)
-library(indicspecies)
+library(OTUtable)     # Contains data and functions for analysis of NTL-MO OTU table
+library(exactRankTests)# Calculates Wilcoxon Rank Significance for ties on richness betwen lakes
+library(vegan)        # Used for Bray-Curtis
+library(ggplot2)      # Used for plotting
+library(reshape2)     # Used to format metadata
+library(grid)         # Used in multiplot()
+library(ggdendro)     # Used to plot hierarchical clustering trees
+library(indicspecies) # Performs indicator taxa analysis
 
 # Load data from OTUtable
 data(otu_table)
@@ -19,18 +20,14 @@ data(taxonomy)
 data(metadata)
 
 # Generate tables at the clade and phylum level
-tribe_table <- combine_otus("Tribe", otu_table, taxonomy)
 clade_table <- combine_otus("Clade", otu_table, taxonomy)
-lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
-order_table <- combine_otus("Order", otu_table, taxonomy)
-class_table <- combine_otus("Class", otu_table, taxonomy)
 phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
 
 # Reduce names to last known taxonmic information
 clade_table <- reduce_names(clade_table)
 phylum_table <- reduce_names(phylum_table)
-
 clade_table07 <- year_subset("07", clade_table)
+
 # Set the multiplot function (from user on Stack Overflow). Used to output multiple plots in one pdf
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   plots <- c(list(...), plotlist)
@@ -88,12 +85,61 @@ pdf(file = paste(path2repo, "hypo_boxplot.pdf", sep = ""), width = 3.3125, heigh
 ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.y = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), legend.position="none") + scale_fill_brewer(palette = "Set3")
 dev.off()
 
-# Check significance (not output as pdf, indicated as symbols in Illustrator)
+# Check significance using the Wilcoxon Rank Test on medians (not output as pdf, indicated as symbols in Illustrator)
 
-epi.aov <- aov(epi.chao1 ~ epi.lakes, epi.data)
-hypo.aov <- aov(hypo.chao1 ~ hypo.lakes, hypo.data)
-TukeyHSD(epi.aov, "epi.lakes")
-TukeyHSD(hypo.aov, "hypo.lakes")
+lakeids <- levels(epi.data$epi.lakes)
+Lake1 <- character(0)
+Lake2 <- character(0)
+Test <- character(0)
+pvalue <- numeric(0)
+Interpretation <- character(0)
+
+for (id in lakeids) { 
+  x = subset(epi.data, epi.data$epi.lakes == id)
+  for (lake in lakeids) {
+    y = subset(epi.data, epi.data$epi.lakes == lake)
+    result <- wilcox.exact(x$epi.obs,y$epi.obs, alternative= "two.sided", conf.level = 0.95)
+    Lake1 <- c(Lake1, id)
+    Lake2 <- c(Lake2, lake)
+    Test <- c(Test, result$method)
+    pvalue <- c(pvalue, result$p.value)
+    if (result$p.value < 0.05) {
+      Interpretation <- c(Interpretation, "Reject Null (difference in median detected)")
+    } else {
+      Interpretation <- c(Interpretation, "Accept Null (difference in median undetected)")
+    }  
+  }
+}
+
+Wilcoxon.epi <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
+print(Wilcoxon.epi)
+
+lakeids <- levels(hypo.data$hypo.lakes)
+Lake1 <- character(0)
+Lake2 <- character(0)
+Test <- character(0)
+pvalue <- numeric(0)
+Interpretation <- character(0)
+
+for (id in lakeids) { 
+  x = subset(hypo.data, hypo.data$hypo.lakes == id)
+  for (lake in lakeids) {
+    y = subset(hypo.data, hypo.data$hypo.lakes == lake)
+    result <- wilcox.exact(x$hypo.obs,y$hypo.obs, alternative= "two.sided", conf.level = 0.95)
+    Lake1 <- c(Lake1, id)
+    Lake2 <- c(Lake2, lake)
+    Test <- c(Test, result$method)
+    pvalue <- c(pvalue, result$p.value)
+    if (result$p.value < 0.05) {
+      Interpretation <- c(Interpretation, "Reject Null (difference in median detected)")
+    } else {
+      Interpretation <- c(Interpretation, "Accept Null (difference in median undetected)")
+    }  
+  }
+}
+
+Wilcoxon.hypo <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
+print(Wilcoxon.hypo)
 ###################
 # Figure 2
 # Trout Bog, 2007
@@ -288,33 +334,33 @@ dev.off()
 # Figure 5 - dendograms
 
 TBH <- bog_subset("TBH", otu_table)
-TBH <- TBH[which(rowSums(TBH) > 5000), ]
+TBH <- TBH[which(rowSums(TBH) > 100), ]
 input <- remove_reps(TBH)
 month <- substr(colnames(input), start = 6, stop = 8)
 input <- input[, which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start = 4, stop = 10)
-h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
 
 pdf(file = paste(path2repo, "TBH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6))
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1.5, 2))
 dev.off()
 
 MAH <- bog_subset("MAH", otu_table)
-MAH <- MAH[which(rowSums(MAH) > 5000), ]
+MAH <- MAH[which(rowSums(MAH) > 100), ]
 input <- remove_reps(MAH)
 month <- substr(colnames(input), start = 6, stop = 8)
 input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
 colnames(input) <- substr(colnames(input), start = 4, stop = 10)
-h <- hclust(vegdist(t(input), method = "bray"), method = "ward")
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
 
 ddata <- dendro_data(h, type = "rectangle")
 ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
 
 pdf(file = paste(path2repo, "MAH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none") + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-4, 6)) 
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1, 1.5)) 
 dev.off()
 
 
