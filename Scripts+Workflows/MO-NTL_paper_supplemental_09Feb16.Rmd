@@ -1,7 +1,7 @@
 ---
 title: "Supplemental Figures"
 author: "Alexandra Linz"
-date: "Thursday, January 28, 2016"
+date: "Tuesday, February 9, 2016"
 output: pdf_document
 ---
 Supplemental figures accompanying the paper "Seasonal mixing frequency and historical mixing regime determine hypolimnion bacterial community dynamics in bog lakes"
@@ -328,7 +328,7 @@ plot_hypo_clades$Clade <- factor(plot_hypo_clades$Clade, levels=plot_hypo_clades
 ggplot(data = plot_hypo_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads", title = "Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-Figure S5. Rank abundance of the 20 most abundant clades in epilimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant clades in epilimnia are Pnec, acI-B, betI-A, and bacI-A. The most abundant clades in hypolimnia are Pnec, Geothrix, acI-B, and betI-B
+Figure S5. Rank abundance of the 20 most abundant clades in epilimnia and hypolimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant clades in epilimnia are Pnec, acI-B, betI-A, and bacI-A. The most abundant clades in hypolimnia are Pnec, Geothrix, acI-B, and betI-B
 
 ***
 
