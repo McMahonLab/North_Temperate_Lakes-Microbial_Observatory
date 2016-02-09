@@ -340,34 +340,74 @@ MAH <- bog_subset("MAH", otu_table)
 SSH <- bog_subset("SSH", otu_table)
 CBH <- bog_subset("CBH", otu_table)
 
-TBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-TBH.nodes <- match(names(TBH.edges), rownames(TBH))
-TBH.conn <- TBH[TBH.nodes, ]
-TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.edges, "*"))
+all.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+
+
+# Calcuate connectivity metric for each sample by lake
+# metric (for each sample) = sum(OTU abundance * # of connections to that OTU * average strength of connections to that OTU)
+TBH.nodes <- match(names(all.edges), rownames(TBH))
+TBH.conn <- TBH[TBH.nodes,]
+TBH.edges <- all.edges[match(rownames(TBH.conn), names(all.edges))]
+
+TBH.corr <- c()
+for(i in 1:length(TBH.edges)){
+  hits <- which(all.network$index1 == names(TBH.edges)[i] | all.network$index2 == names(TBH.edges)[i])
+  TBH.corr[i] <- mean(all.network$LSA[hits])
+}
+TBH.quant <- TBH.edges * TBH.corr
+TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.quant, "*"))
 TBH.dates <- extract_date(colnames(TBH))
 
-NSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-NSH.nodes <- match(names(NSH.edges), rownames(NSH))
-NSH.conn <- NSH[NSH.nodes, ]
-NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.edges, "*"))
+NSH.nodes <- match(names(all.edges), rownames(NSH))
+NSH.conn <- NSH[NSH.nodes,]
+NSH.edges <- all.edges[match(rownames(NSH.conn), names(all.edges))]
+
+NSH.corr <- c()
+for(i in 1:length(NSH.edges)){
+  hits <- which(all.network$index1 == names(NSH.edges)[i] | all.network$index2 == names(NSH.edges)[i])
+  NSH.corr[i] <- mean(all.network$LSA[hits])
+}
+NSH.quant <- NSH.edges * NSH.corr
+NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.quant, "*"))
 NSH.dates <- extract_date(colnames(NSH))
 
-MAH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-MAH.nodes <- match(names(MAH.edges), rownames(MAH))
-MAH.conn <- MAH[MAH.nodes, ]
-MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.edges, "*"))
+MAH.nodes <- match(names(all.edges), rownames(MAH))
+MAH.conn <- MAH[MAH.nodes,]
+MAH.edges <- all.edges[match(rownames(MAH.conn), names(all.edges))]
+
+MAH.corr <- c()
+for(i in 1:length(MAH.edges)){
+  hits <- which(all.network$index1 == names(MAH.edges)[i] | all.network$index2 == names(MAH.edges)[i])
+  MAH.corr[i] <- mean(all.network$LSA[hits])
+}
+MAH.quant <- MAH.edges * MAH.corr
+MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.quant, "*"))
 MAH.dates <- extract_date(colnames(MAH))
 
-CBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-CBH.nodes <- match(names(CBH.edges), rownames(CBH))
-CBH.conn <- CBH[CBH.nodes, ]
-CBH.metric <- colSums(sweep(CBH.conn, 1, CBH.edges, "*"))
+CBH.nodes <- match(names(all.edges), rownames(CBH))
+CBH.conn <- CBH[CBH.nodes,]
+CBH.edges <- all.edges[match(rownames(CBH.conn), names(all.edges))]
+
+CBH.corr <- c()
+for(i in 1:length(CBH.edges)){
+  hits <- which(all.network$index1 == names(CBH.edges)[i] | all.network$index2 == names(CBH.edges)[i])
+  CBH.corr[i] <- mean(all.network$LSA[hits])
+}
+CBH.quant <- CBH.edges * CBH.corr
+CBH.metric <- colSums(sweep(CBH.conn, 1, CBH.quant, "*"))
 CBH.dates <- extract_date(colnames(CBH))
 
-SSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-SSH.nodes <- match(names(SSH.edges), rownames(SSH))
-SSH.conn <- SSH[SSH.nodes, ]
-SSH.metric <- colSums(sweep(SSH.conn, 1, SSH.edges, "*"))
+SSH.nodes <- match(names(all.edges), rownames(SSH))
+SSH.conn <- SSH[SSH.nodes,]
+SSH.edges <- all.edges[match(rownames(SSH.conn), names(all.edges))]
+
+SSH.corr <- c()
+for(i in 1:length(SSH.edges)){
+  hits <- which(all.network$index1 == names(SSH.edges)[i] | all.network$index2 == names(SSH.edges)[i])
+  SSH.corr[i] <- mean(all.network$LSA[hits])
+}
+SSH.quant <- SSH.edges * SSH.corr
+SSH.metric <- colSums(sweep(SSH.conn, 1, SSH.quant, "*"))
 SSH.dates <- extract_date(colnames(SSH))
 
 all.metric <- c(TBH.metric, NSH.metric, MAH.metric, CBH.metric, SSH.metric)

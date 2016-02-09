@@ -188,8 +188,199 @@ pdf(file = paste(path2repo, "richness_over_time2.pdf", sep = ""), width = 3.3125
 ggplot() + geom_line(data = NS_richness, aes(x = date, y = richness), size = 1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour = "black", size = 10), plot.title = element_text(size=12, vjust = 2), legend.position = "none") + geom_point(data = NS_richness[match(NSHmixes, NS_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
 dev.off()
 
+
+#############
+# Figure 3 - Network analysis - Change this to not point directly to file once github repo is finalized
+all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
+all.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
+
+# Get OTU abundance data
+TBH <- bog_subset("TBH", otu_table)
+NSH <- bog_subset("NSH", otu_table)
+MAH <- bog_subset("MAH", otu_table)
+
+# Calcuate connectivity metric for each sample by lake
+# metric (for each sample) = sum(OTU abundance * # of connections to that OTU * average strength of connections to that OTU)
+TBH.nodes <- match(names(all.edges), rownames(TBH))
+TBH.conn <- TBH[TBH.nodes,]
+TBH.edges <- all.edges[match(rownames(TBH.conn), names(all.edges))]
+
+TBH.corr <- c()
+for(i in 1:length(TBH.edges)){
+  hits <- which(all.network$index1 == names(TBH.edges)[i] | all.network$index2 == names(TBH.edges)[i])
+  TBH.corr[i] <- mean(all.network$LSA[hits])
+}
+TBH.quant <- TBH.edges * TBH.corr
+TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.quant, "*"))
+TBH.dates <- extract_date(colnames(TBH))
+
+NSH.nodes <- match(names(all.edges), rownames(NSH))
+NSH.conn <- NSH[NSH.nodes,]
+NSH.edges <- all.edges[match(rownames(NSH.conn), names(all.edges))]
+
+NSH.corr <- c()
+for(i in 1:length(NSH.edges)){
+  hits <- which(all.network$index1 == names(NSH.edges)[i] | all.network$index2 == names(NSH.edges)[i])
+  NSH.corr[i] <- mean(all.network$LSA[hits])
+}
+NSH.quant <- NSH.edges * NSH.corr
+NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.quant, "*"))
+NSH.dates <- extract_date(colnames(NSH))
+
+MAH.nodes <- match(names(all.edges), rownames(MAH))
+MAH.conn <- MAH[MAH.nodes,]
+MAH.edges <- all.edges[match(rownames(MAH.conn), names(all.edges))]
+
+MAH.corr <- c()
+for(i in 1:length(MAH.edges)){
+  hits <- which(all.network$index1 == names(MAH.edges)[i] | all.network$index2 == names(MAH.edges)[i])
+  MAH.corr[i] <- mean(all.network$LSA[hits])
+}
+MAH.quant <- MAH.edges * MAH.corr
+MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.quant, "*"))
+MAH.dates <- extract_date(colnames(MAH))
+
+
+all.metric <- c(TBH.metric, NSH.metric, MAH.metric)
+all.dates <- c(TBH.dates, NSH.dates, MAH.dates)
+lakekey <- c(rep("TBH", length(TBH.metric)), rep("NSH", length(NSH.metric)), rep("MAH", length(MAH.metric)))
+plot.conn <- data.frame(lakekey, all.dates, all.metric)
+colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
+pdf(file = paste(path2repo, "connectivity2007.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line(size = 1) + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust = 0.3), axis.title.y = element_text(size=12, vjust=1.3), axis.text.y = element_text(colour = "black", size = 10))
+dev.off()
+
+pdf(file = paste(path2repo, "connectivity2008.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line(size = 1) + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y = element_text(size = 12, vjust = 1.3), axis.text.y = element_text(colour = "black", size = 10))
+dev.off()
+
+
+# Use linear model to show significance
+
+# Make a variable of continous mixing
+metalakes <- substr(metadata$Sample_Name, start=1, stop=3)
+metayears <- substr(metadata$Sample_Name, start=9, stop=10)
+
+metaTBH <- metadata[which(metalakes == "TBH"), c(1,2,3)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+
+metaNSH <- metadata[which(metalakes == "NSH"), c(1,2,3)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+
+metaMAH <- metadata[which(metalakes == "MAH"), c(1,2,3)]
+metaMAH <- dcast(metaMAH, Sample_Name~Depth, fun.aggregate=mean)
+
+TBHdates <- extract_date(metaTBH$Sample_Name)
+NSHdates <- extract_date(metaNSH$Sample_Name)
+MAHdates <- extract_date(metaMAH$Sample_Name)
+
+cont.mixes <- c()
+for(i in 1:dim(plot.conn)[1]){
+  if(plot.conn$Lake[i] == "TBH"){
+    sample <- metaTBH[which(TBHdates == plot.conn$Date[i]),]
+    sample <- sample[2:length(sample)]
+    sample <- as.numeric(sample[which(is.na(sample) == F)])
+    cont.mixes[i] <- sample[3] - min(sample)
+  }else if(plot.conn$Lake[i] == "NSH"){
+    sample <- metaNSH[which(NSHdates == plot.conn$Date[i]),]
+    sample <- sample[2:length(sample)]
+    sample <- as.numeric(sample[which(is.na(sample) == F)])
+    cont.mixes[i] <- sample[3] - min(sample)
+  }else if(plot.conn$Lake[i] == "MAH"){
+    sample <- metaMAH[which(MAHdates == plot.conn$Date[i]),]
+    sample <- sample[2:length(sample)]
+    sample <- as.numeric(sample[which(is.na(sample) == F)])
+    cont.mixes[i] <- sample[3] - min(sample)
+  }
+}
+
+plot.conn$Mixing.cont <- cont.mixes
+
+# Add year and Julian Date variables
+year <- substr(plot.conn$Date, start=1, stop=4)
+plot.conn$Year<- factor(year, levels=c("2005", "2007", "2008", "2009"))
+
+julian <- c()
+for(i in 1:dim(plot.conn)[1]){
+  if(year[i] == "2005"){
+    julian[i] <- as.numeric(plot.conn$Date[i] - extract_date(c("TBH01Jun05")))
+  }else if(year[i] == "2007"){
+    julian[i] <- as.numeric(plot.conn$Date[i] - extract_date(c("TBH01Jun07")))
+  }else if(year[i] == "2008"){
+    julian[i] <- as.numeric(plot.conn$Date[i] - extract_date(c("TBH01Jun08")))
+  }else if(year[i] == "2009"){
+    julian[i] <- as.numeric(plot.conn$Date[i] - extract_date(c("TBH01Jun09")))
+  }
+}
+
+plot.conn$DayNum <- julian
+
+# Run linear model
+# Setup: Taking log transformed connectivity (+1 to avoid issues with 0) is determined by the year, the lake, and the interaction of the Julian date and the continuous mixing variable ()
+model <- lm(log(Connectivity+1) ~Year + Lake + Mixing.cont*DayNum, data=plot.conn[which(plot.conn$DayNum >= 0),])
+# Run model without interaction to see main effects
+#summary(lm(log(Connectivity+1) ~Year + Lake + Mixing.cont+DayNum, data=plot.conn[which(plot.conn$DayNum >= 0),]))
+summary(model)
+
+# Check the residuals
+plot(resid(model) ~ fitted(model))
+
+# The model tells me that day number effects connectivity differently depending on how strongly stratified the lake is
+# Check the predicted values for how day number affects different lakes
+plot(fitted(model)[which(plot.conn$DayNum >= 0 & plot.conn$Lake == "MAH")] ~ plot.conn$DayNum[which(plot.conn$DayNum >= 0 & plot.conn$Lake == "MAH")])
+# Little to no trend of day num in Mary
+plot(plot.conn$DayNum[which(plot.conn$Lake == "TBH" & plot.conn$Mixing.cont > 3 )], plot.conn$Connectivity[which(plot.conn$Lake == "TBH" & plot.conn$Mixing.cont > 3 )])
+# Slight increase over time when lake is stratified
+plot(plot.conn$DayNum[which(plot.conn$Lake == "TBH" & plot.conn$Mixing.cont < 3 )], plot.conn$Connectivity[which(plot.conn$Lake == "TBH" & plot.conn$Mixing.cont < 3 )])
+# Seems to be either high or low. Likely some cool epilimnion samples right before stratification are contributing high connectivity, but the lake would still be stratified (but just barely)
+
+plot(plot.conn$DayNum[which(plot.conn$Lake == "NSH" & plot.conn$Mixing.cont > 3 )], plot.conn$Connectivity[which(plot.conn$Lake == "NSH" & plot.conn$Mixing.cont > 3 )])
+#Little to no trend over time
+
+plot(plot.conn$DayNum[which(plot.conn$Lake == "NSH" & plot.conn$Mixing.cont < 3 )], plot.conn$Connectivity[which(plot.conn$Lake == "NSH" & plot.conn$Mixing.cont < 3 )])
+# Mixed samples almost uniformly low
+
+# Conclusions:
+# a) Mary has higher connectivity than the other lakes
+# b) Connectivity is different if the lake is mixed vs stratified (observationally, lower when mixed)
+# c) The effect of date on connectivity is different if the lake is mixed vs stratified (observationally, increase over time when stratified, no trend when mixed)
+
+
+#############
+# Figure 4 - dendograms
+
+TBH <- bog_subset("TBH", otu_table)
+TBH <- TBH[which(rowSums(TBH) > 100), ]
+input <- remove_reps(TBH)
+month <- substr(colnames(input), start = 6, stop = 8)
+input <- input[, which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
+colnames(input) <- substr(colnames(input), start = 4, stop = 10)
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
+
+ddata <- dendro_data(h, type = "rectangle")
+ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
+
+pdf(file = paste(path2repo, "TBH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1.5, 2))
+dev.off()
+
+MAH <- bog_subset("MAH", otu_table)
+MAH <- MAH[which(rowSums(MAH) > 100), ]
+input <- remove_reps(MAH)
+month <- substr(colnames(input), start = 6, stop = 8)
+input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
+colnames(input) <- substr(colnames(input), start = 4, stop = 10)
+h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
+
+ddata <- dendro_data(h, type = "rectangle")
+ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
+
+pdf(file = paste(path2repo, "MAH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
+ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1, 1.5)) 
+dev.off()
+
 ###################
-# Figure 3A
+# Figure 5
 # Calculate Bray-Curtis Similarity for Trout Bog vs Mary Lake hypolimnia, 2007
 
 # Select data
@@ -237,10 +428,9 @@ TBHmat2 <- rbind(TBHmat, add, add2)
 
 
 pdf(file = paste(path2repo, "TBH_v_MAH_bray_curtis.pdf", sep = ""), width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Bray-Curtis Similarity", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 15, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.372))
+ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Sorenson Similarity Index", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.372))
 dev.off()
 
-# 3B
 # Select data
 clade_table08 <- year_subset("08", clade_table)
 bog1 <- "NSH"
@@ -286,84 +476,8 @@ NSHmat2 <- rbind(NSHmat, add, add2)
 # Remove dates with missing depth measurements
 
 pdf(file = paste(path2repo, "NSH_v_MAH_bray_curtis.pdf", sep = ""), width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data = NSHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH01Nov08")), ylim = c(0.05, 0.42)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Bray-Curtis Similarity", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 15, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) 
+ggplot() + stat_contour(data = NSHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH01Nov08")), ylim = c(0.05, 0.42)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Sorenson Similarity Index", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) 
 dev.off()
-#############
-# Figure 4 - Network analysis - Change this to not point directly to file once 
-all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
-TBH <- bog_subset("TBH", otu_table)
-NSH <- bog_subset("NSH", otu_table)
-MAH <- bog_subset("MAH", otu_table)
-
-TBH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-TBH.nodes <- match(names(TBH.edges), rownames(TBH))
-TBH.conn <- TBH[TBH.nodes, ]
-TBH.metric <- colSums(sweep(TBH.conn, 1, TBH.edges, "*"))
-TBH.dates <- extract_date(colnames(TBH))
-
-NSH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-NSH.nodes <- match(names(NSH.edges), rownames(NSH))
-NSH.conn <- NSH[NSH.nodes, ]
-NSH.metric <- colSums(sweep(NSH.conn, 1, NSH.edges, "*"))
-NSH.dates <- extract_date(colnames(NSH))
-
-MAH.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
-MAH.nodes <- match(names(MAH.edges), rownames(MAH))
-MAH.conn <- MAH[MAH.nodes, ]
-MAH.metric <- colSums(sweep(MAH.conn, 1, MAH.edges, "*"))
-MAH.dates <- extract_date(colnames(MAH))
-
-all.metric <- c(TBH.metric, NSH.metric, MAH.metric)
-all.dates <- c(TBH.dates, NSH.dates, MAH.dates)
-lakekey <- c(rep("TBH", length(TBH.metric)), rep("NSH", length(NSH.metric)), rep("MAH", length(MAH.metric)))
-plot.conn <- data.frame(lakekey, all.dates, all.metric)
-colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
-pdf(file = paste(path2repo, "connectivity2007.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line(size = 1) + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May07", "TBH18Nov07"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust = 0.3), axis.title.y = element_text(size=12, vjust=1.3), axis.text.y = element_text(colour = "black", size = 10))
-dev.off()
-
-pdf(file = paste(path2repo, "connectivity2008.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(data = plot.conn, aes(x = Date, y = Connectivity, colour = Lake)) + geom_line() + scale_y_log10() + coord_cartesian(xlim = extract_date(c("TBH15May08", "TBH18Nov08"))) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title.x = element_text(size = 12, vjust=0.3), axis.title.y = element_text(size = 12, vjust = 1.3), axis.text.y = element_text(colour = "black", size = 10))
-dev.off()
-
-
-# Insert model here
-
-
-#############
-# Figure 5 - dendograms
-
-TBH <- bog_subset("TBH", otu_table)
-TBH <- TBH[which(rowSums(TBH) > 100), ]
-input <- remove_reps(TBH)
-month <- substr(colnames(input), start = 6, stop = 8)
-input <- input[, which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
-colnames(input) <- substr(colnames(input), start = 4, stop = 10)
-h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
-
-ddata <- dendro_data(h, type = "rectangle")
-ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
-
-pdf(file = paste(path2repo, "TBH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)   + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1.5, 2))
-dev.off()
-
-MAH <- bog_subset("MAH", otu_table)
-MAH <- MAH[which(rowSums(MAH) > 100), ]
-input <- remove_reps(MAH)
-month <- substr(colnames(input), start = 6, stop = 8)
-input <- input[,which(month == "MAY" | month == "JUN" | month == "AUG" | month == "JUL" | month == "SEP")]
-colnames(input) <- substr(colnames(input), start = 4, stop = 10)
-h <- hclust(vegdist(t(input), method = "bray"), method = "ward.D2")
-
-ddata <- dendro_data(h, type = "rectangle")
-ddata$year <- factor(substr(ddata$label$label, start = 6, stop = 7), levels = c("05", "07", "08", "09"))
-
-pdf(file = paste(path2repo, "MAH_dendrogram_abundancecutoff.pdf", sep = ""), width = 3.3125 * 2, height = 2.3)
-ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + theme(axis.text.x = element_text(colour = "black"), axis.text.y = element_text(colour = "black", angle = 90)) + geom_text(data = label(ddata), aes(x = x, y = y, label = label, colour = ddata$year), vjust = 0.5, hjust = 1.1, size = 2, angle = 90)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black"), legend.position = "none", axis.text.y = element_text(angle = 0)) + scale_color_manual(values = c("darkorange3", "chartreuse4", "darkslategrey", "darkred"))  + coord_cartesian(ylim = c(-1, 1.5)) 
-dev.off()
-
-
 
 #################
 # Figure 6A
