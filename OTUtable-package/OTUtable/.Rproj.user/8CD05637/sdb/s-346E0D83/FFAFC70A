@@ -1,0 +1,16 @@
+{
+    "contents" : "\\name{reduce_names}\n\\alias{reduce_names}\n\n\\title{\nShorten taxonomic assignment in table row names\n}\n\\description{\nReduces the full string indicating taxonomy to the last classified level. Works on tables at levels higher than OTUs.\n}\n\\usage{\nreduce_names(table)\n}\n\\arguments{\n\t\\item{table}{\n  A table containing the relative abundances of each taxa produced by combine_otus()\n}\n}\n\n\\value{\nReturns the same table with shortened row names\n}\n\\note{\nThis function is often most useful for plotting, so that the full string does not appear on the plot\n}\n\n\\author{\nAlexandra Linz <amlinz16@gmail.com>\n}\n\n\n\\keyword{data_processing}\n\n\\examples{\ndata(otu_table)\ndata(taxonomy)\n\n# Create a small table for the example\nexample <- year_subset(\"05\", otu_table)\nexample <- bog_subset(\"TBE\", example)\nexample <- example[which(rowSums(example) > 0),]\n\nclade_table <- combine_otus(\"Clade\", example, taxonomy)\nhead(rownames(clade_table))\nreduced_clades <- reduce_names(clade_table)\nhead(rownames(reduced_clades))\n}\n",
+    "created" : 1455117448207.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2513650086",
+    "id" : "FFAFC70A",
+    "lastKnownWriteTime" : 1455117691,
+    "path" : "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/OTUtable-package/OTUtable/man/reduce_names.Rd",
+    "project_path" : "man/reduce_names.Rd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_doc"
+}

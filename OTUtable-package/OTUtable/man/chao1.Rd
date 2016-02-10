@@ -32,6 +32,5 @@ Use apply functions to calculate Chao1 richness for all samples in a matrix
 
 \examples{
 data(otu_table)
-
 chao1_richness <- apply(otu_table, 2, chao1)
 }

@@ -6,7 +6,7 @@
 OTU table analysis functions
 }
 \description{
-This package contains functions for the analysis of an OTU table generated from 16S sequencing. It also includes the data from the North Temperate Lakes Microbial Observatory Long-Term Time Series.
+This package contains functions for the analysis of an OTU table generated from 16S sequencing. It also includes the data from the North Temperate Lakes-Microbial Observatory used in the paper "".
 Three data files are included: otu_table, taxonomy, and metadata. Access these by calling them with data().
 }
 \details{

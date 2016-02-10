@@ -32,4 +32,12 @@ Alexandra Linz <amlinz16@gmail.com>
 samples <- c("TBE01JUN09.R1", "TBE05JUN09", "TBE10JUN09.R2")
 extract_date(samples)
 
+# Extract sample dates from the OTU table
+data(otu_table)
+x <- extract_date(colnames(otu_table))
+
+# Extract sample dates from the metadata
+data(metadata)
+x <- extract_date(metadata$Sample_Name)
+
 }

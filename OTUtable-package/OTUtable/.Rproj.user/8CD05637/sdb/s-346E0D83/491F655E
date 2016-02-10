@@ -1,0 +1,16 @@
+{
+    "contents" : "\\name{OTUtable-package}\n\\alias{OTUtable-package}\n\\alias{OTUtable}\n\\docType{package}\n\\title{\nOTU table analysis functions\n}\n\\description{\nThis package contains functions for the analysis of an OTU table generated from 16S sequencing. It also includes the data from the North Temperate Lakes-Microbial Observatory used in the paper \"\".\nThree data files are included: otu_table, taxonomy, and metadata. Access these by calling them with data().\n}\n\\details{\n\\tabular{ll}{\nPackage: \\tab OTUtable\\cr\nType: \\tab Package\\cr\nVersion: \\tab 1.0\\cr\nDate: \\tab 2015-05-29\\cr\nLicense: \\tab GPL-2 \\cr\n}\nFunctions include:\nbog_subset\nchao1\nclean_shared\nclean_taxonomy\ncombine_otus\nexpand_taxa\nextract_date\ngrab_group\nmake_do_matrix\nmake_temp_matrix\nobs_richness\npielou\nplot_column\nreduce_names\nremove_reps\nrotate\nshannon\nstrat_metric\nyear_subset\nzscore\n\n}\n\\author{\nAlexandra Linz <amlinz16@gmail.com>\n}\n\\references{\nManuscript in preparation\n}\n\\keyword{ package }\n\n",
+    "created" : 1455116960148.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "677320897",
+    "id" : "491F655E",
+    "lastKnownWriteTime" : 1455116993,
+    "path" : "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/OTUtable-package/OTUtable/man/OTUtable-package.Rd",
+    "project_path" : "man/OTUtable-package.Rd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_doc"
+}

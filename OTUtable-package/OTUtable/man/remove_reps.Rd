@@ -5,7 +5,7 @@
 Remove the second replicate of each sample, when it exists
 }
 \description{
-Sometimes it is desirable to remove replicate samples (often for plotting). This command removes all samples marked as replicate 2.
+Sometimes it is desirable to remove replicate samples (often for plotting). This command removes all samples marked as replicate 2. Please note that you should always check the similarity of replicates for your metric of interest before removing them for aesthetic purposes.
 }
 \usage{
 remove_reps(table)

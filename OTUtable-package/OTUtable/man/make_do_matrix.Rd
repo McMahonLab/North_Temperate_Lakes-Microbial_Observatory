@@ -5,7 +5,7 @@
 Make matrix of dissolved oxygen data
 }
 \description{
-Takes a given sample ID and converts the dissolved oxygen data in data(metadata) from long format into a matrix. This is useful for plotting using 
+Takes a given sample ID and converts the dissolved oxygen data in data(metadata) from long format into a matrix. This is useful for plotting using plot_column()
 }
 \usage{
 make_do_matrix(sampleID, field_data)

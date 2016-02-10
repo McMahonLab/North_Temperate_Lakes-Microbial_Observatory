@@ -1,0 +1,16 @@
+{
+    "contents" : "\\name{taxonomy}\n\\alias{taxonomy}\n\n\\title{\nTaxonomic assignments of OTUs\n}\n\\description{\nA dataset containing the taxonomy of each OTU in the otu_table\nProduced from mothur output using clean_taxonomy(), followed by expand_taxa()\n}\n\\usage{\ndata(taxonomy)\n}\n\\format{\nA dataframe with 7 columns (taxonomic levels) and 6,208 rows\t(OTUs)\n}\n\n\n\\details{\nClassified using our Freshwater database, followed by Greengenes - for the full workflow, visit the McMahonLab Github 16STax-Ass repository\nSome OTUs are missing; these were removed by subsampling of the OTU table\nThe presence of both blank (__) assignments and \"unclassified\" assignments are the result of the dual classification.\n}\n\n\\author{\nAlexandra Linz <amlinz16@gmail.com>\n}\n\n",
+    "created" : 1455117013999.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1097160995",
+    "id" : "638162E",
+    "lastKnownWriteTime" : 1455117082,
+    "path" : "C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/OTUtable-package/OTUtable/man/taxonomy.Rd",
+    "project_path" : "man/taxonomy.Rd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_doc"
+}

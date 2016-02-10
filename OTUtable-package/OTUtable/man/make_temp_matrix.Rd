@@ -5,7 +5,7 @@
 Make matrix of temperature data
 }
 \description{
-Takes a given sample ID and converts temperature data of water profiles over time from long format into a matrix
+Takes a given sample ID and converts temperature data of water profiles over time from long format into a matrix. This is most often useful for plotting using plot_column().
 }
 \usage{
 make_temp_matrix(sampleID, field_data)

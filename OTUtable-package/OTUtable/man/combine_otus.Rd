@@ -5,7 +5,8 @@
 Combine OTUs based on identical taxonomic assignments
 }
 \description{
-Sums the abundances of OTUs with the same taxonomy at a given level into a single vector for that taxonomy. This creates a new table of relative abundance data at a higher taxonomic level than OTU. This function only works with the OTU level as input.
+Sums the abundances of OTUs with the same taxonomy at a given level into a single vector for that taxonomy. This creates a new table of relative abundance data at a higher taxonomic level than OTU. This function only works with the OTU level as input, but can be used on any subset of the OTU table created by year_subset() or bog_subset().
+If bootstrap values were not removed by expand_taxa(), this command will likely create spurious groupings based on identical bootstrap values.
 }
 \usage{
 combine_otus(level, table, taxonomy)
@@ -38,10 +39,9 @@ Alexandra Linz <amlinz16@gmail.com>
 data(otu_table)
 data(taxonomy)
 
-colnames(taxonomy) #This print the options for level = ""
+example_table <- year_subset("05", otu_table)
+example_table <- bog_subset("TBE", example_table)
 
-phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
-
-clade_table <- combine_otus("Clade", otu_table, taxonomy)
+phylum_table <- combine_otus("Phylum", example_table, taxonomy)
 
 }

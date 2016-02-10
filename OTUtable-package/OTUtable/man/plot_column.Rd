@@ -12,7 +12,7 @@ plot_column(data_matrix, title)
 }
 \arguments{
 	\item{data_matrix}{
-  A matrix output by make_do_matrix or make_temp_matrix
+  A matrix output by make_do_matrix() or make_temp_matrix()
 }
 	\item{title}{
   The title you would like on the plot

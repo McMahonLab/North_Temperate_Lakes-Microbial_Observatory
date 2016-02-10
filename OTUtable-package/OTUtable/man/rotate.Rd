@@ -12,7 +12,7 @@ rotate(data_matrix)
 }
 \arguments{
 	\item{data_matrix}{
-  Used in this package with matrix output by make_do_matrix or make_temp_matrix. Any matrix will work, though.
+  Used in this package with matrix output by make_do_matrix or make_temp_matrix as part of the function plot_column(). Any matrix will work, though.
 }
 	
 }
