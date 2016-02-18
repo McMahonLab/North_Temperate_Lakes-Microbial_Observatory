@@ -1,0 +1,48 @@
+####################
+Workflow for measuring Unifrac values between samples
+22Jan16
+####################
+
+First, I will pick a smaller subset of samples to test the method.
+TBH and MAH 07 samples will be used, since I know what these should look like in Bray-Curtis
+
+
+Working backwards:
+- I need to run unifrac.weighted(tree, count or group file)
+	- I'm choosing the weighted, which counts abundances of OTUs, because it allows a gradient of values rather than just hypothesis testing
+- To do this, I need a tree file and a count or group file
+- A count file is pretty easy to make from an OTU table - I'll format my table to a count file in R
+	- Do I want to exclude OTUs with no abundances from the table? I'm leaning towards no, since it would be difficult to make the tree match
+- To make a tree in mothur, I need to run clearcut() on an aligned fasta file of my representative sequences.
+- My rep seq fasta file is already aligned! However, sequence IDS need to be at least 10 characters long to run in clearcut()
+
+1. Use find/replace in Notepad to lengthen OTU names
+I just replaced "Otu" with "bogOtu":
+bog_repseqs_07Jul15.fasta > bog_repseqs_22Jan16_10charnames.fasta
+Otu0001 > bogOtu0001
+
+2. Make tree of sequences in bog_repseqs_22Jan16_10charnames.fasta
+Open mothur (located in Desktop/Programs on my laptop, downloaded v1.36.1 mothur_win64.zip on 22 Jan 16)
+Navigate to Unifrac_analysis folder in NTL-MO github repo:
+
+set.dir(input=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis) 
+set.dir(output=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis)
+set.dir(tempdefault=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis)
+
+#Make tree
+clearcut(fasta=bog_repseqs_22Jan16_10charnames.fasta, DNA=T)
+#started 1:07PM, finished 1:08
+
+3. Write the R script to convert the OTU table to a parsed table of only TBH and MAH 07
+
+see OTUtable_to_countfile.R
+
+4. Let's see if this works!
+
+unifrac.weighted(tree=bog_repseqs_22Jan16_10charnames.tre, count=TBH-MAH07.count, random=t)
+
+5. Nope. Error says that it cannot run when some sequences have no reads in the OTU table
+This is unfortunate because it means I will have to trim my fasta file, then remake the tree each time.
+I'd really like to write some sort of script, either R or Bash or maybe python, that will just take the bog names I want and then run the rest for me.
+
+
