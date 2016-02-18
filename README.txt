@@ -10,12 +10,12 @@ Katherine McMahon <trina.mcmahon@wisc.edu>
 https://mcmahonlab.wisc.edu
 https://github.com/McMahonLab
 
-Copyright(c) 2015, Katherine D. McMahon
+Copyright(c) 2016, Katherine D. McMahon
 All rights reserved
-Last updated Feb 18, 2016
-
-If you use this data or the package OTUtable in your research, please cite:
+Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish your analysis, please cite:
 Linz A., Crary B., Shade A., Herren C.M., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes." Manuscript in prep, Feb 18 2016. 
+
+Last updated Feb 18, 2016
 
 HOW TO USE THIS REPO
 --------------------
@@ -98,3 +98,4 @@ North_Temperate_Lakes-Microbial_Observatory
 |||- mixing_regime_indicator_table				#Generates Tables 3-5 in manuscript. Output is in Data/.
 |||- MO-NTL_paper_supplemental_09Feb16.pdf			#Markdown output of supplemental document
 |||- MO-NTL_paper_supplemental_09Feb16.Rmd			#Script for generating supplemental figures
+|||- quantify_phenology.R					#Generates Table 2 in manuscript	
