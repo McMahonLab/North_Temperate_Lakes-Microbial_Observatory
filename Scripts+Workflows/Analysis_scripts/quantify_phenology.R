@@ -8,8 +8,8 @@ data(otu_table)
 data(taxonomy)
 data(metadata)
 clade_table <- combine_otus("Clade", otu_table, taxonomy)
-metalakes <- substr(metadata$Sample_Name, start=1, stop=3)
-metayears <- substr(metadata$Sample_Name, start=9, stop=10)
+metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
+metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
 mary <- bog_subset("MAH", clade_table)
 
 m <- matrix(NA, length(dimictic), length(years))
@@ -36,18 +36,18 @@ for(i in 1:length(dimictic)){
       for(k in 1:dim(parsed.data)[2]){
         bc.dis <- c()
         for(l in 1:dim(mary.year)[2]){
-          test <- cbind(parsed.data[,k], mary.year[,l])
+          test <- cbind(parsed.data[,k], mary.year[, l])
           bc.dis[l] <- 1 - vegdist(t(test), method="bray")
         }
         mean.bc[k] <- mean(bc.dis) 
       }
       time <- as.numeric(final.dates - final.dates[1])
-      r[i,j] <- cor(time, mean.bc)
-      n[i,j] <- length(mean.bc)  
+      r[i, j] <- cor(time, mean.bc)
+      n[i, j] <- length(mean.bc)  
       bestfit <- lm(mean.bc ~ time)
-      m[i,j] <- bestfit$coefficients[2]
-      b[i,j] <- bestfit$coefficients[1]
-      p[i,j] <- summary(bestfit)$coefficients[2,4]
+      m[i, j] <- bestfit$coefficients[2]
+      b[i, j] <- bestfit$coefficients[1]
+      p[i, j] <- summary(bestfit)$coefficients[2, 4]
     }
   }
 }
