@@ -498,9 +498,12 @@ rownames(named_otu_table) <- fullnames
 # Re-run clade and phylum tables so that names are no longer shortened.
 clade_table <- combine_otus("Clade", otu_table, taxonomy)
 phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
+lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
+order_table <- combine_otus("Order", otu_table, taxonomy)
+class_table <- combine_otus("Class", otu_table, taxonomy)
 
 # Combine the tables at all taxonomic levels into one giant table
-full_table <- rbind(named_otu_table, tribe_table, clade_table, lineage_table, order_table, class_table, phylum_table)
+full_table <- rbind(named_otu_table, clade_table, lineage_table, order_table, class_table, phylum_table)
 
 # Remove unclassified groups - I'm not interested in these for this analysis
 classified <- grep("unclassified", rownames(full_table))
@@ -553,7 +556,7 @@ input_table <- t(input_table)
 input_table <- as.data.frame(input_table)
 # Group by layer identifier
 sampleids <- rownames(input_table)
-lav yer <- substr(sampleids, start = 3, stop = 3)
+layer <- substr(sampleids, start = 3, stop = 3)
 layerid <- c("E", "H")
 
 epi_v_hypo <- c()
@@ -572,7 +575,7 @@ epi <- epi[order(epi$stat, decreasing=T), ]
 # Manually pick the top 10. Because groups from the same phylogeny are competing, choose the best indicator (by correlation coefficient) for an evolutionary branch.
 # For example, if phylum Actinobacteria is a better indicator than acI-B, report only Actinobacteria
 # But if acI_B is the better indicator, report both.
-epi.indicators <- epi[c(1, 2, 4, 6, 11, 16, 17, 20, 26, 39), ]
+epi.indicators <- epi[c(1, 2, 4, 6, 9, 13, 17, 21, 29, 39), ]
 
 # Add a column of abundance as % community for these indicators
 epi_table <- bog_subset("..E", t(input_table))
@@ -592,7 +595,7 @@ dev.off()
 hypo <- results[which(results$index == 2),]
 
 hypo <- hypo[order(hypo$stat, decreasing=T),]
-hypo.indicators <- hypo[c(1, 3, 4, 5, 6, 7, 10, 17, 21, 22), ]
+hypo.indicators <- hypo[c(1, 2, 3, 4, 7, 12, 13, 17, 19, 21), ]
 
 hypo_table <- bog_subset("..H", t(input_table))
 hits <- match(rownames(hypo.indicators), rownames(hypo_table))

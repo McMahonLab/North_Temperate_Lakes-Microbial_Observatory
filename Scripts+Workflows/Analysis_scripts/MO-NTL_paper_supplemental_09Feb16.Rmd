@@ -332,6 +332,35 @@ Figure S5. Rank abundance of the 20 most abundant clades in epilimnia and hypoli
 
 ***
 
+```{r, PCoA, echo=FALSE, warning=FALSE, message=FALSE}
+hypo <- bog_subset("..H", clade_table)
+lakes <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
+distance <- vegdist(t(hypo), method = "bray")
+groups <- factor(substr(colnames(hypo), start = 1, stop = 2), levels = lakes)
+pcoa <- betadisper(distance, groups)
+scores <- scores(pcoa)
+
+regime <- c()
+regime[which(groups == "CB" | groups == "FB" | groups == "WS")] <- "polymictic"
+regime[which(groups == "NS" | groups == "TB" | groups == "SS")] <- "dimictic"
+regime[which(groups == "HK" | groups == "MA")] <- "meromictic"
+
+#Make dataframe for plotting
+plot.pcoa <- data.frame(groups, scores$sites, regime)
+colnames(plot.pcoa) <- c("Lake", "PCoA1", "PCoA2", "Regime")
+
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, shape = Regime)) + geom_point(size=3) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
+
+
+
+#anosim(t(hypo), groups, permutations = 999, distance = "bray")
+#anosim(t(hypo), regime, permutations = 999, distance = "bray")
+```
+
+Figure S6. Principle coordinates analysis of hypolimnia by lake and mixing regime. Each color represents a lake, and each shape represents the mixing regime. Using an ANOSIM permutation test, samples from different lakes and regimes were found to be different at p less than or equal to 0.001. 
+
+***
+
 ```{r, Connectivity_between_bogs, echo=FALSE, warning=FALSE, message=FALSE}
 all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
 TBH <- bog_subset("TBH", otu_table)
@@ -449,7 +478,7 @@ Wilcoxon.conn <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
 
 ```
 
-Figure S6. Connectivity between hypolimnia. Connectivity was measured as the number of edges connecting each OTU multiplied by the abundance of that OTU in a given sample, then summed for the given sample. When the amount of connectivity is compared for lakes with multiple years of sampling, Mary Lake has higer connectivity, followed by South Sparkling Bog. The only lakes that are not significantly different are CBH and TBH.
+Figure S7. Connectivity between hypolimnia. Connectivity was measured as the number of edges connecting each OTU multiplied by the abundance of that OTU in a given sample, then summed for the given sample. When the amount of connectivity is compared for lakes with multiple years of sampling, Mary Lake has higer connectivity, followed by South Sparkling Bog. The only lakes that are not significantly different are CBH and TBH.
 
 ***
 
@@ -499,8 +528,38 @@ ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend
 
 ```
 
-Figure S7. Hierarchical clustering of samples over years. This analysis was performed on hypolimnia with multiple years of sampling. All hypolimnia except for that of Mary Lake show strong clustering patterns by year (see main figures)
+Figure S8. Hierarchical clustering of samples over years. This analysis was performed on hypolimnia with multiple years of sampling. All hypolimnia except for that of Mary Lake show strong clustering patterns by year (see main figures)
 
 ***
 
+```{r, TBH_vs_MAH07, echo=FALSE, warning=FALSE, message=FALSE}
+clade_table07 <- year_subset("07", clade_table)
+all.hypo <- bog_subset("..H", clade_table07)
+TBH <- bog_subset("TBH", all.hypo)
+MAH <- bog_subset("MAH", all.hypo)
 
+#Label which lake each sample comes from
+groups <- c(rep("Trout", dim(TBH)[2]), rep("Mary", dim(MAH)[2]))
+input <- cbind(TBH, MAH)
+dates <- extract_date(colnames(input))
+
+#Remove January samples
+dates <- dates[c(1:32, 35:130)]
+input <- input[,c(1:32, 35:130)]
+groups <- groups[c(1:32, 35:130)]
+
+#Run PCoA using Bray-Curtis Similarity as distance metric
+distance <- vegdist(t(input), method="bray")
+pcoa <- betadisper(distance, groups)
+#Extract scores for plotting
+scores <- scores(pcoa)
+#Make dataframe for plotting
+plot.pcoa <- data.frame(groups, as.numeric(dates - dates[78]), scores$sites)
+colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
+
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
+```
+
+Figure S9. Principle coordinates analysis of Trout Bog and Mary Lake hypolimnia in 2007. Color indicates the length of time from the initial sampling point that year (May 31). Mary Lake samples show no clear trend over time, while Trout Bog samples do. In Trout Bog, samples taken during fall mixing (low range of PCoA1, high range of PCoA2) are separated from samples taken during the rest of the year. Several points in Mary Lake are observed away from the main cluster; these samples were taken during blooms of taxa more typically seen in dimictic lakes.
+
+***
