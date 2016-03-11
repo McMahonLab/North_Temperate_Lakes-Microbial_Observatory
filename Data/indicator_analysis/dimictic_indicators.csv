@@ -1,11 +1,11 @@
 "","Phi","% of Community"
-"k__Bacteria;p__Acidobacteria",0.557071702302541,0.00539927901946647
-"k__Bacteria;p__Proteobacteria;c__Betaproteobacteria;o__Methylophilales;f__Methylophilaceae",0.517079571567885,0.00167193325780204
-"k__Bacteria;p__Verrucomicrobia;c__[Pedosphaerae];o__[Pedosphaerales];f__Ellin515;g__;s__.1",0.480172713762005,0.000262272118652796
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Desulfobacterales;f__Desulfobulbaceae;g__Desulfobulbus",0.44555671370522,0.000732021835410444
-"k__Bacteria;p__Chlorobi;c__Chlorobia;o__Chlorobiales;f__Chlorobiaceae;g__;s__.1",0.431041763414264,0.00102445153980843
-"k__Bacteria;p__Proteobacteria;c__Betaproteobacteria;o__Methylophilales",0.429987785691688,0.00329018436502214
-"k__Bacteria;p__Verrucomicrobia;c__[Methylacidiphilae];o__S-BQ2-57;f__;g__;s__.2",0.428661022092056,7.09856833865486e-05
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Desulfobacterales;f__Desulfobulbaceae",0.416255460774481,0.00198232567720672
-"k__Bacteria;p__Bacteroidetes;c__[Saprospirae];o__[Saprospirales];f__Chitinophagaceae;g__;s__.44",0.39033388420486,0.000209001956947162
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Syntrophobacterales;f__Syntrophaceae;g__Syntrophus;s__.6",0.359117362384421,7.34164177567206e-05
+"Acidobacteria",0.556844843588448,0.540076217942116
+"Proteobacteria;Betaproteobacteria;Methylophilales",0.553211519266101,0.694250695231229
+"Acidobacteria;Holophagae",0.546628874662848,0.49260685961479
+"Proteobacteria;Deltaproteobacteria;Desulfobacterales;Desulfobulbaceae",0.416376096550231,0.198347924606036
+"Acidobacteria;Acidobacteriia",0.362914198239273,0.0214605005664847
+"Proteobacteria;Gammaproteobacteria;Methylococcales;gamI",0.341286246609978,0.356592851992996
+"Chlorobi;Chlorobia",0.338074704986004,0.139581831290555
+"Proteobacteria",0.336913126472855,7.43046657740241
+"Bacteroidetes;Saprospirae;Saprospirales;bacI;bacI-B",0.326540993252426,0.0264538057472448
+"Verrucomicrobia;Methylacidiphilae;S-BQ2-57",0.30860623636695,0.0443094036461016

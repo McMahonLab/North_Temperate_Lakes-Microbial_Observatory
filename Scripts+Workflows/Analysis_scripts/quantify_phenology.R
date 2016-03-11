@@ -1,4 +1,4 @@
-dimictic <- c("NSH", "TBH", "SSH")
+lakes <- c("NSH", "TBH", "SSH", "CBH", "WSH", "FBH", "HKH")
 years <- c("05", "07", "08", "09")
 
 library(reshape2)
@@ -12,18 +12,18 @@ metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
 metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
 mary <- bog_subset("MAH", clade_table)
 
-m <- matrix(NA, length(dimictic), length(years))
-r <- matrix(NA, length(dimictic), length(years))
-n <- matrix(NA, length(dimictic), length(years))
-b <- matrix(NA, length(dimictic), length(years))
-p <- matrix(NA, length(dimictic), length(years))
-for(i in 1:length(dimictic)){
-  bog <- bog_subset(dimictic[i], clade_table)
+m <- matrix(NA, length(lakes), length(years))
+r <- matrix(NA, length(lakes), length(years))
+n <- matrix(NA, length(lakes), length(years))
+b <- matrix(NA, length(lakes), length(years))
+p <- matrix(NA, length(lakes), length(years))
+for(i in 1:length(lakes)){
+  bog <- bog_subset(lakes[i], clade_table)
   
   for(j in 1:length(years)){
     mary.year <- year_subset(years[j], mary)
     data <- year_subset(years[j], bog)
-    metabog <- metadata[which(metalakes == dimictic[i] & metayears == years[j]), c(1,2,4)]
+    metabog <- metadata[which(metalakes == lakes[i] & metayears == years[j]), c(1,2,4)]
     if(dim(data)[2] > 0){
       metabog2 <- dcast(metabog, Sample_Name~Depth, fun.aggregate=mean)
       mixes <- extract_date(metabog2$Sample_Name[which(metabog2$"0.5" - metabog2[,dim(metabog2)[2]-1] < 1)])
@@ -55,7 +55,7 @@ colnames(m) <- years
 colnames(r) <- years
 colnames(p) <- years
 colnames(b) <- years
-rownames(m) <- dimictic
-rownames(r) <- dimictic
-rownames(p) <- dimictic
-rownames(b) <- dimictic
+rownames(m) <- lakes
+rownames(r) <- lakes
+rownames(p) <- lakes
+rownames(b) <- lakes

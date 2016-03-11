@@ -80,6 +80,8 @@ reduce_names <- function(table){
     if(length(unknown) == 0){
       blanks <- grep("__$", taxa)
       short_names[i] <- taxa[length(taxa) - length(blanks)]
+    }else if(length(taxa) == length(unknown)){
+      short_names[i] <- "unclassified"
     }else{
       short_names[i] <- taxa[length(taxa) - length(unknown)]
     }

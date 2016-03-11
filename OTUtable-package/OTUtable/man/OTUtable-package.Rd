@@ -13,38 +13,36 @@ Three data files are included: otu_table, taxonomy, and metadata. Access these b
 \tabular{ll}{
 Package: \tab OTUtable\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2015-05-29\cr
-License: \tab GPL-2 \cr
+Version: \tab 1.0.0\cr
+Date: \tab 2016-03-11\cr
+License: \tab GPL-3 \cr
 }
 Functions include:
-bog_subset
-chao1
-clean_shared
-clean_taxonomy
-combine_otus
-expand_taxa
-extract_date
-grab_group
-make_do_matrix
-make_temp_matrix
-obs_richness
-pielou
-plot_column
-reduce_names
-remove_reps
-rotate
-shannon
-strat_metric
-year_subset
-zscore
-
+bog_subset \cr
+chao1 \cr
+clean_shared \cr
+clean_taxonomy \cr
+combine_otus \cr
+extract_date \cr
+grab_group \cr
+make_do_matrix \cr
+make_temp_matrix \cr
+obs_richness \cr
+pielou \cr
+plot_column \cr
+reduce_names \cr
+remove_reps \cr
+rotate \cr
+shannon \cr
+strat_metric \cr
+year_subset \cr
+zscore \cr
 }
 \author{
 Alexandra Linz <amlinz16@gmail.com>
 }
 \references{
-Manuscript in preparation
+Linz, A.M., Crary, B., Shade, A., Herren, C.M., Owens, S., Gilbert, J.A., Knight, R., and McMahon, K.D. (2016) "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes." Manuscript in prep. 
 }
 \keyword{ package }
 

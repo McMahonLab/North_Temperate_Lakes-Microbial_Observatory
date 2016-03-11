@@ -1,11 +1,11 @@
 "","Phi","% of Community"
-"k__Bacteria;p__Planctomycetes",0.721035204054644,0.00082397775260068
-"k__Bacteria;p__Chloroflexi",0.61155749073322,0.000331692244309404
-"k__Bacteria;p__Actinobacteria;c__Actinobacteria;o__Actinomycetales;acI;acI-A;acI-A7",0.586490226997433,0.000144608095581419
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Syntrophobacterales",0.584365969323364,0.00128713564733752
-"k__Bacteria;p__OP3",0.561104266068297,0.000495251828200639
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Desulfobacterales;f__Desulfobacteraceae;g__Desulfofaba;s__.1",0.553723454201874,0.000258687815428983
-"k__Bacteria;p__Proteobacteria;c__Deltaproteobacteria;o__Desulfobacterales;f__Desulfobacteraceae",0.548384315472552,0.000276732928210938
-"k__Bacteria;p__TM6",0.543949893098989,0.000161458440622103
-"k__Bacteria;p__Bacteroidetes;c__Flavobacteriia",0.541076694154193,0.00143392728396333
-"k__Bacteria;p__Verrucomicrobia;c__Verruco-5",0.534808031983626,7.98846431146359e-05
+"Planctomycetes",0.722156859313336,0.087271603666701
+"Chloroflexi",0.617544207615158,0.0455906890513956
+"Proteobacteria;Deltaproteobacteria;Syntrophobacterales",0.583751504963291,0.129516943042538
+"Proteobacteria;Deltaproteobacteria;Desulfobacterales;Desulfobacteraceae",0.55356348558546,0.0259594190956844
+"OP3",0.551190410921908,0.0814048820681842
+"TM6",0.548708057940832,0.0224451539808425
+"Actinobacteria;Actinobacteria;Actinomycetales;acTH2",0.522838835881343,0.069061695334226
+"Chloroflexi;Anaerolineae",0.519862708093394,0.0244762591410032
+"Verrucomicrobia;Verruco-5",0.50372153992206,0.0529529302708827
+"Actinobacteria;Thermoleophilia",0.478531941477811,0.0219342877742301
