@@ -6,7 +6,7 @@
 OTU table analysis functions
 }
 \description{
-This package contains functions for the analysis of an OTU table generated from 16S sequencing. It also includes the data from the North Temperate Lakes-Microbial Observatory used in the paper "".
+Contains functions for the analysis of an OTU table generated from 16S sequencing. It also includes the data from the North Temperate Lakes-Microbial Observatory used in the paper Linz, et al. (2016). "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes." (Manuscript in prep)
 Three data files are included: otu_table, taxonomy, and metadata. Access these by calling them with data().
 }
 \details{
@@ -14,7 +14,7 @@ Three data files are included: otu_table, taxonomy, and metadata. Access these b
 Package: \tab OTUtable\cr
 Type: \tab Package\cr
 Version: \tab 1.0.0\cr
-Date: \tab 2016-03-11\cr
+Date: \tab 2016-03-16\cr
 License: \tab GPL-3 \cr
 }
 Functions include:
