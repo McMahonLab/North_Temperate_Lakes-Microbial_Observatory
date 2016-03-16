@@ -1,2 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 export(bog_subset, chao1, clean_shared, clean_taxonomy, combine_otus, extract_date, grab_group, make_do_matrix, make_temp_matrix, obs_richness, pielou, plot_column, reduce_names, remove_reps, rotate, shannon, year_subset, zscore)
+importFrom("grDevices", "colorRampPalette")
+importFrom("graphics", "axis", "filled.contour")
+importFrom("stats", "sd")
+importFrom("utils", "read.csv", "read.table")
