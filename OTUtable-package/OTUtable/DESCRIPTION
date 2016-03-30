@@ -5,7 +5,7 @@ Version: 1.0.0
 Date: 2016-03-16
 Author: Alexandra Linz
 Maintainer: Alexandra Linz <amlinz16@gmail.com>
-Description: This package provides functions for the analysis of OTU tables produced by 16S sequencing, as well as example data. It contains the data and scripts used in the paper Linz, et al. (2016) "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes" (Manuscript in prep).
+Description: Analyses of OTU tables produced by 16S sequencing, as well as example data. It contains the data and scripts used in the paper Linz, et al. (2016) "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes" (Manuscript in prep).
 License: GPL-3
 LazyLoad: yes
 Depends: R (>= 2.10)
