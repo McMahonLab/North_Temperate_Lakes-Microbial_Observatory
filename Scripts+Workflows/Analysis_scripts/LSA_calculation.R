@@ -1,4 +1,4 @@
-setwd("C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Additional_analyses/Networks")
+setwd("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Additional_analyses/Networks")
 minreads <- 100
 minlsa <- .75
 
@@ -12,7 +12,7 @@ x <- otu_table
 #  Optional month subset
 #  x <- x[,which(substr(colnames(x), start=6, stop=8) == "MAY")]
 #  Optional bog subset
-x <- bog_subset("MAH", x)
+# x <- bog_subset("MAH", x)
 x <- x[which(rowSums(x) >= minreads), ]
 
 lsa_prep <- function(table){
@@ -31,7 +31,7 @@ lsa_prep <- function(table){
 
 temp <- lsa_prep(x)
 write.table(temp, file="temp.txt", row.names=F, col.names=F, sep = "\t")
-out <- "MAH_network.txt"
+out <- "allsamples_network_11Mar16.txt"
 
 # My desktop path
 # system(paste("D:/fastlsa_win/fastlsa.exe -i temp.txt", " -o ", out, " -d 0", " -m ", minlsa, sep=""))

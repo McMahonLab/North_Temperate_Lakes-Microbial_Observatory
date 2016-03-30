@@ -190,7 +190,7 @@ dev.off()
 
 
 #############
-# Figure 3 - Network analysis - Change this to not point directly to file once github repo is finalized
+# Figure 3 - Network analysis
 all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
 all.edges <- table(c(as.character(all.network$index1), as.character(all.network$index2)))
 
@@ -428,7 +428,7 @@ TBHmat2 <- rbind(TBHmat, add, add2)
 
 
 pdf(file = paste(path2repo, "TBH_v_MAH_bray_curtis.pdf", sep = ""), width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Sorenson Similarity Index", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.372))
+ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.data, aes(x = Dates, y = BrayCurtis), size = 1.5) + labs(y = "Sorenson Similarity Index", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH07Jun07", "TBH11Nov07")), ylim = c(0.07, 0.4))
 dev.off()
 
 # Select data
@@ -575,7 +575,7 @@ epi <- epi[order(epi$stat, decreasing=T), ]
 # Manually pick the top 10. Because groups from the same phylogeny are competing, choose the best indicator (by correlation coefficient) for an evolutionary branch.
 # For example, if phylum Actinobacteria is a better indicator than acI-B, report only Actinobacteria
 # But if acI_B is the better indicator, report both.
-epi.indicators <- epi[c(1, 2, 4, 6, 9, 13, 17, 21, 29, 39), ]
+epi.indicators <- epi[c(1, 4, 6, 13, 14, 18, 21, 25, 26, 30), ]
 
 # Add a column of abundance as % community for these indicators
 epi_table <- bog_subset("..E", t(input_table))
@@ -595,7 +595,7 @@ dev.off()
 hypo <- results[which(results$index == 2),]
 
 hypo <- hypo[order(hypo$stat, decreasing=T),]
-hypo.indicators <- hypo[c(1, 2, 3, 4, 7, 12, 13, 17, 19, 21), ]
+hypo.indicators <- hypo[c(1, 2, 7, 8, 9, 10, 14, 16, 18, 22), ]
 
 hypo_table <- bog_subset("..H", t(input_table))
 hits <- match(rownames(hypo.indicators), rownames(hypo_table))

@@ -1,13 +1,12 @@
 ---
 title: "Supplemental Figures"
 author: "Alexandra Linz"
-date: "Tuesday, February 9, 2016"
+date: "Friday, March 11, 2016"
 output: pdf_document
 ---
-Supplemental figures accompanying the paper "Seasonal mixing frequency and historical mixing regime determine hypolimnion bacterial community dynamics in bog lakes"
 
 ```{r, Setting_up_the_environment, echo=F, warning=FALSE, message=FALSE}
-# Input your path to the North_Temperate_Lakes-Microbial_Observatory/Figures folder in the GitHub repo, or whereever you would like the figures to be saved
+# Input your path to the North_Temperate_Lakes-Microbial_Observatory/Figures folder in the GitHub repo, or whereever you would like the ** # Figures to be saved
 path2repo <- "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
 
 # Load packages
@@ -55,13 +54,13 @@ hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 ggplot(data = epi.data, aes(y = epi.evenness, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Epilimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3")
 ```
 
+
+
 ```{r, Evenness_between_bogs2, echo=FALSE, warning=FALSE, message=FALSE}
 ggplot(data = hypo.data, aes(y = hypo.evenness, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Hypolimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3") 
 ```
 
-Figure S1. Evenness by lakes. Pielou's Evenness metric was used to measure the evenness of each sample and grouped by lake. While most pairs of lakes are significantly different in richness in both layers, no trend of increasing or decreasing evenness with depth is observed. However, the evenness in the hypolimnia of both meromictic lakes is significantly greater than all other lakes in this study.
-
-***
+Figure S1 
 
 ```{r, evenness_significance, warning=FALSE, message=FALSE, echo=FALSE}
 
@@ -151,6 +150,8 @@ colnames(TB_evenness) <- c("date", "evenness")
 ggplot() + geom_line(data = TB_evenness, aes(x = date, y=evenness), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black", size = 8), plot.title = element_text(size = 12, vjust = 2)) + geom_point(data = TB_evenness[match(TBHmixes, TB_evenness$date), ], aes(x = date, y = evenness), size = 5, colour = "red") 
 ```
 
+
+
 ```{r, Evenness_over_time2, echo=FALSE, warning=FALSE, message=FALSE}
 # Repeat with North Sparkling, 2008
 metaNSH <- metadata[which(metalakes == "NSH" & metayears == "08"), c(1,2,4)]
@@ -173,13 +174,14 @@ ggplot() + geom_line(data = NS_evenness, aes(x = date, y=evenness), size = 1) + 
 
 ```
 
-Figure S2. Evenness over time. Evenness decreases during the Trout Bog 2007 fall mixing event, as is observed for richness. During the North Sparkling Bog artificial mixing event in 2008, evenness decreases but quickly recovers, with no drop in evenness during the fall mixing event for that year.
-
-***
+Figure S2
 
 ```{r, Phylum_abundance, echo=FALSE, warning=FALSE, message=FALSE}
 # Keep only phyla labels in phylum_table
+archaea <- grep("Archaea", rownames(phylum_table))
+
 phylum_table <- reduce_names(phylum_table)
+
 
 # Sum total observations of each phylum in the full dataset and sort by abundance
 totals <- rowSums(phylum_table)
@@ -191,7 +193,9 @@ phyla.names <- c()
 for(i in 1:length(get.names)){
   phyla.names[i] <- get.names[[i]][2]
 }
-phyla.names[which(is.na(phyla.names) == T)] <- "unclassified"
+phyla.names[23] <- "unclassified Archaea"
+phyla.names[30] <- "unclassified"
+phyla.names[45] <- "unclassified Bacteria"
 
 # Set up a dataframe for plotting in ggplot2. Set the phyla.names to factors, with levels in order of abundance.
 phylum_totals <- data.frame(phyla.names, totals)
@@ -202,9 +206,7 @@ ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "
 
 ```
 
-Figure S3. Forty phyla were identified over the entire NTL-MO time series. See Table 1 for lake abbrevations; the third letter indicates the sampling depth as "E" for epilimnion and "H" for hypolimnion. A) The most abundant phyla were Proteobacteria, Actinobacteria, Bacteriodetes, and Verrucomicrobia. Reads that could not be classified into a phylum were the fourth most abundant category. Candidate phyla members such as OP3 and SR1 are present in this dataset. 
-
-***
+Figure S3
 
 ```{r, Phylum_barchart, echo=FALSE, message=FALSE, warning=FALSE}
 # Specify the sampled layers
@@ -232,8 +234,8 @@ phyla.names <- c()
 for(i in 1:length(get.names)){
   phyla.names[i] <- get.names[[i]][2]
 }
-phyla.names[7] <- "unclassifed"
-phyla.names[12] <- "other"
+phyla.names[8] <- "unclassifed"
+phyla.names[14] <- "other"
 phyla.names <- factor(phyla.names, levels = rev(phyla.names))
 rownames(new.layer) <- NULL
 
@@ -242,16 +244,14 @@ phyla_by_bog <- data.frame(phyla.names, new.layer)
 phyla_by_bog2 <- melt(phyla_by_bog)
 
 # Create color palette that can handle the large number of categories
-pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400")
+pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400", "#391826", "#f4bebe")
 
 # Plot data as a stacked barplot
 ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
 
 ```
 
-Figure S4. Phylum-level community differences were compared between layers and lakes. Epilimnion samples were relatively similar across all lakes, with the exception of the presence of Planctomyces in HKE and MAE, the epilimnia of the two meromictic lakes included in this study. Hypolimnion samples showed a trend of decreasing Actinobacteria with total lake depth, while the numbers of unclassified bacteria and other phyla (those comprising less than 8,000 reads in the dataset) increase with total lake depth. The sampled communities in hypolimnia of dimictic lakes (NSH, TBH, and SSH) contained higher levels of Acidobacteria than the other categories.
-
-***
+Figure S4 
 
 ```{r, Rank_abundance:epilimnia, echo=FALSE, warning=FALSE, message=FALSE}
 # Keep only epilimnion samples
@@ -278,6 +278,8 @@ colnames(plot_epi_clades) <- c("Clade", "Abundance")
 plot_epi_clades$Clade <- factor(plot_epi_clades$Clade, levels=plot_epi_clades$Clade)
 ggplot(data = plot_epi_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour = "black") + labs(x = NULL, y = "Observed Reads", title = "Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
+
+
 
 ```{r, Rankabundance:hypolimnia, echo=FALSE, warning=FALSE, message=FALSE}
 # Repeat the same analysis as above on hypolimnion samples, but remove samples where the water column was mixed, as well as all polymictic lake samples.
@@ -308,7 +310,7 @@ hits <- match(mixes, substr(colnames(hypo_clade_table), start = 1, stop = 10))
 hypo_clade_table <- hypo_clade_table[, -hits]
 
 # Remove taxonomic level tags at the beginning of some names (present in Greengenes classified clades)
-rownames(hypo_clade_table) <- gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(hypo_clade_table))
+rownames(hypo_clade_table) <- make.unique(gsub("[kpcofg]__|\\[|\\]|Bacteria;", "", rownames(hypo_clade_table)))
 
 # Keep only clades that are completely classified
 splitnames<- strsplit(rownames(hypo_clade_table), ";")
@@ -328,9 +330,7 @@ plot_hypo_clades$Clade <- factor(plot_hypo_clades$Clade, levels=plot_hypo_clades
 ggplot(data = plot_hypo_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads", title = "Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 ```
 
-Figure S5. Rank abundance of the 20 most abundant clades in epilimnia and hypolimnia samples. Total reads in all epilimnion samples have been summed for each clade-level group. Names represent the last classified level of taxonomic information for that clade; for example, the designation "Bacteria" indicates that clades unclassified at the phylum level are the fifth most abundant group in these samples. The most abundant clades in epilimnia are Pnec, acI-B, betI-A, and bacI-A. The most abundant clades in hypolimnia are Pnec, Geothrix, acI-B, and betI-B
-
-***
+Figure S5 
 
 ```{r, PCoA, echo=FALSE, warning=FALSE, message=FALSE}
 hypo <- bog_subset("..H", clade_table)
@@ -345,7 +345,7 @@ regime[which(groups == "CB" | groups == "FB" | groups == "WS")] <- "polymictic"
 regime[which(groups == "NS" | groups == "TB" | groups == "SS")] <- "dimictic"
 regime[which(groups == "HK" | groups == "MA")] <- "meromictic"
 
-#Make dataframe for plotting
+# Make dataframe for plotting
 plot.pcoa <- data.frame(groups, scores$sites, regime)
 colnames(plot.pcoa) <- c("Lake", "PCoA1", "PCoA2", "Regime")
 
@@ -353,13 +353,11 @@ ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, shape = Regime)) 
 
 
 
-#anosim(t(hypo), groups, permutations = 999, distance = "bray")
-#anosim(t(hypo), regime, permutations = 999, distance = "bray")
+# anosim(t(hypo), groups, permutations = 999, distance = "bray")
+# anosim(t(hypo), regime, permutations = 999, distance = "bray")
 ```
 
-Figure S6. Principle coordinates analysis of hypolimnia by lake and mixing regime. Each color represents a lake, and each shape represents the mixing regime. Using an ANOSIM permutation test, samples from different lakes and regimes were found to be different at p less than or equal to 0.001. 
-
-***
+Figure S6 
 
 ```{r, Connectivity_between_bogs, echo=FALSE, warning=FALSE, message=FALSE}
 all.network <- read.table(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Network_analysis/allsamples_network_28Jan16.txt", header = T)
@@ -474,13 +472,11 @@ for (id in lakeids) {
 }
 
 Wilcoxon.conn <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
-#print(Wilcoxon.conn)
+# print(Wilcoxon.conn)
 
 ```
 
-Figure S7. Connectivity between hypolimnia. Connectivity was measured as the number of edges connecting each OTU multiplied by the abundance of that OTU in a given sample, then summed for the given sample. When the amount of connectivity is compared for lakes with multiple years of sampling, Mary Lake has higer connectivity, followed by South Sparkling Bog. The only lakes that are not significantly different are CBH and TBH.
-
-***
+Figure S7 
 
 ```{r, hclust_of_all_bogs, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10}
 CBH <- bog_subset("CBH", otu_table)
@@ -528,9 +524,7 @@ ggplot(segment(ddata)) + geom_segment(aes(x = x, y = y, xend = xend, yend = yend
 
 ```
 
-Figure S8. Hierarchical clustering of samples over years. This analysis was performed on hypolimnia with multiple years of sampling. All hypolimnia except for that of Mary Lake show strong clustering patterns by year (see main figures)
-
-***
+Figure S8  
 
 ```{r, TBH_vs_MAH07, echo=FALSE, warning=FALSE, message=FALSE}
 clade_table07 <- year_subset("07", clade_table)
@@ -560,6 +554,4 @@ colnames(plot.pcoa) <- c("Lake", "Date", "PCoA1", "PCoA2")
 ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, shape = Lake, color = Date)) + geom_point(size=3) + scale_shape_discrete(solid=T) + scale_colour_gradient2(low = "white", mid = "yellow", high = "red") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=0.7), axis.text.y = element_text(colour="black", size=12))
 ```
 
-Figure S9. Principle coordinates analysis of Trout Bog and Mary Lake hypolimnia in 2007. Color indicates the length of time from the initial sampling point that year (May 31). Mary Lake samples show no clear trend over time, while Trout Bog samples do. In Trout Bog, samples taken during fall mixing (low range of PCoA1, high range of PCoA2) are separated from samples taken during the rest of the year. Several points in Mary Lake are observed away from the main cluster; these samples were taken during blooms of taxa more typically seen in dimictic lakes.
-
-***
+Figure S9 

@@ -6,7 +6,8 @@ Taxonomic assignments of OTUs
 }
 \description{
 A dataset containing the taxonomy of each OTU in the otu_table
-Produced from mothur output using clean_taxonomy(), followed by expand_taxa()
+Produced from mothur output using clean_taxonomy()
+Bootstrap values have been removed from this dataset, but are still available in as part of the Data folder in the McMahonLab/North_Temperate_Lakes-Microbial_Observatory GitHub repo
 }
 \usage{
 data(taxonomy)
