@@ -5,7 +5,7 @@ library(ape)
 library(vegan)
 library(grid)
 library(reshape2)
-
+path2repo <- "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
 data(otu_table)
 data(taxonomy)
 data(metadata)
@@ -33,7 +33,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 # Unfortunately, the tree of all OTUs is too large for ape to write to file (recursion errors)
 # A new tree has to be made each time the script is run. This takes approx. 15 min for our 6,208 sequences. I'd recommend making yourself a cup of tea during this time.
-seqs <- read.dna("C:/Users/amlinz16/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
+seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
 d <- dist.dna(seqs, model = "raw")
 bogtree <- nj(d)
 
@@ -264,7 +264,7 @@ TBHmat <- make_temp_matrix("TBH.....07", metadata)
 TBHmat <- melt(TBHmat)
 colnames(TBHmat) <- c("Depth", "Date", "Temperature")
 TBHmat$Date <- as.Date(TBHmat$Date, format = "%Y-%m-%d")
-TBHmat$Depth <- -TBHmat$Depth / 30 + 0.92
+TBHmat$Depth <- -TBHmat$Depth / 11 + 0.79
 
 # Need to close polygons - add 0 or max values at top and bottom of graph
 TBHmat <- TBHmat[which(is.na(TBHmat$Temperature) == F), ]
@@ -278,12 +278,35 @@ add2$Temperature <- rep(28, length(add2$Temperature))
 TBHmat2 <- rbind(TBHmat, add, add2)
 
 
-#pdf(file = paste(path2repo, "TBH_v_MAH_unifrac.pdf", sep = ""), width = 3.3125, height = 2.5)
-ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.trend, aes(x = Date, y = Distance), size = 1.5) + labs(y = "UniFrac Distance", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH20Jun07", "TBH11Nov07")), ylim = c(0.74, 0.90))
+pdf(file = paste(path2repo, "TBH_v_MAH_unifrac.pdf", sep = ""), width = 4, height = 2.5)
+ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.trend, aes(x = Date, y = Distance), size = 1.5) + labs(y = "1 - UniFrac Distance", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH20Jun07", "TBH11Nov07")), ylim = c(0.3, 0.75))
+dev.off()
 
-#dev.off()
+#Make PCoA of TB vs MA
+TBH_MAH <- prune_samples(sampledata2$Year == "07" & sampledata2$Bog == "TB" & sampledata2$Layer == "H" | sampledata2$Year == "07"  & sampledata2$Bog == "MA" & sampledata2$Layer == "H" &  substr(sample_names(sampledata2), start = 6, stop = 8) != "REP", alldata_reps)
+TBH_MAH_lake <- factor(substr(sample_names(TBH_MAH), start = 1, stop = 2), levels = c("TB", "MA"))
 
+top <- names(sort(taxa_sums(TBH_MAH), TRUE)[1:500])
+TBH_MAHabun = prune_taxa(top, TBH_MAH)
+x <- UniFrac(TBH_MAHabun , weighted = T, normalize = T)
+pcoa <- betadisper(x, TBH_MAH_lake)
 
+scores <- scores(pcoa)
+TBH_MAH_dates <- extract_date(sample_names(TBH_MAH))
+
+plot.pcoa <- data.frame(scores$sites, TBH_MAH_lake, TBH_MAH_dates, estimate_richness(TBH_MAH, measures = "Shannon")/log(length(which(taxa_sums(TBH_MAH) > 0))))
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Lake", "Date", "Evenness")
+plot.pcoa <- plot.pcoa[order(plot.pcoa$Date),]
+
+#Calculate weights of axes
+pcoa$eig[1]/sum(pcoa$eig)
+pcoa$eig[2]/sum(pcoa$eig)
+
+pdf(file = paste(path2repo, "TBH_v_MAH_unifrac_pcoa.pdf", sep = ""), width = 4, height = 2.75)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Evenness, shape = Lake)) + geom_point(size=2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1)) + scale_color_gradientn(colors = c("firebrick3", "gold2", "springgreen4")) + geom_path(data = plot.pcoa[which(plot.pcoa$Lake == "TB"),], aes(x = PCoA1, y = PCoA2), size = 0.25) + geom_path(data = plot.pcoa[which(plot.pcoa$Lake == "MA"),], aes(x = PCoA1, y = PCoA2), size = 0.25) + labs(x = "PCoA1 (56%)", y = "PCoA2 (14%)")
+dev.off()
+
+# North Sparkling over time
 NSH08 <- prune_samples(sampledata2$Year == "08" & sampledata2$Bog == "TB" & sampledata2$Layer == "H" | sampledata2$Year == "08" & substr(sample_names(sampledata2), start = 6, stop = 8) == "REP", alldata_reps)
 NSH08_lake <- factor(substr(sample_names(NSH08), start = 1, stop = 2), levels = c("TB", "MA"))
 
@@ -319,46 +342,279 @@ NSHmat2 <- rbind(NSHmat, add, add2)
 #pdf(file = paste(path2repo, "NSH_v_MAH_unifrac.pdf", sep = ""), width = 3.3125, height = 2.5)
 ggplot() + stat_contour(data = NSHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + coord_cartesian(xlim = extract_date(c("NSH25May08", "NSH05Oct08")), ylim = c(0.32, 0.65)) + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.trend, aes(x = Date, y = Distance), size = 1.5) + labs(y = "UniFrac Distance", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill="dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) 
 #dev.off()
+#This plot doesn't look as nice because our metadata and DNA dates don't line up. Replace with a PCoA of TB vs MA?
 
-# Make PCoAs of similarity to MA over time?
 
-# Write function to measure linear model fit for each bog and year
-metalakes <- substr(metadata$Sample_Name, start = 1, stop = 2)
-metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
 
-phenology <- function(bog, year){
-  dataset <- prune_samples(sampledata2$Year == year & sampledata2$Bog == bog & sampledata2$Layer == "H" | sampledata2$Year == year & substr(sample_names(sampledata2), start = 6, stop = 8) == "REP", alldata_reps)
-  top <- names(sort(taxa_sums(dataset), TRUE)[1:500])
-  dataset_abun = prune_taxa(top, dataset)
-  x <- UniFrac(dataset_abun, weighted = F, normalize = T)
-  sim <- 1 - as.matrix(x)[1:length(sample_names(dataset_abun))-1, length(sample_names(dataset_abun))]
-  all.dates <- extract_date(names(sim))
-  # remove dates that are not stratified
-  metabog <- metadata[which(metalakes == bog & metayears == year), c(1,2,4)]
-  metabog2 <- dcast(metabog, Sample_Name~Depth, fun.aggregate=mean)
-  temp.range <- c()
-  for(i in 1:dim(metabog2)[1]){
-    sample <- as.numeric(metabog2[i,])
-    temp.range[i] <- sample[2] - min(sample[which(is.na(sample) == F)])
+# Use a GLM to test trends in similarity between lakes
+
+hypo <- prune_samples(sampledata2$Layer == "H", alldata_reps)
+top <- names(sort(taxa_sums(hypo), TRUE)[1:500])
+hypo_abun = prune_taxa(top, hypo)
+x <- UniFrac(hypo_abun, weighted = T, normalize = T)
+x <- as.matrix(x)
+
+sim <- c()
+for(i in 1:dim(x)[1]){
+  sampleyear <- substr(rownames(x)[i], start = 9, stop = 10)
+  if (sampleyear == "05"){
+    sim[i] <- x[i, 691]
+  }else if (sampleyear == "07"){
+    sim[i] <- x[i, 692]
+  }else if (sampleyear == "08"){
+    sim[i] <- x[i, 693]
+  }else if (sampleyear == "09"){
+    sim[i] <- x[i, 694]
   }
-  mix.dates <- extract_date(metabog2$Sample_Name[which(temp.range < 2)])
-  
-  stratified <- sim[!all.dates %in% mix.dates & all.dates < extract_date(paste("TBH01Nov", year, sep = ""))]
-  strat.dates <- extract_date(names(stratified))
-  
-  r <- cor(as.numeric(strat.dates), stratified)
-  n <- length(stratified)
-  model <- lm(stratified~as.numeric(strat.dates))
-  p <- summary(model)$coefficients[2, 4]
-  
-  print("Samples: "); print(n)
-  print("r^2:  "); print(r)
-  print("p-value: "); print(p)  
-  
-  plot(as.numeric(strat.dates), stratified, main = paste(bog, year))
+}
+sim <- sim[1:690]
+
+samplelakes <- substr(rownames(x)[1:690], start = 1, stop = 2)
+sampleyear <- substr(rownames(x)[1:690], start = 9, stop = 10)
+sampledate <- extract_date(rownames(x)[1:690])
+
+glm.trend <- data.frame(rownames(x)[1:690], sim, samplelakes, sampleyear, sampledate)
+colnames(glm.trend) <- c("Sample", "UniFrac", "Lake", "Year", "Date")
+
+# Make a variable of continous mixing
+
+
+cont.mixes <- c()
+for(i in 1:dim(glm.trend)[1]){
+  find <- grep(substr(glm.trend$Sample[i], start = 1, stop = 10), metadata$Sample_Name)
+  if(length(find) > 0){
+    samples <- metadata[find,]
+    top <- samples$DO[which(samples$Depth == "0.5")]
+    if(length(top) == 0){
+      top <- samples$DO[which(samples$Depth == "1")]
+    }
+    bottom <- min(samples$DO)
+    cont.mixes[i] <- top - bottom
+  }
 }
 
-#See if I can find the number of recorded mixes in each year
+glm.trend$Mixing.cont <- cont.mixes
+glm.trend$Mixing.bin <- glm.trend$Mixing.cont < 4
+
+#Julian Date variables
+
+julian <- c()
+for(i in 1:dim(glm.trend)[1]){
+  if(glm.trend$Year[i] == "05"){
+    julian[i] <- as.numeric(glm.trend$Date[i] - extract_date(c("TBH01Jun05")))
+  }else if(glm.trend$Year[i] == "07"){
+    julian[i] <- as.numeric(glm.trend$Date[i] - extract_date(c("TBH01Jun07")))
+  }else if(glm.trend$Year[i] == "08"){
+    julian[i] <- as.numeric(glm.trend$Date[i] - extract_date(c("TBH01Jun08")))
+  }else if(glm.trend$Year[i] == "09"){
+    julian[i] <- as.numeric(glm.trend$Date[i] - extract_date(c("TBH01Jun09")))
+  }
+}
+
+glm.trend$DayNum <- julian
+
+#Remove Mary Lake - this comparison does not make sense
+glm.trend <- glm.trend[which(glm.trend$Lake != "MA"),]
+
+#hist(glm.trend$UniFrac)
+#Distances look normal-ish
+
+# Run linear model
+
+# Run model without interaction to see main effects
+model <- lm(UniFrac ~ Year + Lake + Mixing.bin + DayNum, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model)
+
+library(lme4)
+
+model1 <- lmer(UniFrac ~ Year  + Mixing.bin + DayNum + (1|Lake), data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model1)
+
+model2 <- lmer(UniFrac ~ Year  + Mixing.bin + Lake:DayNum + (1|Lake), data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model2)
+
+model3 <- lmer(UniFrac ~ Mixing.bin + Lake:DayNum + (1|Lake) + (1|Year), data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model3)
+
+model4 <- lmer(UniFrac ~ Mixing.bin + Lake:DayNum + (1|Lake:Year), data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model4)
+
+model5 <- lmer(UniFrac ~ Mixing.cont + Lake:DayNum + (1|Lake:Year), data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model5)
+
+model6 <- lm(UniFrac ~ Mixing.bin + Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model6)
+
+model7 <- lm(UniFrac ~  Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0 & glm.trend$Mixing.bin == FALSE),])
+summary(model7)
+
+model8 <- lm(UniFrac ~  Lake:Mixing.cont:Year , data=glm.trend[which(glm.trend$DayNum >=0 ),])
+summary(model8)
+
+plot(glm.trend$Mixing.cont[which(glm.trend$Lake == "TB")] ~ glm.trend$DayNum[which(glm.trend$Lake == "TB")], col = glm.trend$Year[which(glm.trend$Lake == "TB")])
+
+model <- lm(UniFrac ~ Year + Lake + Mixing.cont + DayNum, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model)
+
+#binary mixing seems to be the stronger predictor
+#Is there a different effect of day number when mixing is true vs false?
+model <- lm(UniFrac ~ Year + Lake + DayNum:Mixing.bin, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model)
+#Yes
+
+#Is there a different effect of day number when mixing is false in each lake?
+model <- lm(UniFrac ~ Year + Lake:DayNum:Mixing.bin, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model)
+#Unclear. Reduce the number of interactions.
+
+#Is there a different effect of day number each lake?
+model1 <- lm(UniFrac ~ Year + Lake*DayNum + Mixing.bin, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model1)
+#Need help interpreting this one
+
+#Is there a different effect of mixing in each lake?
+model2 <- lm(UniFrac ~ Year + DayNum + Lake:Mixing.bin, data=glm.trend[which(glm.trend$DayNum >=0),])
+summary(model2)
+#HK, FB, and CB all have a different effect - the most polymictic and meromictic? Maybe WS was essentially dimictic the one year tested.
+
+# Check the residuals
+plot(resid(model1) ~ fitted(model1))
+plot(resid(model2) ~ fitted(model2))
+
+#Model 1 actually looks nicer
+
+# The model tells me that day number effects connectivity differently depending on how strongly stratified the lake is
+# Check the predicted values for how day number affects different lakes
+plot(fitted(model1)[which(glm.trend$DayNum >= 0 & glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$DayNum >= 0 & glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )])
+
+plot(fitted(model2)[which(glm.trend$DayNum >= 0 & glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$DayNum >= 0 & glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )])
+# Association between real and predicted values is not great
+
+plot(glm.trend$DayNum[which(glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "TB" & glm.trend$Mixing.bin  == F )])
+#Negative linear decrease indicates increasing similarity over time
 
 
+plot(glm.trend$DayNum[which(glm.trend$Lake == "HK" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "HK" & glm.trend$Mixing.bin  == F )])
+#No trend
 
+plot(glm.trend$DayNum[which(glm.trend$Lake == "CB" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "CB" & glm.trend$Mixing.bin  == F )])
+#Slight negative linear decrease indicates increasing similarity over time
+
+plot(glm.trend$DayNum[which(glm.trend$Lake == "SS" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "SS" & glm.trend$Mixing.bin  == F )])
+#Slight negative linear decrease to no trend
+
+plot(glm.trend$DayNum[which(glm.trend$Lake == "NS" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "NS" & glm.trend$Mixing.bin  == F )])
+# Unclear
+
+plot(glm.trend$DayNum[which(glm.trend$Lake == "WS" & glm.trend$Mixing.bin  == F )], glm.trend$UniFrac[which(glm.trend$Lake == "WS" & glm.trend$Mixing.bin  == F )])
+#No trend
+# where do unifrac and bray curtis disagree?
+
+bc <- distance(hypo_abun, "bray")
+bc <- as.matrix(bc)
+
+sim <- c()
+for(i in 1:dim(bc)[1]){
+  sampleyear <- substr(rownames(bc)[i], start = 9, stop = 10)
+  if (sampleyear == "05"){
+    sim[i] <- x[i, 691]
+  }else if (sampleyear == "07"){
+    sim[i] <- x[i, 692]
+  }else if (sampleyear == "08"){
+    sim[i] <- x[i, 693]
+  }else if (sampleyear == "09"){
+    sim[i] <- x[i, 694]
+  }
+}
+sim <- sim[1:690]
+sim <- sim[which(samplelakes != "MA")]
+
+glm.trend$BrayCurtis <- sim 
+
+#Try same model with BC
+model7.2 <- lm(BrayCurtis ~  Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0 & glm.trend$Mixing.bin == FALSE),])
+summary(model7.2)
+
+model8.2 <- lm(BrayCurtis ~  Lake:Mixing.cont:Year , data=glm.trend[which(glm.trend$DayNum >=0 ),])
+summary(model8.2)
+
+#Same results - is it the abundance threshold?
+
+bc <- distance(hypo, "bray")
+bc <- as.matrix(bc)
+
+sim <- c()
+for(i in 1:dim(bc)[1]){
+  sampleyear <- substr(rownames(bc)[i], start = 9, stop = 10)
+  if (sampleyear == "05"){
+    sim[i] <- x[i, 691]
+  }else if (sampleyear == "07"){
+    sim[i] <- x[i, 692]
+  }else if (sampleyear == "08"){
+    sim[i] <- x[i, 693]
+  }else if (sampleyear == "09"){
+    sim[i] <- x[i, 694]
+  }
+}
+sim <- sim[1:690]
+sim <- sim[which(samplelakes != "MA")]
+
+glm.trend$BrayCurtis <- sim 
+
+simple <- lm(BrayCurtis ~ Lake:DayNum:Year, data = glm.trend[which(glm.trend$Mixing.bin == F),])
+
+#Try re-running UniFrac comparing to all Mary Lake samples instead of the representative
+
+MAsamples <- x[which(substr(rownames(x), start = 1, stop = 2) != "MA"),which(substr(rownames(x), start = 1, stop = 2) == "MA" & substr(rownames(x), start = 6, stop = 8) != "REP")]
+mean.Unifrac <- rowSums(MAsamples)/dim(MAsamples)[2]
+
+glm.trend$meanUnifrac <- mean.Unifrac
+
+model7.3 <- lm(meanUnifrac ~  Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0 & glm.trend$Mixing.bin == FALSE),])
+summary(model7.3)
+
+model8.3 <- lm(meanUnifrac ~  Lake:Mixing.cont:Year , data=glm.trend[which(glm.trend$DayNum >=0 ),])
+summary(model8.3)
+
+#Results still odd - add in the mean Bray Curtis and see if I get the same result as previously
+MAsamples <- bc[which(substr(rownames(x), start = 1, stop = 2) != "MA"),which(substr(rownames(x), start = 1, stop = 2) == "MA" & substr(rownames(x), start = 6, stop = 8) != "REP")]
+mean.bc <- rowSums(MAsamples)/dim(MAsamples)[2]
+
+glm.trend$meanBrayCurtis <- mean.bc
+
+model7.4 <- lm(meanBrayCurtis ~  Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0 & glm.trend$Mixing.bin == FALSE),])
+summary(model7.4)
+
+model8.4 <- lm(meanBrayCurtis ~  Lake:Mixing.cont:Year , data=glm.trend[which(glm.trend$DayNum >=0 ),])
+summary(model8.4)
+
+#Results are still off. Try removing the abundance thresholds.
+
+bc <- distance(hypo, "bray")
+bc <- as.matrix(bc)
+x <- UniFrac(hypo, weighted = T, normalize = T)
+x <- as.matrix(x)
+
+#Start trying to find where bray curtis and unifrac disagree
+
+plot(glm.trend$meanBrayCurtis, glm.trend$meanUnifrac)
+summary(lm(glm.trend$meanBrayCurtis ~ glm.trend$meanUnifrac))
+
+#Highly correlated - this means that the difference is the clade vs otu designation, not UniFrac vs Bray Curtis
+
+clade_table <- combine_otus("Clade", otu_table, taxonomy)
+hypo_clade_table <- bog_subset("..H", clade_table)
+bc.clade <- vegdist(t(hypo_clade_table), method = "bray")
+bc.clade <- as.matrix(bc.clade)
+bc.clade <- bc.clade[which(substr(rownames(bc.clade), start = 1, stop = 2) != "MA"), which(substr(rownames(bc.clade), start = 1, stop = 2) == "MA" )]
+
+glm.trend$cladeBrayCurtis <- rowSums(bc.clade)/dim(bc.clade)[2]
+
+plot(glm.trend$cladeBrayCurtis, glm.trend$meanUnifrac)
+summary(lm(glm.trend$meanBrayCurtis ~ glm.trend$meanUnifrac))
+
+#Also good correlation
+plot(glm.trend$cladeBrayCurtis, glm.trend$meanBrayCurtis, col = glm.trend$Lake)
+
+model7.4 <- lm(cladeBrayCurtis ~  Lake:DayNum:Year , data=glm.trend[which(glm.trend$DayNum >=0 & glm.trend$Mixing.bin == FALSE),])
+summary(model7.4)
