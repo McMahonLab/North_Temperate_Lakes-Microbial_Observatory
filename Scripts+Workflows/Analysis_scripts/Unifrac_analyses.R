@@ -51,10 +51,8 @@ colors <- c("#a6cee3", "#1f78b4", "#33a02c", "#b2df8a")
 TBH <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer == "H", alldata)
 TBH_year <- factor(substr(sample_names(TBH), start = 9, stop = 10), levels = years)
 
-top <- names(sort(taxa_sums(TBH), TRUE)[1:500])
-TBH_abun = prune_taxa(top, TBH)
 
-x <- UniFrac(TBH_abun, weighted = T, normalize = T)
+x <- UniFrac(TBH, weighted = F, normalize = T)
 pcoa <- betadisper(x, TBH_year)
 scores <- scores(pcoa)
 # Locate centroids
@@ -62,11 +60,30 @@ TBHcentroids <- scores$centroids
 TBHcentroids <- as.data.frame(TBHcentroids)
 TBHcentroids$Year <- factor(years, level = years)
 
-plot.pcoa <- data.frame(scores$sites, TBH_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+plot.pcoa <- data.frame(scores$sites, TBH_year, extract_date(rownames(scores$sites)))
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year", "Date")
+
+julian <- c()
+for(i in 1:dim(plot.pcoa)[1]){
+  if(plot.pcoa$Year[i] == "05"){
+    julian[i] <- as.numeric(plot.pcoa$Date[i] - extract_date(c("TBH01Jan05")))
+  }else if(plot.pcoa$Year[i] == "07"){
+    julian[i] <- as.numeric(plot.pcoa$Date[i] - extract_date(c("TBH01Jan07")))
+  }else if(plot.pcoa$Year[i] == "08"){
+    julian[i] <- as.numeric(plot.pcoa$Date[i] - extract_date(c("TBH01Jan08")))
+  }else if(plot.pcoa$Year[i] == "09"){
+    julian[i] <- as.numeric(plot.pcoa$Date[i] - extract_date(c("TBH01Jan09")))
+  }
+}
+
+plot.pcoa$DayNum <- julian
 
 #Save for plotting
-p1 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=TBHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Trout Bog") + coord_cartesian(xlim = c(-0.3, 0.3), ylim = c(-0.4, 0.4)) + scale_color_manual(values = colors)
+
+
+
+p1 <- 
+  ggplot(data = plot.pcoa[which(plot.pcoa$DayNum > 60),], aes (x = PCoA1, y = PCoA2, shape = Year, color = DayNum)) + geom_point(size = 2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1)) + scale_color_gradientn(colors = c( "gold2", "springgreen4", "dodgerblue"), values = c(0, 0.5, 1)) + labs(title = "Trout Bog")
 
 #Plot distance from centroids boxplots
 
@@ -137,6 +154,8 @@ SSHcentroids$Year <- factor(c("07", "08", "09"), level = years)
 
 plot.pcoa <- data.frame(scores$sites, SSH_year[which(is.na(SSH_year) == F)])
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+
+
 
 #Save for plotting
 p3 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=SSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "South Sparkling Bog") + coord_cartesian(xlim = c(-0.3, 0.3), ylim = c(-0.4, 0.4)) + scale_color_manual(values = colors[2:4])
@@ -250,9 +269,7 @@ ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year, shape = Sample, s
 TBH07 <- prune_samples(sampledata2$Year == "07" & sampledata2$Bog == "TB" & sampledata2$Layer == "H" | sampledata2$Year == "07" & substr(sample_names(sampledata2), start = 6, stop = 8) == "REP", alldata_reps)
 TBH07_lake <- factor(substr(sample_names(TBH07), start = 1, stop = 2), levels = c("TB", "MA"))
 
-top <- names(sort(taxa_sums(TBH07), TRUE)[1:500])
-TBH07_abun = prune_taxa(top, TBH07)
-x <- UniFrac(TBH07, weighted = T, normalize = T)
+x <- UniFrac(TBH07, weighted = F, normalize = T)
 sim <- 1 - as.matrix(x)[1:length(TBH07_lake)-1, length(TBH07_lake)]
 TBH07_date <- extract_date(names(sim))
 # plot(TBH07_date[order(TBH07_date)], sim[order(TBH07_date)], type = "l")
@@ -279,7 +296,7 @@ TBHmat2 <- rbind(TBHmat, add, add2)
 
 
 pdf(file = paste(path2repo, "TBH_v_MAH_unifrac.pdf", sep = ""), width = 4, height = 2.5)
-ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.trend, aes(x = Date, y = Distance), size = 1.5) + labs(y = "1 - UniFrac Distance", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH20Jun07", "TBH11Nov07")), ylim = c(0.3, 0.75))
+ggplot() + stat_contour(data = TBHmat2, aes(y = Depth, x = Date, z = Temperature, fill = ..level..), geom = "polygon") + scale_fill_gradientn(colours = c("dodgerblue", "cyan", "green", "yellow", "red"), "Temp", limits = c(4, 28)) + geom_line(data = plot.trend, aes(x = Date, y = Distance), size = 1.5) + labs(y = "1 - UniFrac Distance", x = NULL) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = "dodgerblue3"), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour="black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title.x = element_text(size = 15, vjust = 0.2), axis.title.y = element_text(size = 12, vjust = 1.6), axis.text.y = element_text(colour = "black", size = 10)) + coord_cartesian(xlim = extract_date(c("TBH20Jun07", "TBH11Nov07")), ylim = c(0.0, 0.4))
 dev.off()
 
 #Make PCoA of TB vs MA
