@@ -2,7 +2,7 @@
 # Plots are saved as pdfs. For many figures, further processing is performed in Adobe Illustrator
 ###########
 # Input your path to the North_Temperate_Lakes-Microbial_Observatory/Figures folder in the GitHub repo, or whereever you would like the figures to be saved
-path2repo <- "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
+path2repo <- "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Figures/"
 
 # Load packages
 library(OTUtable)     # Contains data and functions for analysis of NTL-MO OTU table
@@ -143,6 +143,78 @@ for (id in lakeids) {
 
 Wilcoxon.hypo <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
 print(Wilcoxon.hypo)
+
+# Make 2 more panels of PCoAs for epi and hypo
+
+seqs <- read.dna("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
+d <- dist.dna(seqs, model = "raw")
+bogtree <- nj(d)
+
+# Make OTU table, taxonomy, and sampledata datasets
+OTU <- otu_table(as.matrix(otu_table), taxa_are_rows = T)
+TAX <- tax_table(as.matrix(taxonomy))
+
+sampledata <- sample_data(data.frame(Bog = substr(colnames(otu_table), start = 1, stop = 2), Layer = substr(colnames(otu_table), start = 3, stop = 3), Year = substr(colnames(otu_table), start = 9, stop = 10), row.names = colnames(otu_table), stringsAsfactors = F))                                        
+
+alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
+
+epi <-prune_samples(sampledata$Year == "07" & sampledata$Layer == "E", alldata)
+epi_lakes <- factor(substr(sample_names(epi), start = 1, stop = 2), levels = c("FB", "CB", "WS", "NS", "TB", "SS", "HK", "MA"))
+epi_regime <- rep(NA, length(epi_lakes))
+epi_regime[which(epi_lakes == "FB" | epi_lakes == "CB" | epi_lakes == "WS")] <- "polymictic"
+epi_regime[which(epi_lakes == "NS" | epi_lakes == "TB" | epi_lakes == "SS")] <- "dimictic"
+epi_regime[which(epi_lakes == "HK" | epi_lakes == "MA")] <- "meromictic"
+epi_regime <- factor(epi_regime, levels = c("polymictic", "dimictic", "meromictic"))
+
+x <- UniFrac(epi, weighted = T, normalize = T)
+pcoa <- betadisper(x, epi_lakes)
+scores <- scores(pcoa)
+
+plot.pcoa <- data.frame(scores$sites, epi_lakes, epi_regime)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Lake", "Regime")
+
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+
+pdf(file = paste(path2repo, "epi_pcoa.pdf", sep = ""), width = 3.3125, height = 3)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, shape = Regime)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Set3")
+dev.off()
+
+adonis(x ~ Bog, as(sample_data(epi), "data.frame"))
+# r^2 = 0.36625, p = 0.001
+# Calculate PERMADISP by mixing regime
+adonis(x ~ epi_regime, as(cbind(sample_data(epi), epi_regime), "data.frame"))
+# r^2 = 0.19818, p = 0.001
+
+# Repeat with hypolimnion
+hypo <-prune_samples(sampledata$Year == "07" & sampledata$Layer == "H", alldata)
+hypo_lakes <- factor(substr(sample_names(hypo), start = 1, stop = 2), levels = c("FB", "CB", "WS", "NS", "TB", "SS", "HK", "MA"))
+hypo_regime <- rep(NA, length(hypo_lakes))
+hypo_regime[which(hypo_lakes == "FB" | hypo_lakes == "CB" | hypo_lakes == "WS")] <- "polymictic"
+hypo_regime[which(hypo_lakes == "NS" | hypo_lakes == "TB" | hypo_lakes == "SS")] <- "dimictic"
+hypo_regime[which(hypo_lakes == "HK" | hypo_lakes == "MA")] <- "meromictic"
+hypo_regime <- factor(hypo_regime, levels = c("polymictic", "dimictic", "meromictic"))
+
+x <- UniFrac(hypo, weighted = T, normalize = T)
+pcoa <- betadisper(x, hypo_lakes)
+scores <- scores(pcoa)
+
+plot.pcoa <- data.frame(scores$sites, hypo_lakes, hypo_regime)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Lake", "Regime")
+
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+
+pdf(file = paste(path2repo, "hypo_pcoa.pdf", sep = ""), width = 3.3125, height = 3)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, shape = Regime)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + labs(title = "hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Set3")
+dev.off()
+
+adonis(x ~ Bog, as(sample_data(hypo), "data.frame"))
+# r^2 = 0.49795, p = 0.001
+# Calculate PERMADISP by mixing regime
+adonis(x ~ hypo_regime, as(cbind(sample_data(hypo), hypo_regime), "data.frame"))
+# r^2 = 0.34851, p = 0.001
+
 ###################
 # Figure 2
 # Trout Bog, 2007
@@ -352,17 +424,7 @@ plot(plot.conn$DayNum[which(plot.conn$Lake == "NSH" & plot.conn$Mixing.cont < 3 
 #############
 # Figure 4 - PCoAs of interannual variation
 
-seqs <- read.dna("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
-d <- dist.dna(seqs, model = "raw")
-bogtree <- nj(d)
 
-# Make OTU table, taxonomy, and sampledata datasets
-OTU <- otu_table(as.matrix(otu_table), taxa_are_rows = T)
-TAX <- tax_table(as.matrix(taxonomy))
-
-sampledata <- sample_data(data.frame(Bog = substr(colnames(otu_table), start = 1, stop = 2), Layer = substr(colnames(otu_table), start = 3, stop = 3), Year = substr(colnames(otu_table), start = 9, stop = 10), row.names = colnames(otu_table), stringsAsfactors = F))                                        
-
-alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
 years <- c("05", "07", "08", "09")
 
 colors <- c("#a6cee3", "#1f78b4", "#33a02c", "#b2df8a")
