@@ -8,9 +8,10 @@ data(otu_table)
 data(taxonomy)
 data(metadata)
 clade_table <- combine_otus("Clade", otu_table, taxonomy)
+clade_table2 <- clade_table[grep("unclassified", rownames(clade_table), invert = T),]
 metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
 metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
-mary <- bog_subset("MAH", clade_table)
+mary <- bog_subset("MAH", clade_table2)
 
 m <- matrix(NA, length(lakes), length(years))
 r <- matrix(NA, length(lakes), length(years))

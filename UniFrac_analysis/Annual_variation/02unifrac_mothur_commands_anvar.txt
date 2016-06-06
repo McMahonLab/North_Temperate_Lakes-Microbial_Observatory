@@ -1,0 +1,5 @@
+set.dir(input=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis\Annual_variation) 
+set.dir(output=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis\Annual_variation)
+set.dir(tempdefault=C:\Users\amlinz16\Desktop\North_Temperate_Lakes-Microbial_Observatory\UniFrac_analysis\Annual_variation)
+clearcut(fasta=temp.fasta, DNA=T)
+unifrac.weighted(tree=temp.tre, count=temp.count, processors=6)
