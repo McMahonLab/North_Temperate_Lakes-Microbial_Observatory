@@ -89,60 +89,9 @@ ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) +
 dev.off()
 
 # Check significance using the Wilcoxon Rank Test on medians (not output as pdf, indicated as symbols in Illustrator)
+pairwise.wilcox.test(epi.data$epi.obs, epi.data$epi.lakes, p.adjust.method = "bonferroni")
 
-lakeids <- levels(epi.data$epi.lakes)
-Lake1 <- character(0)
-Lake2 <- character(0)
-Test <- character(0)
-pvalue <- numeric(0)
-Interpretation <- character(0)
-
-for (id in lakeids) { 
-  x = subset(epi.data, epi.data$epi.lakes == id)
-  for (lake in lakeids) {
-    y = subset(epi.data, epi.data$epi.lakes == lake)
-    result <- wilcox.exact(x$epi.obs,y$epi.obs, alternative= "two.sided", conf.level = 0.95)
-    Lake1 <- c(Lake1, id)
-    Lake2 <- c(Lake2, lake)
-    Test <- c(Test, result$method)
-    pvalue <- c(pvalue, result$p.value)
-    if (result$p.value < 0.05) {
-      Interpretation <- c(Interpretation, "Reject Null (difference in median detected)")
-    } else {
-      Interpretation <- c(Interpretation, "Accept Null (difference in median undetected)")
-    }  
-  }
-}
-
-Wilcoxon.epi <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
-print(Wilcoxon.epi)
-
-lakeids <- levels(hypo.data$hypo.lakes)
-Lake1 <- character(0)
-Lake2 <- character(0)
-Test <- character(0)
-pvalue <- numeric(0)
-Interpretation <- character(0)
-
-for (id in lakeids) { 
-  x = subset(hypo.data, hypo.data$hypo.lakes == id)
-  for (lake in lakeids) {
-    y = subset(hypo.data, hypo.data$hypo.lakes == lake)
-    result <- wilcox.exact(x$hypo.obs,y$hypo.obs, alternative= "two.sided", conf.level = 0.95)
-    Lake1 <- c(Lake1, id)
-    Lake2 <- c(Lake2, lake)
-    Test <- c(Test, result$method)
-    pvalue <- c(pvalue, result$p.value)
-    if (result$p.value < 0.05) {
-      Interpretation <- c(Interpretation, "Reject Null (difference in median detected)")
-    } else {
-      Interpretation <- c(Interpretation, "Accept Null (difference in median undetected)")
-    }  
-  }
-}
-
-Wilcoxon.hypo <- data.frame(Lake1, Lake2, Test, pvalue, Interpretation)
-print(Wilcoxon.hypo)
+pairwise.wilcox.test(hypo.data$hypo.obs, hypo.data$hypo.lakes, p.adjust.method = "bonferroni")
 
 # Make 2 more panels of PCoAs for epi and hypo
 

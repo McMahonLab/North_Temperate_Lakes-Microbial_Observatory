@@ -57,13 +57,17 @@ hypo.data <- data.frame(hypo.lakes, hypo.evenness)
 epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
-ggplot(data = epi.data, aes(y = epi.evenness, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Epilimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3")
+png(file = paste(path2repo, "FigureS1_epi_boxplot.png", sep = ""), width = 4, height = 3, units = "in", res = 144)
+ggplot(data = epi.data, aes(y = epi.evenness, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Epilimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3")
+dev.off()
 ```
 
 
 
 ```{r, Evenness_between_bogs2, echo=FALSE, warning=FALSE, message=FALSE}
-ggplot(data = hypo.data, aes(y = hypo.evenness, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Hypolimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3") 
+png(file = paste(path2repo, "FigureS1_hypo_boxplot.png", sep = ""), width = 4, height = 3, units = "in", res = 144)
+ggplot(data = hypo.data, aes(y = hypo.evenness, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y = "Observed Evenness", x = NULL, title = "Hypolimnion") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 16, colour = "black"), axis.title = element_text(size = 18, vjust = 2), axis.text.y = element_text(colour = "black", size = 14), legend.position = "none") + scale_fill_brewer(palette = "Set3") 
+dev.off()
 ```
 
 Figure S1 
@@ -103,7 +107,9 @@ hypo.date <- hypo.date[c(1:32, 35:80)]
 TB_evenness <- data.frame(hypo.date, hypo.even)
 colnames(TB_evenness) <- c("date", "evenness")
 
-ggplot() + geom_line(data = TB_evenness, aes(x = date, y=evenness), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black", size = 8), plot.title = element_text(size = 12, vjust = 2)) + geom_point(data = TB_evenness[match(TBHmixes, TB_evenness$date), ], aes(x = date, y = evenness), size = 5, colour = "red") 
+png(file = paste(path2repo, "FigureS2_TBHeven.png", sep = ""), width = 4, height = 3, units = "in", res = 144)
+ggplot() + geom_line(data = TB_evenness, aes(x = date, y=evenness), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black", size = 8), plot.title = element_text(size = 12, vjust = 2)) + geom_point(data = TB_evenness[match(TBHmixes, TB_evenness$date), ], aes(x = date, y = evenness), size = 5, colour = "red") 
+dev.off()
 ```
 
 
@@ -126,7 +132,9 @@ hypo.date <- extract_date(colnames(hypo))
 NS_evenness <- data.frame(hypo.date, hypo.even)
 colnames(NS_evenness) <- c("date", "evenness")
 
-ggplot() + geom_line(data = NS_evenness, aes(x = date, y=evenness), size = 1) + labs(title = "North Sparkling Bog", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black", size = 8), plot.title = element_text(size = 12, vjust = 2)) + geom_point(data = NS_evenness[match(NSHmixes, NS_evenness$date), ], aes(x = date, y = evenness), size = 5, colour = "red") 
+png(file = paste(path2repo, "FigureS2_NSHeven.png", sep = ""), width = 4, height = 3, units = "in", res = 144)
+ggplot() + geom_line(data = NS_evenness, aes(x = date, y=evenness), size = 1) + labs(title = "North Sparkling Bog", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 1, size = 8, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black", size = 8), plot.title = element_text(size = 12, vjust = 2)) + geom_point(data = NS_evenness[match(NSHmixes, NS_evenness$date), ], aes(x = date, y = evenness), size = 5, colour = "red") 
+dev.off()
 
 ```
 
@@ -158,7 +166,9 @@ phylum_totals <- data.frame(phyla.names, totals)
 phylum_totals$phyla.names <- factor(phylum_totals$phyla.names, levels = phylum_totals$phyla.names[order(phylum_totals$totals)])
 
 # Plot as a bar graph
-ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+png(file = paste(path2repo, "FigureS3_phylum_barplot.png", sep = ""), width = 8, height = 6, units = "in", res = 144)
+ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))
+dev.off()
 
 ```
 
@@ -203,7 +213,9 @@ phyla_by_bog2 <- melt(phyla_by_bog)
 pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400", "#391826", "#f4bebe")
 
 # Plot data as a stacked barplot
-ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
+png(file = paste(path2repo, "FigureS4_phylum_stackedbars.png", sep = ""), width = 8, height = 5, units = "in", res = 144)
+ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
+dev.off()
 
 ```
 
@@ -232,7 +244,10 @@ epi_clade_sums <- sort(rowSums(epi_clade_table2), decreasing = T)
 plot_epi_clades <- data.frame(names(epi_clade_sums)[1:20], epi_clade_sums[1:20])
 colnames(plot_epi_clades) <- c("Clade", "Abundance")
 plot_epi_clades$Clade <- factor(plot_epi_clades$Clade, levels=plot_epi_clades$Clade)
-ggplot(data = plot_epi_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour = "black") + labs(x = NULL, y = "Observed Reads", title = "Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+png(file = paste(path2repo, "FigureS5_epi_clade_abun.png", sep = ""), width = 7, height = 5, units = "in", res = 144)
+ggplot(data = plot_epi_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour = "black") + labs(x = NULL, y = "Observed Reads", title = "Epilimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust=2), axis.text.y = element_text(colour="black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))
+dev.off()
 ```
 
 
@@ -283,7 +298,10 @@ hypo_clade_sums <- sort(rowSums(hypo_clade_table2), decreasing = T)
 plot_hypo_clades <- data.frame(names(hypo_clade_sums)[1:20], hypo_clade_sums[1:20])
 colnames(plot_hypo_clades) <- c("Clade", "Abundance")
 plot_hypo_clades$Clade <- factor(plot_hypo_clades$Clade, levels=plot_hypo_clades$Clade)
-ggplot(data = plot_hypo_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads", title = "Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+png(file = paste(path2repo, "FigureS5_hypo_clade_abun.png", sep = ""), width = 7, height = 5, units = "in", res = 144)
+ggplot(data = plot_hypo_clades, aes(x = Clade, y = Abundance)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Observed Reads", title = "Hypolimnia") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 12, vjust = 2), axis.text.y = element_text(colour = "black")) + scale_y_continuous(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))
+dev.off()
 ```
 
 Figure S5 
@@ -373,7 +391,9 @@ plot.conn <- data.frame(lakekey, all.dates, all.metric)
 colnames(plot.conn) <- c("Lake", "Date", "Connectivity")
 plot.conn$Lake <- factor(plot.conn$Lake, levels = c("CBH", "NSH", "TBH", "SSH", "MAH"))
 
-ggplot(data = plot.conn, aes(x = Lake, y = Connectivity)) + geom_boxplot() + scale_y_log10() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.text = element_text(colour = "black"))
+png(file = paste(path2repo, "FigureS6_connectivity.png", sep = ""), width = 5, height = 5, units = "in", res = 144)
+ggplot(data = plot.conn, aes(x = Lake, y = Connectivity)) + geom_boxplot() + scale_y_log10() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"), axis.text = element_text(colour = "black"))
+dev.off()
 
 #Test significant differences
 rank.test <- pairwise.wilcox.test(plot.conn$Connectivity, plot.conn$Lake, p.adjust.method = "bonferroni")
@@ -418,7 +438,9 @@ colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=NSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors[2:4])
+png(file = paste(path2repo, "FigureS7_NSH_pcoa.png", sep = ""), width = 3, height = 3, units = "in", res = 144)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=NSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors[2:4])
+dev.off()
 
 # Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
 #adonis(x ~ Year, as(sample_data(NSH), "data.frame"))
@@ -441,8 +463,9 @@ colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=CBHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Crystal Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors[c(2, 4)])
-
+png(file = paste(path2repo, "FigureS7_CBH_pcoa.png", sep = ""), width = 3, height = 3, units = "in", res = 144)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=CBHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Crystal Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors[c(2, 4)])
+dev.off()
 # Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
 #adonis(x ~ Year, as(sample_data(CBH), "data.frame"))
 ```
@@ -482,7 +505,9 @@ MAH2centroids$Year <- factor(years, level = years)
 plot.pcoa <- data.frame(scores$sites, MAH2_year, as.factor(MAH2_type))
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year", "Sample")
 
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year, shape = Sample, size = Sample)) + geom_point() + scale_shape_manual(values = c(16, 15)) + scale_size_manual(values = c(2, 3)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=MAH2centroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake") + scale_color_manual(values = colors)
+png(file = paste(path2repo, "FigureS8_MAHreps_pcoa.png", sep = ""), width = 4, height = 4, units = "in", res = 144)
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year, shape = Sample, size = Sample)) + geom_point() + scale_shape_manual(values = c(16, 15)) + scale_size_manual(values = c(2, 3)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 12, colour = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), axis.text.y = element_text(colour = "black", size = 10), panel.border = element_rect(colour = "black", fill=NA, size=1), legend.position="none") + geom_point(data=MAH2centroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake") + scale_color_manual(values = colors)
+dev.off()
 
 ```
 
