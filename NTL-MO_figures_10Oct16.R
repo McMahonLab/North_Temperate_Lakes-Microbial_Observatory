@@ -352,6 +352,58 @@ pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/P
 multiplot(p1, p2, cols = 1)
 dev.off()
 
+# Identify mixing dates (less than 1 degree of temperature difference between 0.5 meters and maximum sampling depth)
+metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
+metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "07"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name~Depth, fun.aggregate=mean)
+TBHmixes <- extract_date(metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"7" < 1)])
+
+# Make dataset of Trout Bog hypolimion samples from 2007
+hypo <- bog_subset(paste("TBH", sep = ""), seq_table)
+hypo <- year_subset("07", hypo)
+#Calculate observed richness
+hypo.even <- apply(hypo, 2, pielou)
+#Extract sampling date from sample names
+hypo.date <- extract_date(colnames(hypo))
+#Remove January samples - large gap distracts in plot, and winter samples are not considered in this study
+hypo.even <- hypo.even[c(1:32, 35:80)]
+hypo.date <- hypo.date[c(1:32, 35:80)]
+
+# Make dataframe for plotting
+TB_evenness <- data.frame(hypo.date, hypo.even)
+colnames(TB_evenness) <- c("date", "evenness")
+
+p1 <- ggplot() + geom_line(data = TB_evenness, aes(x = date, y = evenness), size = 1) + labs(title = "Trout 2007", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust = 2), axis.text.y = element_text(colour = "black", size=10), plot.title = element_text(size = 12, vjust = 2), legend.position = "none") + geom_point(data = TB_evenness[match(TBHmixes, TB_evenness$date), ], aes(x = date, y = evenness), size = 2, colour = "red") + theme_bw()
+
+metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
+metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "08"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name~Depth, fun.aggregate=mean)
+NSHmixes <- extract_date(metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)])
+
+# Make dataset of Trout Bog hypolimion samples from 2007
+hypo <- bog_subset(paste("NSH", sep = ""), seq_table)
+hypo <- year_subset("08", hypo)
+#Calculate observed richness
+hypo.even <- apply(hypo, 2, pielou)
+#Extract sampling date from sample names
+hypo.date <- extract_date(colnames(hypo))
+#Remove January samples - large gap distracts in plot, and winter samples are not considered in this study
+hypo.even <- hypo.even[c(1:32, 35:80)]
+hypo.date <- hypo.date[c(1:32, 35:80)]
+
+# Make dataframe for plotting
+NS_evenness <- data.frame(hypo.date, hypo.even)
+colnames(NS_evenness) <- c("date", "evenness")
+
+p2 <- ggplot() + geom_line(data = NS_evenness, aes(x = date, y = evenness), size = 1) + labs(title = "North Sparkling 2008", x = NULL, y = "Pielou's Evenness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks=element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust = 2), axis.text.y = element_text(colour = "black", size=10), plot.title = element_text(size = 12, vjust = 2), legend.position = "none") + geom_point(data = NS_evenness[match(NSHmixes, NS_evenness$date), ], aes(x = date, y = evenness), size = 2, colour = "red") + theme_bw()
+
+
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS2.1.pdf", width = 3.3125*2, height = 5.5)
+multiplot(p1, p2, cols = 1)
+dev.off()
+
 ### Figure S3 - Phylum comp by lake
 
 # Specify the sampled layers
