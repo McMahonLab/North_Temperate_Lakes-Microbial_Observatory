@@ -17,10 +17,10 @@ library(ggrepel)
 
 data(metadata)
 
-seq_table <- read.csv("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_seqstable.csv", row.names = 1)
-seq_taxonomy <- read.csv(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/seqs.98.cleantaxonomy.csv", row.names = 1, header = T, colClasses = c("character"))
+seq_table <- read.csv("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_seqstable.csv", row.names = 1)
+seq_taxonomy <- read.csv(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/seqs.98.cleantaxonomy.csv", row.names = 1, header = T, colClasses = c("character"))
 
-seqs <- read.dna("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/qc.bogs.clean.min25.fasta", format = "fasta")
+seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/qc.bogs.clean.min25.fasta", format = "fasta")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   plots <- c(list(...), plotlist)
@@ -108,7 +108,7 @@ adonis(x ~ regime, as(cbind(sample_data(hypo), regime), "data.frame"))
 # r^2 = 0.21907, p = 0.001
 
 #Reduce size of legends
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure1.pdf", width = 3.3125, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure1.pdf", width = 4, height = 7)
 multiplot(p1, p2, cols = 1)
 dev.off()
 
@@ -157,7 +157,7 @@ TBH_phyla <- group_by(TBH_phyla, seq_taxonomy, Month)
 TBH_phyla <- summarise(TBH_phyla, mean = mean(value))
 p2 <- ggplot(data = TBH_phyla, aes(x = Month, y = mean, fill = seq_taxonomy)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads", title = "Trout Bog Hypolimnion") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 10)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure2.pdf", width = 4.5, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure2.pdf", width = 4.5, height = 7)
 multiplot(p1, p2, cols=1)
 dev.off()
 
@@ -181,7 +181,7 @@ x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
 p3 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "Mary Lake Hypolimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure3.pdf", width = 3.3125*2, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure3.pdf", width = 3.3125*2, height = 7)
 multiplot(p1, p2, p3, cols = 1)
 dev.off()
 
@@ -225,7 +225,7 @@ for(i in 1:length(interest)){
   year4$dates <- extract_date(year4$variable)
   p4 <- ggplot(data = year4, aes(x = dates, y = value, color = seq)) + geom_point() + geom_line() + theme_bw() + theme(legend.position = "none") +  labs(title = "2009", x = "Date", y = "Abundance")  + xlim(extract_date(c("TBE15May09", "TBE20Nov09"))) + geom_label(data = NULL, x = as.numeric(extract_date(c("TBE01Oct09"))), y = max(year4$value) * 0.75, label = paste("r =", round(r, 2)), color = "black")
   
-  pdf(file = paste("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure4.", i, ".pdf", sep = ""), width = 5, height = 5)
+  pdf(file = paste("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure4.", i, ".pdf", sep = ""), width = 5, height = 5)
   multiplot(p1, p2, p3, p4, cols = 2)
   dev.off()
 }
@@ -263,7 +263,7 @@ for(i in 1:length(lakes)){
 assign(paste("p", i, sep = ""), z)
 }
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure5.pdf", width = 3.3125*2.75, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figure5.pdf", width = 3.3125*2.75, height = 7)
 multiplot(p1, p2, p3, p4, cols = 2)
 dev.off()
 
@@ -301,7 +301,7 @@ pairwise.wilcox.test(epi.data$epi.obs, epi.data$epi.lakes, p.adjust.method = "bo
 
 pairwise.wilcox.test(hypo.data$hypo.obs, hypo.data$hypo.lakes, p.adjust.method = "bonferroni")
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS1.pdf", width = 3.3125*2, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS1.pdf", width = 3.3125*2, height = 7)
 multiplot(p1, p2, cols = 1)
 dev.off()
 
@@ -348,7 +348,7 @@ colnames(NS_richness) <- c("date", "richness")
 
 p2 <- ggplot() + geom_line(data = NS_richness, aes(x = date, y = richness), size = 1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.title = element_text(size = 10, vjust=2), axis.text.y = element_text(colour = "black", size = 10), plot.title = element_text(size=12, vjust = 2), legend.position = "none") + geom_point(data = NS_richness[match(NSHmixes, NS_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red") + theme_bw()
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS2.pdf", width = 3.3125*2, height = 5.5)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS2.pdf", width = 3.3125*2, height = 5.5)
 multiplot(p1, p2, cols = 1)
 dev.off()
 
@@ -445,7 +445,7 @@ phyla_by_bog2 <- melt(phyla_by_bog)
 pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400", "#391826", "#f4bebe")
 
 # Plot data as a stacked barplot
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS3.pdf", width = 3.3125*2, height = 6)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS3.pdf", width = 3.3125*2, height = 6)
 ggplot(data=phyla_by_bog2, aes(x=variable, y=value, fill=phyla.names)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads") + theme(axis.text.x = element_text(size = 12, angle = 90, color="black"), axis.text.y = element_text(size=14, color="black"), axis.title = element_text(size = 15, vjust=2), legend.title = element_blank(), legend.text = element_text(size = 16)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
 dev.off()
 
@@ -475,8 +475,8 @@ new.phylum_table <- melt(new.phylum_table)
 new.phylum_table$Lake <- factor(substr(new.phylum_table$variable, start = 1, stop = 2), levels = c("CB", "FB", "NS", "WS", "TB", "SS", "HK", "MA"))
 new.phylum_table$Layer <- substr(new.phylum_table$variable, start = 3, stop = 3)
 new.phylum_table$LakeLayer <- factor(substr(new.phylum_table$variable, start = 1, stop = 3), levels = c("CBE", "FBE", "NSE", "WSE", "TBE", "SSE", "HKE", "MAE", "CBH", "FBH", "NSH", "WSH", "TBH", "SSH", "HKH", "MAH"))
-new.phylum_table$Month <- factor(substr(new.phylum_table$variable, start = 6, stop = 8), levels = c("JAN", "Feb", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT","NOV"))
-levels(new.phylum_table$Month) <- c("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT","NOV")
+new.phylum_table$Month <- factor(substr(new.phylum_table$variable, start = 6, stop = 8), levels = c("JUN", "JUL", "AUG", "SEP", "OCT","NOV", "JAN", "Feb", "MAR", "APR", "MAY"))
+levels(new.phylum_table$Month)[levels(new.phylum_table$Month)=="Feb"] <- "FEB"
 
 # Make color palette
 pal2 = c("#005682", "#edfb48", "#a1a100", "#626262", "#008141", "#008282", "#00d5f2", "#f2a400", "#209401", "#929292", "#3885e7", "#ff8400", "#391826", "#f4bebe")
@@ -501,7 +501,7 @@ NSH_phyla <- group_by(NSH_phyla, seq_taxonomy, Month)
 NSH_phyla <- summarise(NSH_phyla, mean = mean(value))
 p4 <- ggplot(data = NSH_phyla, aes(x = Month, y = mean, fill = seq_taxonomy)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads", title = "North Sparkling Hypolimnion") + theme(axis.text.x = element_text(size = 10, angle = 90, color="black"), axis.text.y = element_text(size=10, color="black"), axis.title = element_text(size = 12, vjust=2), legend.position = "none", plot.title = element_text(size = 12)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS4.1.pdf", width = 5.5, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS4.1.pdf", width = 5.5, height = 7)
 multiplot(p1, p2, p3, p4, cols=2)
 dev.off()
 
@@ -526,7 +526,7 @@ MAH_phyla <- group_by(MAH_phyla, seq_taxonomy, Month)
 MAH_phyla <- summarise(MAH_phyla, mean = mean(value))
 p4 <- ggplot(data = MAH_phyla, aes(x = Month, y = mean, fill = seq_taxonomy)) + geom_bar(stat="identity", position = "fill") + labs(x = NULL, y = "Proportion of Observed Reads", title = "Mary Lake Hypolimnion") + theme(axis.text.x = element_text(size = 10, angle = 90, color="black"), axis.text.y = element_text(size=10, color="black"), axis.title = element_text(size = 12, vjust=2), legend.position = "none", plot.title = element_text(size = 12)) + scale_fill_manual(values=rev(pal2)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(colour = "black"), axis.line.y = element_line(colour = "black"))  + scale_y_continuous(expand = c(0,0)) 
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS4.2.pdf", width = 5.5, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS4.2.pdf", width = 5.5, height = 7)
 multiplot(p1, p2, p3, p4, cols=2)
 dev.off()
 
@@ -538,14 +538,14 @@ dev.off()
 # write.csv(mntd, file = "mntd_taxon_relatedness_index.csv")
 
 #Let's read it back in and start from there
-mntd <- read.csv("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/mntd_taxon_relatedness_index.csv", row.names = 1)
+mntd <- read.csv("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/mntd_taxon_relatedness_index.csv", row.names = 1)
 mntd$nti <- (mntd$mntd.rand.mean - mntd$mntd.obs)/mntd$mntd.rand.sd
 
 mntd.results <- data.frame(mntd$mntd.obs.z)
 mntd.results$site <- substr(rownames(mntd), start = 1, stop = 3)
 mntd.results$site <- factor(mntd.results$site, levels = c("CBE", "FBE", "WSE", "NSE", "TBE", "SSE", "HKE", "MAE", "CBH", "FBH", "WSH", "NSH", "TBH", "SSH", "HKH", "MAH"))
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS5.pdf", width = 3.3125*2, height = 4)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS5.pdf", width = 3.3125*2, height = 4)
 ggplot(data = mntd.results[which(is.na(mntd.results$site) == F), ], aes(y = mntd.mntd.obs.z, x = site)) + geom_boxplot() + theme_bw() + labs(title = "Phylogenetic Clustering", x = NULL, y = "Mean Nearest Taxon Distance")
 dev.off()
 
@@ -590,7 +590,7 @@ for(i in 1:length(interest)){
     p4 <- ggplot(data = year4, aes(x = dates, y = value, color = seq)) + geom_point() + geom_line() + theme_bw() + labs(title = "2009", x = "Date", y = "Abundance")  + xlim(extract_date(c("TBE15May09", "TBE20Nov09"))) + theme(legend.position = c(1,1), legend.justification = c(1,1), legend.title = element_blank())
     
   
-    pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.1.pdf", width = 3.3125*2, height = 6)
+    pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.1.pdf", width = 3.3125*2, height = 6)
     multiplot(p1, p2, p3, p4, cols = 2)
     dev.off()
     
@@ -637,7 +637,7 @@ for(i in 1:length(interest)){
     year4$dates <- extract_date(year4$variable)
     p4 <- ggplot(data = year4, aes(x = dates, y = value, color = seq)) + geom_point() + geom_line() + theme_bw() + labs(title = "2009", x = "Date", y = "Abundance")  + xlim(extract_date(c("MAE15May09", "MAE20Nov09")))  + theme(legend.position = c(1,1), legend.justification = c(1,1), legend.title = element_blank())
     
-    pdf(file = paste("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.2.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
+    pdf(file = paste("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.2.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
     multiplot(p1, p2, p3, p4, cols = 2)
     dev.off()
     
@@ -681,7 +681,7 @@ for(i in 1:length(interest)){
   year4$dates <- extract_date(year4$variable)
   p4 <- ggplot(data = year4, aes(x = dates, y = value, color = seq)) + geom_point() + geom_line() + theme_bw() + labs(title = "2009", x = "Date", y = "Abundance")  + xlim(extract_date(c("TBE15May09", "TBE20Nov09")))  + theme(legend.position = c(1,1), legend.justification = c(1,1), legend.title = element_blank())
   
-  pdf(file = paste("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.3.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
+  pdf(file = paste("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.3.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
   multiplot(p1, p2, p3, p4, cols = 2)
   dev.off()
   
@@ -726,7 +726,7 @@ for(i in 1:length(interest)){
     year4$dates <- extract_date(year4$variable)
     p4 <- ggplot(data = year4, aes(x = dates, y = value, color = seq)) + geom_point() + geom_line() + theme_bw() + labs(title = "2009", x = "Date", y = "Abundance")  + xlim(extract_date(c("MAH15May09", "MAH20Nov09")))  + theme(legend.position = c(1,1), legend.justification = c(1,1), legend.title = element_blank())
     
-    pdf(file = paste("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.4.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
+    pdf(file = paste("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS6.4.", i, ".pdf", sep = ""), width = 3.3125*2, height = 6)
     multiplot(p1, p2, p3, p4, cols = 2)
     dev.off()
     
@@ -765,12 +765,12 @@ for(i in 1:length(year)){
   to.plot <- data.frame(abundance, persistance, variance)
   to.plot$lineage <- rownames(reduce_names(table))
   
-  z <- ggplot(data = to.plot, aes(x = variance, y = abundance, fill = persistance)) + geom_point() + theme_bw() + labs(title = paste(year[i]), x = "Coefficient of Variance", y = "Mean Abundance when Present") + geom_label_repel(aes(label = lineage)) + scale_fill_gradient(low = "white", high = "lightgreen") + theme(legend.position = "none")
+  z <- ggplot(data = to.plot, aes(x = variance, y = abundance, fill = persistance)) + geom_point() + theme_bw() + labs(title = paste(year[i]), x = "Variability (CV)", y = "Mean Abundance when Present") + geom_label_repel(aes(label = lineage)) + scale_fill_gradient(low = "white", high = "lightgreen") + theme(legend.position = "none")
   
   assign(paste("p", i, sep = ""), z)
 }
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS7.pdf", width = 3.3125*2, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS7.pdf", width = 3.3125*2, height = 7)
 multiplot(p1, p2, p3, p4, cols = 2)
 dev.off()
 
@@ -782,21 +782,21 @@ NSH <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "H", alldata)
 x <- UniFrac(NSH, weighted = T, normalize = T)
 x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
-p1 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "North Sparkling Hypolimnion", x = "Time Difference", y = "UniFrac Distance")
+p1 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "North Sparkling Hypolimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
 NSE <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "E", alldata)
 x <- UniFrac(NSE, weighted = T, normalize = T)
 x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
-p2 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "North Sparkling Epilimnion", x = "Time Difference", y = "UniFrac Distance")
+p2 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "North Sparkling Epilimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
 MAE <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer == "E", alldata)
 x <- UniFrac(MAE, weighted = T, normalize = T)
 x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
-p3 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "Mary Lake Epilimnion", x = "Time Difference", y = "UniFrac Distance")
+p3 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "Mary Lake Epilimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS8.1.pdf", width = 3.3125*2, height = 7)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS8.1.pdf", width = 3.3125*2, height = 7)
 multiplot(p1, p2, p3, cols = 1)
 dev.off()
 
@@ -804,15 +804,15 @@ SSH <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "H", alldata)
 x <- UniFrac(SSH, weighted = T, normalize = T)
 x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
-p1 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "South Sparkling Hypolimnion", x = "Time Difference", y = "UniFrac Distance")
+p1 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "South Sparkling Hypolimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
 SSE <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "E", alldata)
 x <- UniFrac(SSE, weighted = T, normalize = T)
 x <- melt(as.matrix(x))
 x$Date <- as.numeric(abs(extract_date(x$Var1) - extract_date(x$Var2)))
-p2 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "South Sparkling Epilimnion", x = "Time Difference", y = "UniFrac Distance")
+p2 <- ggplot(x, aes(x = Date, y = value)) + geom_point(size = 0.5, alpha = 1/10) + theme_bw() + labs(title = "South Sparkling Epilimnion", x = "Time Difference", y = "UniFrac Distance") + scale_x_continuous(breaks = c(365, 365*2, 365*3, 365*4))
 
 
-pdf(file = "C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS8.2.pdf", width = 3.3125*2, height = 7/3*2)
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/figureS8.2.pdf", width = 3.3125*2, height = 7/3*2)
 multiplot(p1, p2, cols = 1)
 dev.off()
