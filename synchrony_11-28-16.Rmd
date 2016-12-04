@@ -1,0 +1,262 @@
+---
+title: "Synchrony_11-29-16"
+author: "Alex Linz"
+date: "Tuesday, November 29, 2016"
+output: html_document
+---
+
+```{r, setup, echo = F, message = F, warning = F}
+library(OTUtable)
+library(reshape2)
+#library(dplyr)
+library(ggplot2)
+library(grid)
+library(raster)
+#library(ggrepel)
+library(ape)
+library(phyloseq)
+library(vegan)
+
+seq_table <- read.csv("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_seqstable.csv", row.names = 1)
+seq_taxonomy <- read.csv(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/seqs.98.cleantaxonomy.csv", row.names = 1, header = T, colClasses = c("character"))
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  plots <- c(list(...), plotlist)
+  numPlots = length(plots)
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  if (numPlots==1) {
+    print(plots[[1]])   
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+```
+
+```{r, phylo, echo = F, message = F, warning = F}
+# Since I'll be using UniFrac as my distance metric, I'll use the phyloseq package for parsing as well
+# This chunk will take awhile because of the phylogenetic distance calculations
+
+seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/qc.bogs.clean.min25.fasta", format = "fasta")
+d <- dist.dna(seqs, model = "raw")
+bogtree <- nj(d)
+
+# Set up phyloseq object to run UniFrac on
+seq_table <- remove_reps(seq_table)
+OTU <- otu_table(as.matrix(seq_table), taxa_are_rows = T)
+TAX <- tax_table(as.matrix(seq_taxonomy))
+sampledata <- sample_data(data.frame(Bog = substr(colnames(seq_table), start = 1, stop = 2), Layer = substr(colnames(seq_table), start = 3, stop = 3), Year = substr(colnames(seq_table), start = 9, stop = 10), row.names = colnames(seq_table), stringsAsfactors = F)) 
+alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
+
+```
+
+```{r, mssd, message = F, echo = T, warning = F}
+mssd <- function(axis1.vector){
+  # observed square difference
+  n <- length(axis1.vector)
+  m <- sum((axis1.vector[2:n] - axis1.vector[1:(n- 1)])^2)/(n-1)
+  # Null trend
+  s <- sum((axis1.vector - mean(axis1.vector))^2)/(n)
+  
+  # If the observed difference is significantly smaller than the null, there is a successive trend
+  t <- (1-(m/2))/sqrt((n-2)/((n-1)*(n+1)))
+  return((1 - pnorm(t))*2)
+  
+}
+
+
+```
+
+I'll use the ice-off date as time 0 for each year
+Crystal Bog Ice-Off dates:
+2005-4-12
+2007-4-12
+2008-4-25
+2009-4-20
+
+Trout Bog Ice-off dates:
+2005-4-15
+2007-4-18
+2008-4-30
+2009-4-22
+
+For all other lakes, I'll use the average of the CB and TB dates:
+2005-4-13
+2007-4-16
+2008-4-27
+2009-4-21
+
+```{r, reports, echo = T, message = F, warning = F}
+lakes <- c("FB", "CB", "WS", "NS", "TB", "SS", "MA", "HK")
+layers <- c("E", "H")
+years <- c("05", "07", "08", "09")
+
+for(a in 1:length(lakes)){
+  for(b in 1:length(layers)){
+    for(c in 1:length(years)){
+      # Only perform the analysis of the lake-layer-year subset actually exists
+      if(length(which(sampledata$Bog == lakes[a] & sampledata$Layer == layers[b] & sampledata$Year == years[c])) > 0){
+              subset <- prune_samples(sampledata$Bog == lakes[a] & sampledata$Layer == layers[b] & sampledata$Year == years[c], alldata)
+              # Calculate UniFrac and convert to long form
+              x <- UniFrac(subset, weighted = T, normalize = T)
+              x1 <- melt(as.matrix(x))
+              # Make a list of unique dates so that I can select only distances between consecutive samples from the long UniFrac table
+              samples <- unique(x1$Var1)
+              samples <- samples[order(extract_date(samples))]
+              x2 <- x1[1, ]
+              for(i in 1:(length(samples)-1)){
+                new.x <- x1[which(x1$Var1 == samples[i] & x1$Var2 == samples[i+1]), ]
+                x2 <- rbind(x2, new.x)
+              }
+              x2 <- x2[2:length(samples), ]
+              # Use the ice-off date as time zero
+              if(lakes[a] == "CB"){
+                if(years[c] == "05"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE12APR05")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE12APR05")))
+                }else if(years[c] == "07"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE12APR07")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE12APR07")))
+                }else if(years[c] == "08"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE25APR08")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE25APR08")))
+                }else if(years[c] == "09"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE20APR09")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE20APR09")))
+                }
+              }else if(lakes[a] == "TB"){
+                if(years[c] == "05"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE15APR05")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE15APR05")))
+                }else if(years[c] == "07"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE18APR07")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE18APR07")))
+                }else if(years[c] == "08"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE30APR08")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE30APR08")))
+                }else if(years[c] == "09"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE22APR09")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE22APR09")))
+                }
+              }else{
+                if(years[c] == "05"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE13APR05")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE13APR05")))
+                }else if(years[c] == "07"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE16APR07")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE16APR07")))
+                }else if(years[c] == "08"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE27APR08")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE27APR08")))
+                }else if(years[c] == "09"){
+                  x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE21APR09")))
+                  x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE21APR09")))
+                }
+              }
+              # Add a column of time difference to my new table
+              x2$Time <- x2$Adj.Date2 - x2$Adj.Date1
+              
+              # Rate of change analysis
+              x2$Rate <- x2$value/x2$Time
+              x2 <- x2[which(x2$Rate != Inf),]
+              mean.rate <- mean(x2$Rate)
+              p <- ggplot(data = x2, aes(x = Adj.Date1, y = Rate)) + geom_bar(stat = "identity") + theme_bw() + labs(title = paste(lakes[a], layers[b], years[c], ", mean rate = ", round(mean.rate, digits = 3), sep = ""), x = "Days since Ice-Off") + xlim(c(50, 215))
+              assign(paste("rate_",lakes[a], layers[b], years[c] , sep = ""), p)
+      
+
+
+        # Direction of trajectory by PCoA
+        ord <- betadisper(x, substr(labels(x), start = 1, stop = 3))
+        coord <- scores(ord)
+        # order the points by date
+        points <- as.data.frame(coord$sites[order(extract_date(rownames(coord$sites))), ])
+        axis1 <- round(ord$eig[1]/sum(ord$eig), digits = 2)
+        #axis2 <- round(ord$eig[2]/sum(ord$eig), digits = 2)
+        points$Sample <- rownames(points)
+        points$Diff1 <- c(points$PCoA1[2:(dim(points)[1])] - points$PCoA1[1:(dim(points)[1] - 1)], NA) 
+        points <- melt(points, id.var = "Sample")
+        # Use the ice-off date as time zero
+              if(lakes[a] == "CB"){
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE12APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE12APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE25APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE20APR09")))
+                }
+              }else if(lakes[a] == "TB"){
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE15APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE18APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE30APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE22APR09")))
+                }
+              }else{
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE13APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE16APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE27APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE21APR09")))
+                }
+              }
+              
+              sig.trend <- mssd(points$value[which(points$variable == "PCoA1")])
+              points$sign <- points$value > 0
+              points$Time.Diff <- c(points$Adj.Date[2:(dim(points)[1])] - points$Adj.Date[1:(dim(points)[1] - 1)], NA)
+              p <- ggplot(data = points[which(points$variable == "Diff1"),], aes(x = Adj.Date, y = value/Time.Diff, fill = sign)) + geom_bar(stat = "identity", position = "dodge", width = 1) + theme_bw() + theme(legend.position = "none") + labs(title = paste(lakes[a], layers[b], years[c], ", MSSD p-value = ", round(sig.trend, 5), sep = ""), x = "Days since Ice-Off", y = paste("Change on PCoA1 per day, var = ", axis1, sep = "")) + xlim(c(50, 215))
+
+              assign(paste("dir_",lakes[a], layers[b], years[c] , sep = ""), p)
+
+
+        
+      }
+    }
+  }
+}
+
+```
+
+```{r, plots, message = F, echo = F, warning = F}
+multiplot(rate_FBE07, rate_FBH07, cols = 2)
+multiplot(dir_FBE07, dir_FBH07, cols = 2)
+
+multiplot(rate_WSE07, rate_WSH07, cols = 2)
+multiplot(dir_WSE07, dir_WSH07, cols = 2)
+
+multiplot(rate_CBE07, rate_CBE09,  rate_CBH07, rate_CBH09,cols = 2)
+multiplot(dir_CBE07, dir_CBE09, dir_CBH07, dir_CBH09,cols = 2)
+
+multiplot(rate_NSE07, rate_NSE08, rate_NSE09,  rate_NSH07, rate_NSH08, rate_NSH09, cols = 2)
+multiplot(dir_NSE07, dir_NSE08, dir_NSE09,  dir_NSH07, dir_NSH08, dir_NSH09, cols = 2)
+
+multiplot(rate_TBE05, rate_TBE07, rate_TBE08, rate_TBE09,  rate_TBH05, rate_TBH07, rate_TBH08, rate_TBH09, cols = 2)
+multiplot(dir_TBE05, dir_TBE07, dir_TBE08, dir_TBE09,  dir_TBH05, dir_TBH07, dir_TBH08, dir_TBH09, cols = 2)
+
+multiplot(rate_SSE07, rate_SSE08, rate_SSE09,  rate_SSH07, rate_SSH08, rate_SSH09, cols = 2)
+multiplot(dir_SSE07, dir_SSE08, dir_SSE09,  dir_SSH07, dir_SSH08, dir_SSH09, cols = 2)
+
+multiplot(rate_HKE07, rate_HKH07, cols = 2)
+multiplot(dir_HKE07, dir_HKH07, cols = 2)
+
+multiplot(rate_MAE05, rate_MAE07, rate_MAE08, rate_MAE09,  rate_MAH05, rate_MAH07, rate_MAH08, rate_MAH09, cols = 2)
+multiplot(dir_MAE05, dir_MAE07, dir_MAE08, dir_MAE09, dir_MAH05,dir_MAH07, dir_MAH08, dir_MAH09, cols = 2)
+
+```
+

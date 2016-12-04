@@ -1,0 +1,323 @@
+---
+title: "Synchrony in the Bog Tags"
+author: "Alex Linz"
+date: "Sunday, November 27, 2016"
+output: html_document
+---
+
+The goal of this analysis is to look at synchrony in the 16S bog dataset to see if there are interannual or seasonal trends in community metrics, even if composition is does not show these trends. I'm defining synchrony as correlation in temporal variability. So how to quantify temporal variability at the community level?
+- rate of change: the amount of change between pairs of samples/the time between those samples. Can be used to measure an "instantaneous" rate or as a moving average.
+- pace: the time it takes to change a certain amount. Related to rate, but includes more samples
+- trajectory: the "direction" of change. I'll use ordination and the direction refers to change in that imaginary space.
+
+The big questions I'd like to answer with these analyses are:
+- Do I see synchrony between lakes?
+- Do epilimnia and hypolimnia have different rates, paces, or trajectories?
+- Does the rate change by season?
+
+```{r, setup, echo = F, message = F, warning = F}
+library(OTUtable)
+library(reshape2)
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(raster)
+library(ggrepel)
+library(ape)
+library(phyloseq)
+library(vegan)
+
+data(metadata)
+
+seq_table <- read.csv("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_seqstable.csv", row.names = 1)
+seq_taxonomy <- read.csv(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/seqs.98.cleantaxonomy.csv", row.names = 1, header = T, colClasses = c("character"))
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  plots <- c(list(...), plotlist)
+  numPlots = length(plots)
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  if (numPlots==1) {
+    print(plots[[1]])   
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+```
+
+```{r, phylo, echo = F, message = F, warning = F}
+# Since I'll be using UniFrac as my distance metric, I'll use the phyloseq package for parsing as well
+# This chunk will take awhile because of the phylogenetic distance calculations
+
+seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/qc.bogs.clean.min25.fasta", format = "fasta")
+d <- dist.dna(seqs, model = "raw")
+bogtree <- nj(d)
+
+# Set up phyloseq object to run UniFrac on
+seq_table <- remove_reps(seq_table)
+OTU <- otu_table(as.matrix(seq_table), taxa_are_rows = T)
+TAX <- tax_table(as.matrix(seq_taxonomy))
+sampledata <- sample_data(data.frame(Bog = substr(colnames(seq_table), start = 1, stop = 2), Layer = substr(colnames(seq_table), start = 3, stop = 3), Year = substr(colnames(seq_table), start = 9, stop = 10), row.names = colnames(seq_table), stringsAsfactors = F)) 
+alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
+
+```
+
+For each lake, layer, and year, report:
+- a plot of the rate of change for every consecutive pair of samples
+- the average rate of change for that data subset
+- the pace, as the time between the 1st sample and every other sample and the amount of change between those samples
+- the trajectory, as change on axis 1 and 2 in PCoA
+
+I'll use the ice-off date as time 0 for each year
+Crystal Bog Ice-Off dates:
+2005-4-12
+2007-4-12
+2008-4-25
+2009-4-20
+
+Trout Bog Ice-off dates:
+2005-4-15
+2007-4-18
+2008-4-30
+2009-4-22
+
+For all other lakes, I'll use the average of the CB and TB dates:
+2005-4-13
+2007-4-16
+2008-4-27
+2009-4-21
+
+
+```{r, reports, echo = F, message = F, warning = F}
+lakes <- c("FB", "CB", "WS", "NS", "TB", "SS", "MA", "HK")
+layers <- c("E", "H")
+years <- c("05", "07", "08", "09")
+
+for(a in 1:length(lakes)){
+  for(b in 1:length(layers)){
+    for(c in 1:length(years)){
+      # Only perform the analysis of the lake-layer-year subset actually exists
+      if(length(which(sampledata$Bog == lakes[a] & sampledata$Layer == layers[b] & sampledata$Year == years[c])) > 0){
+              subset <- prune_samples(sampledata$Bog == lakes[a] & sampledata$Layer == layers[b] & sampledata$Year == years[c], alldata)
+              # Calculate UniFrac and convert to long form
+              x <- UniFrac(subset, weighted = T, normalize = T)
+              x1 <- melt(as.matrix(x))
+              # Make a list of unique dates so that I can select only distances between consecutive samples from the long UniFrac table
+#               samples <- unique(x$Var1)
+#               samples <- samples[order(extract_date(samples))]
+#               x2 <- x1[1, ]
+#               for(i in 1:(length(samples)-1)){
+#                 new.x <- x[which(x$Var1 == samples[i] & x$Var2 == samples[i+1]), ]
+#                 x2 <- rbind(x2, new.x)
+#               }
+#               x2 <- x2[2:length(samples), ]
+#               # Use the ice-off date as time zero
+#               if(lakes[a] == "CB"){
+#                 if(years[c] == "05"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE12APR05")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE12APR05")))
+#                 }else if(years[c] == "07"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE12APR07")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE12APR07")))
+#                 }else if(years[c] == "08"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE25APR08")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE25APR08")))
+#                 }else if(years[c] == "09"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE20APR09")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE20APR09")))
+#                 }
+#               }else if(lakes[a] == "TB"){
+#                 if(years[c] == "05"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE15APR05")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE15APR05")))
+#                 }else if(years[c] == "07"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE18APR07")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE18APR07")))
+#                 }else if(years[c] == "08"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE30APR08")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE30APR08")))
+#                 }else if(years[c] == "09"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("TBE22APR09")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("TBE22APR09")))
+#                 }
+#               }else{
+#                 if(years[c] == "05"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE13APR05")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE13APR05")))
+#                 }else if(years[c] == "07"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE16APR07")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE16APR07")))
+#                 }else if(years[c] == "08"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE27APR08")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE27APR08")))
+#                 }else if(years[c] == "09"){
+#                   x2$Adj.Date1 <- as.numeric(extract_date(x2$Var1) - extract_date(c("CBE21APR09")))
+#                   x2$Adj.Date2 <- as.numeric(extract_date(x2$Var2) - extract_date(c("CBE21APR09")))
+#                 }
+#               }
+#               # Add a column of time difference to my new table
+#               x2$Time <- x2$Adj.Date2 - x2$Adj.Date1
+#               
+#               # Rate of change analysis
+#               x2$Rate <- x2$value/x2$Time
+#               mean.rate <- mean(x2$Rate)
+#               print(ggplot(data = x2, aes(x = Adj.Date1, y = Rate)) + geom_bar(stat = "identity") + theme_bw() + labs(title = paste(lakes[a], layers[b], years[c], ", mean rate = ", round(mean.rate, digits = 3), sep = ""), x = "Days after Ice-Off"))
+#       }
+#       
+#       # Calculate pace - the time it takes to change a certain amount
+#       # Paced on the change between each pair of samples, how long would it take for complete turnover? (UniFrac == 1)
+#       x3 <- x1
+#       x3$Time <- abs(as.numeric(extract_date(x$Var1) - extract_date(x$Var2)))
+#       x3 <- x3[which(x3$Time != 0), ]
+#       x3$Pace <- 1/x3$value * x3$Time
+#       mean.pace <- mean(x3$Pace)
+#       print(ggplot(data = x3, aes(x = Pace)) + geom_histogram(binwidth = 25)+ labs(title = paste(lakes[a], layers[b], years[c], ", mean pace = ", round(mean.pace, digits = 3), sep = ""), x = "Calculated days to complete turnover"))
+
+        # Direction of trajectory by PCoA
+        pcoa <- betadisper(x, substr(labels(x), start = 1, stop = 3))
+        scores <- scores(pcoa)
+        # order the points by date
+        points <- as.data.frame(scores$sites[order(extract_date(rownames(scores$sites))), ])
+        axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+        axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+        print(ggplot(data = points, aes(x = PCoA1, y = PCoA2)) + geom_point(size = 3) + geom_line() + theme_bw() + labs(title = paste(lakes[a], layers[b], years[c], sep = ""), x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")))
+        points$Sample <- rownames(points)
+        points <- melt(points, id.var = "Sample")
+        # Use the ice-off date as time zero
+              if(lakes[a] == "CB"){
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE12APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE12APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE25APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE20APR09")))
+                }
+              }else if(lakes[a] == "TB"){
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE15APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE18APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE30APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("TBE22APR09")))
+                }
+              }else{
+                if(years[c] == "05"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE13APR05")))
+                }else if(years[c] == "07"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE16APR07")))
+                }else if(years[c] == "08"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE27APR08")))
+                }else if(years[c] == "09"){
+                  points$Adj.Date <- as.numeric(extract_date(points$Sample) - extract_date(c("CBE21APR09")))
+                }
+              }
+              
+              print(ggplot(data = points, aes(x = Adj.Date, y = value, fill = variable)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + labs(title = paste(lakes[a], layers[b], years[c], sep = ""), x = "Days since Ice-Off", y = "Amount of Directional Change"))
+
+
+
+
+
+      }
+    }
+  }
+}
+
+```
+
+
+
+```{r, superimposition, echo = F, message = F, warning = F}
+for(a in 1:length(lakes)){
+    for(c in 1:length(years)){
+      # Only perform the analysis of the lake-layer-year subset actually exists
+      if(length(which(sampledata$Bog == lakes[a] & sampledata$Year == years[c] & sampledata$Layer != "U")) > 0){
+              epi <- prune_samples(sampledata$Bog == lakes[a] & sampledata$Layer == "E" & sampledata$Year == years[c], alldata)
+              hypo <- prune_samples(sampledata$Bog == lakes[a] & sampledata$Layer == "H" & sampledata$Year == years[c], alldata)
+
+              x.epi <- UniFrac(epi, weighted = T, normalize = T)
+              pcoa.epi <- betadisper(x.epi, substr(labels(x.epi), start = 1, stop = 3))
+              scores.epi <- scores(pcoa.epi)
+              scores.epi <- data.frame(scores.epi$site)
+              scores.epi$Layer <- rep("Epi", dim(scores.epi)[1])
+              scores.epi <- scores.epi[order(extract_date(rownames(scores.epi))), ]
+              
+              x.hypo <- UniFrac(hypo, weighted = T, normalize = T)
+              pcoa.hypo <- betadisper(x.hypo, substr(labels(x.hypo), start = 1, stop = 3))
+              scores.hypo <- scores(pcoa.hypo)
+              scores.hypo <- data.frame(scores.hypo$site)
+              scores.hypo$Layer <- rep("Hypo", dim(scores.hypo)[1])
+              scores.hypo <- scores.hypo[order(extract_date(rownames(scores.hypo))), ]
+            
+              
+              dataset <- rbind(scores.epi, scores.hypo)
+              dataset$Sample <- rownames(dataset)
+              
+              if(lakes[a] == "CB"){
+                if(years[c] == "05"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE12APR05")))
+                }else if(years[c] == "07"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE12APR07")))
+                }else if(years[c] == "08"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE25APR08")))
+                }else if(years[c] == "09"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE20APR09")))
+                }
+              }else if(lakes[a] == "TB"){
+                if(years[c] == "05"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("TBE15APR05")))
+                }else if(years[c] == "07"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("TBE18APR07")))
+                }else if(years[c] == "08"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("TBE30APR08")))
+                }else if(years[c] == "09"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("TBE22APR09")))
+                }
+              }else{
+                if(years[c] == "05"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE13APR05")))
+                }else if(years[c] == "07"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE16APR07")))
+                }else if(years[c] == "08"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE27APR08")))
+                }else if(years[c] == "09"){
+                  dataset$Adj.Date <- as.numeric(extract_date(dataset$Sample) - extract_date(c("CBE21APR09")))
+                }
+              }
+              dataset <- dataset[order(extract_date(dataset$Sample)), ]
+              dataset$Sample <- factor(dataset$Sample, levels = dataset$Sample)
+              
+              p1 <- ggplot(data = dataset[which(dataset$Layer == "Epi"), ], aes(x = PCoA1, y = PCoA2, color = Adj.Date)) + geom_point(size = 3) + theme_bw() + scale_color_gradient2(low = "midnightblue", mid = "green", high = "goldenrod", midpoint = median(dataset$Adj.Date))+ labs(title = paste(lakes[a], years[c], " Epi", sep = ""))  + geom_path()
+              p2 <- ggplot(data = dataset[which(dataset$Layer == "Hypo"), ], aes(x = PCoA1, y = PCoA2, color = Adj.Date)) + geom_point(size = 3) + theme_bw() + scale_color_gradient2(low = "midnightblue", mid = "green", high = "goldenrod", midpoint = median(dataset$Adj.Date))+ labs(title = paste(lakes[a], years[c], " Hypo", sep = ""))  + geom_path()
+              print(multiplot(p1, p2, cols=2))
+              }
+      }
+    }
+
+
+```
+
+Conclusions
+
+For the rate of change, no support for different inherent rates by lake or by layer. Some support for synchrony in the rate of change between layers in the same lake and year. Mixing events show huge amounts of change, but otherwise no detectable trends over time.
+
+There's huge variation in pace, and no clear trend by lake, layer, or year. Either I'm not interpreting the definition of this metric correctly, or this is not a meaningful statistic.
+
+I can't do Procrustean superimposition because my dates don't match up (not even between epi and hypo of the same lake... grrr). Instead, I'm going to plot the PCoAs on top of each other and do this by eye.
+
+
+
+
