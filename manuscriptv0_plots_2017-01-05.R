@@ -15,7 +15,7 @@ library(cowplot)
 data(metadata)
 data(otu_table)
 data(taxonomy)
-seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
+seqs <- read.dna("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
 d <- dist.dna(seqs, model = "raw")
 bogtree <- nj(d)
 
@@ -121,6 +121,61 @@ axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
 ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Dark2") + scale_fill_brewer(palette = "Dark2")
 
+#Run the UniFrac by lake by layer, but don't plot - just get the r^2 from ANOSIM
+CB <- prune_samples(sampledata$Bog == "CB" & sampledata$Layer != "U", alldata)
+x <- UniFrac(CB, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(CB), "data.frame")) #0.03235 p = 0.003
+
+FB <- prune_samples(sampledata$Bog == "FB", alldata)
+x <- UniFrac(FB, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(FB), "data.frame")) #0.01592 p = 0.107
+
+WS <- prune_samples(sampledata$Bog == "WS", alldata)
+x <- UniFrac(WS, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(WS), "data.frame")) #0.10988 p < 0.001
+
+NS <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer != "U", alldata)
+x <- UniFrac(NS, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(NS), "data.frame")) #0.1782, p < 0.001
+
+TB <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer != "U", alldata)
+x <- UniFrac(TB, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(TB), "data.frame")) #0.14581 p < 0.001
+
+SS <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer != "U", alldata)
+x <- UniFrac(SS, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(SS), "data.frame")) #0.16489 p < 0.001
+
+HK <- prune_samples(sampledata$Bog == "HK" & sampledata$Layer != "U", alldata)
+x <- UniFrac(HK, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(HK), "data.frame")) #0.42182 p < 0.001
+
+MA <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer != "U", alldata)
+x <- UniFrac(MA, weighted = T, normalize = T)
+pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+layer <- substr(labels(x), start = 3, stop = 3)
+adonis(x ~ layer, as(sample_data(MA), "data.frame")) #0.5 p < 0.001
+
+lakekey <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
+lakekey <- factor(lakekey, levels = lakekey)
+diffs <- c(0.03235, 0.01592, 0.10988, 0.1782, 0.14581, 0.16489, 0.42182, 0.5)
+layer_barplot <- data.frame(lakekey, diffs)
+ggplot(data = layer_barplot, aes(x = lakekey, y = diffs)) + geom_bar(stat = "identity")
+
 # Separate epilimnion and hypolimnion samples
 epi <- prune_samples(sampledata$Layer == "E", alldata)
 hypo <- prune_samples(sampledata$Layer == "H", alldata)
@@ -205,3 +260,118 @@ fig2a <- fig2a + theme(legend.position = "none")
 fig2 <- plot_grid(fig2a, fig2b, nrow = 2, labels = c("A", "B"), align = "w")
 fig2 <- plot_grid(fig2, legend, nrow = 1, rel_widths = c(1, 0.1))
 save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig2.pdf", fig2, base_aspect_ratio = 1.2, base_height = 6)
+
+##########
+#Figure 3
+# 3 PCoAs by lake by year - TB, SS, and MA
+# Then boxplot of dispersion by lake and layer
+
+years <- c("05", "07", "08", "09")
+
+colors <- c("#a6cee3", "#1f78b4", "#33a02c", "#b2df8a")
+# Make UniFrac PCoA of TBH
+TBH <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer == "H", alldata)
+TBH_year <- factor(substr(sample_names(TBH), start = 9, stop = 10), levels = years)
+
+x <- UniFrac(TBH, weighted = T, normalize = T)
+pcoa <- betadisper(x, TBH_year)
+scores <- scores(pcoa)
+# Locate centroids
+TBHcentroids <- scores$centroids
+TBHcentroids <- as.data.frame(TBHcentroids)
+TBHcentroids$Year <- factor(years, level = years)
+
+plot.pcoa <- data.frame(scores$sites, TBH_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+
+fig3a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + geom_point(data=TBHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Trout Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+fig3_legend <- get_legend(fig3a)
+fig3a <- fig3a + theme(legend.position = "none")
+
+# Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
+adonis(x ~ Year, as(sample_data(TBH), "data.frame"))
+# r2 0.35531
+# Pr 0.001
+
+# PCoA of South Sparkling
+SSH <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "H", alldata)
+SSH_year <- factor(substr(sample_names(SSH), start = 9, stop = 10), levels = years)
+
+x <- UniFrac(SSH, weighted = T, normalize = T)
+pcoa <- betadisper(x, SSH_year)
+scores <- scores(pcoa)
+# Locate centroids
+SSHcentroids <- scores$centroids
+SSHcentroids <- as.data.frame(SSHcentroids)
+SSHcentroids$Year <- factor(years[2:4], level = years)
+
+plot.pcoa <- data.frame(scores$sites, SSH_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+
+fig3b <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + geom_point(data=SSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "South Sparkling Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors[2:4])  + theme(legend.position = "none")
+
+# Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
+adonis(x ~ Year, as(sample_data(SSH), "data.frame"))
+# r2 0.20469
+# Pr 0.001
+
+# PCoA of Mary Lake
+MAH <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer == "H", alldata)
+MAH_year <- factor(substr(sample_names(MAH), start = 9, stop = 10), levels = years)
+
+x <- UniFrac(MAH, weighted = T, normalize = T)
+pcoa <- betadisper(x, MAH_year)
+scores <- scores(pcoa)
+# Locate centroids
+MAHcentroids <- scores$centroids
+MAHcentroids <- as.data.frame(MAHcentroids)
+MAHcentroids$Year <- factor(years, level = years)
+
+plot.pcoa <- data.frame(scores$sites, MAH_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+
+fig3c <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=MAHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+# Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
+adonis(x ~ Year, as(sample_data(MAH), "data.frame"))
+# r2 0.09169
+# Pr 0.002
+
+#Panel 2
+
+# calculate unifrac, then run the betadisper() function on different groupings of the data and boxplot their dispersion
+x <- UniFrac(alldata, weighted = T, normalize = T)
+#layer_group <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+lakelayer_group <- betadisper(x, substr(labels(x), start = 1, stop = 3))
+plot.boxes <- data.frame(lakelayer_group$group, lakelayer_group$distances)
+colnames(plot.boxes) <- c("Group", "Distance")
+plot.boxes <- plot.boxes[which(plot.boxes$Group != "CBU" & plot.boxes$Group != "NSU"), ]
+plot.boxes$Group <- factor(plot.boxes$Group, levels = c("MAE", "MAH",  "HKE", "HKH", "SSE", "SSH", "TBE", "TBH",  "NSE", "NSH",  "WSE", "WSH", "FBE", "FBH", "CBE", "CBH"))
+
+lakelayerkey <- c("MAE", "MAH", "HKE", "HKH", "SSE", "SSH", "TBE", "TBH",  "NSE", "NSH",  "WSE", "WSH", "FBE", "FBH", "CBE", "CBH")
+x1 <- c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5)
+pal <- rev(c("#a6cee3", "#a6cee3", "#1f78b4", "#1f78b4", "#b2df8a", "#b2df8a", "#33a02c", "#33a02c", "#fb9a99", "#fb9a99", "#e31a1c", "#e31a1c", "#fdbf6f", "#fdbf6f", "#ff7f00", "#ff7f00"))
+background <- data.frame(lakelayerkey, x1, pal)
+
+fig3d <- ggplot() + geom_boxplot(data = plot.boxes, aes(x = Group, y = Distance)) + coord_flip() + annotate("rect", xmin = x1, xmax = x1 + 1, ymin = -Inf, ymax = Inf, fill = pal) + geom_boxplot(data = plot.boxes, aes(x = Group, y = Distance)) + labs(y = "Dispersion", x = NULL)
+
+fig3_panel1 <- plot_grid(fig3a, fig3b, fig3c, nrow = 3, labels = c("A", "B", "C"))
+fig3_panel1 <- plot_grid(fig3_panel1, fig3_legend, nrow = 1, rel_widths = c(1, 0.1))
+fig3 <- plot_grid(fig3_panel1, fig3d, nrow = 1, rel_widths = c(1, 1), labels = c("", "D"))
+save_plot("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig3.pdf", fig3, base_aspect_ratio = 1.5, base_height = 6)
+
+
+# Do layers in the same lake have significantly different dispersion?
+pairwise.wilcox.test(lakelayer_group$distances, lakelayer_group$group, p.adjust.method = "bonferroni")
+# Not different: CB, FB, HK, NS, WS
+# Different: MA, SS, TB
+# Conclusion: dimictic/meromictic hypolimnia are less variable than epilimnia
