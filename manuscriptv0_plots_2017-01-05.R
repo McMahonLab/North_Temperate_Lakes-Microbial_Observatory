@@ -15,7 +15,7 @@ library(cowplot)
 data(metadata)
 data(otu_table)
 data(taxonomy)
-seqs <- read.dna("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
+seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
 d <- dist.dna(seqs, model = "raw")
 bogtree <- nj(d)
 
@@ -119,7 +119,7 @@ colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer", "Lake")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Dark2") + scale_fill_brewer(palette = "Dark2")
+ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
 
 #Run the UniFrac by lake by layer, but don't plot - just get the r^2 from ANOSIM
 CB <- prune_samples(sampledata$Bog == "CB" & sampledata$Layer != "U", alldata)
@@ -375,3 +375,160 @@ pairwise.wilcox.test(lakelayer_group$distances, lakelayer_group$group, p.adjust.
 # Not different: CB, FB, HK, NS, WS
 # Different: MA, SS, TB
 # Conclusion: dimictic/meromictic hypolimnia are less variable than epilimnia
+
+# split by year and repeat (but don't save plots)
+
+
+###############
+#Figure 4
+#Venn Diagrams
+
+#Part 1 - core analysis, in text
+
+# Is there a natural breaking point?
+FWcore <- rownames(otu_table)[which(rowSums(otu_table > 0) == 1387)]
+FWcore <- taxonomy[match(FWcore, rownames(taxonomy)), ]
+
+persistant_levels <- c()
+for(i in 1:100){
+  persistant_levels[i] <- length(which(rowSums(otu_table > 0) >= 1387*(i/100)))
+}
+barplot(persistant_levels)
+# No natural breaking point
+
+#Otu0097 is PnecC
+#What about most samples?
+FWcore95 <- rownames(otu_table)[which(rowSums(otu_table > 0) >= 1387*0.95)]
+FWcore95 <- taxonomy[match(FWcore95, rownames(taxonomy)), ]
+#76, 97, 813 == bacI-A1, PnecC, acI-B2
+FWcore90 <- rownames(otu_table)[which(rowSums(otu_table > 0) >= 1387*0.90)]
+FWcore90 <- taxonomy[match(FWcore90, rownames(taxonomy)), ]
+# add 678 == LD28
+
+epi <- bog_subset("..E", otu_table)
+Epicore90 <- rownames(epi)[which(rowSums(epi > 0) >= 671*0.90)]
+Epicore90 <- taxonomy[match(Epicore90, rownames(taxonomy)), ]
+# 4, 76, 97, 184, 472, 522, 678, 813 == betI, bacI-A1, PnecC, acI-B3, Lhab-A4, alfI-A1, LD28, acI-B2
+hypo <- bog_subset("..H", otu_table)
+hypocore90 <- rownames(hypo)[which(rowSums(hypo > 0) >= 690*0.90)]
+hypocore90 <- taxonomy[match(hypocore90, rownames(taxonomy)), ]
+# 42, 53, 76, 97, 189, 813 == Rhodo, unclassified Verruco, bacI-A1, PnecC, acI-B2, acI-B2
+
+#Repeat with tribes
+
+FWcore <- rownames(tribe_table)[which(rowSums(tribe_table > 0) == 1387)]
+FWcore <- taxonomy[match(FWcore, rownames(taxonomy)), ]
+FWcore95 <- rownames(tribe_table)[which(rowSums(tribe_table > 0) >= 1387*0.95)]
+FWcore95 <- taxonomy[match(FWcore95, rownames(taxonomy)), ]
+FWcore90 <- rownames(tribe_table)[which(rowSums(tribe_table > 0) >= 1387*0.90)]
+FWcore90 <- taxonomy[match(FWcore90, rownames(taxonomy)), ]
+
+epi <- bog_subset("..E", tribe_table)
+Epicore90 <- rownames(epi)[which(rowSums(epi > 0) >= 671*0.90)]
+Epicore90 <- taxonomy[match(Epicore90, rownames(taxonomy)), ]
+hypo <- bog_subset("..H", tribe_table)
+hypocore90 <- rownames(hypo)[which(rowSums(hypo > 0) >= 690*0.90)]
+hypocore90 <- taxonomy[match(hypocore90, rownames(taxonomy)), ]
+
+# Part 2 - overlap by mixing regime
+
+FBE.vector <- rowSums(bog_subset("FBE", otu_table))
+CBE.vector <- rowSums(bog_subset("CBE", otu_table))
+WSE.vector <- rowSums(bog_subset("WSE", otu_table))
+NSE.vector <- rowSums(bog_subset("NSE", otu_table))
+TBE.vector <- rowSums(bog_subset("TBE", otu_table))
+SSE.vector <- rowSums(bog_subset("SSE", otu_table))
+HKE.vector <- rowSums(bog_subset("HKE", otu_table))
+MAE.vector <- rowSums(bog_subset("MAE", otu_table))
+
+FBH.vector <- rowSums(bog_subset("FBH", otu_table))
+CBH.vector <- rowSums(bog_subset("CBH", otu_table))
+WSH.vector <- rowSums(bog_subset("WSH", otu_table))
+NSH.vector <- rowSums(bog_subset("NSH", otu_table))
+TBH.vector <- rowSums(bog_subset("TBH", otu_table))
+SSH.vector <- rowSums(bog_subset("SSH", otu_table))
+HKH.vector <- rowSums(bog_subset("HKH", otu_table))
+MAH.vector <- rowSums(bog_subset("MAH", otu_table))
+
+
+poly.epi <- FBE.vector > 0 & CBE.vector > 0 & WSE.vector > 0
+poly.hypo <- FBH.vector > 0 & CBH.vector > 0 & WSH.vector > 0
+di.epi <- NSE.vector > 0 & TBE.vector > 0 & SSE.vector > 0
+di.hypo <- NSH.vector > 0 & TBH.vector > 0 & SSH.vector > 0
+mero.epi <- HKE.vector > 0 & MAE.vector > 0
+mero.hypo <- HKH.vector > 0 & MAH.vector > 0
+
+grid.newpage()
+v1 <- draw.triple.venn(area1 = length(which(poly.epi == T)), area2 = length(which(di.epi == T)), area3 = length(which(mero.epi == T)), n12 = length(which(poly.epi == T & di.epi == T)), n13 = length(which(poly.epi == T & mero.epi == T)), n23 = length(which(mero.epi == T & di.epi == T)), n123 = length(which(poly.epi == T & di.epi == T & mero.epi == T)), category = c("Polymictic", "Dimictic", "Meromictic"), main = c("Epilimnion"), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4, cex = 1, cat.cex = 0.45)
+
+grid.newpage()
+v2 <- draw.triple.venn(area1 = length(which(poly.hypo == T)), area2 = length(which(di.hypo == T)), area3 = length(which(mero.hypo == T)), n12 = length(which(poly.hypo == T & di.hypo == T)), n13 = length(which(poly.hypo == T & mero.hypo == T)), n23 = length(which(mero.hypo == T & di.hypo == T)), n123 = length(which(poly.hypo == T & di.hypo == T & mero.hypo == T)), category = c("Polymictic", "Dimictic", "Meromictic"), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4, cex = 1, cat.cex = 0.45)
+
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig4a.pdf", width = 2, height = 2)
+grid.draw(v1)
+dev.off()
+
+pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig4b.pdf", width = 2, height = 2)
+grid.draw(v2)
+dev.off()
+
+##########
+#Figure 5 - the richness over time trace
+
+# Trout Bog, 2007
+
+# Identify mixing dates (less than 1 degree of temperature difference between 0.5 meters and maximum sampling depth)
+metalakes <- substr(metadata$Sample_Name, start = 1, stop = 3)
+metayears <- substr(metadata$Sample_Name, start = 9, stop = 10)
+metaTBH <- metadata[which(metalakes == "TBH" & metayears == "07"), c(1,2,4)]
+metaTBH <- dcast(metaTBH, Sample_Name ~ Depth, fun.aggregate = mean)
+TBHmixes <- extract_date(metaTBH$Sample_Name[which(metaTBH$"0.5" - metaTBH$"7" < 1)])
+
+# Make dataset of Trout Bog hypolimion samples from 2007
+hypo <- bog_subset(paste("TBH", sep = ""), otu_table)
+hypo <- year_subset("07", hypo)
+# Calculate observed richness
+hypo.rich <- apply(hypo, 2, obs_richness)
+# Extract sampling date from sample names
+hypo.date <- extract_date(colnames(hypo))
+# Remove January samples - large gap distracts in plot, and winter samples are not considered in this study
+hypo.rich <- hypo.rich[c(1:32, 35:80)]
+hypo.date <- hypo.date[c(1:32, 35:80)]
+
+# Make dataframe for plotting
+TB_richness <- data.frame(hypo.date, hypo.rich)
+colnames(TB_richness) <- c("date", "richness")
+
+fig5a <- ggplot() + geom_line(data = TB_richness, aes(x = date, y = richness), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness") + geom_point(data = TB_richness[match(TBHmixes, TB_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
+
+
+# Repeat with North Sparkling, 2008
+metaNSH <- metadata[which(metalakes == "NSH" & metayears == "08"), c(1,2,4)]
+metaNSH <- dcast(metaNSH, Sample_Name ~ Depth, fun.aggregate = mean)
+NSHmixes <- extract_date(metaNSH$Sample_Name[which(metaNSH$"0.5" - metaNSH$"4" < 1)])
+
+hypo <- bog_subset(paste("NSH", sep = ""), otu_table)
+hypo <- year_subset("08", hypo)
+hypo.rich <- apply(hypo, 2, obs_richness)
+hypo.date <- extract_date(colnames(hypo))
+
+NS_richness <- data.frame(hypo.date, hypo.rich)
+colnames(NS_richness) <- c("date", "richness")
+
+fig5b <- ggplot() + geom_line(data = NS_richness, aes(x = date, y = richness), size = 1.2) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness")  + geom_point(data = NS_richness[match(NSHmixes, NS_richness$date), ], aes(x = date, y = richness), size = 2, colour = "red")
+fig5 <- plot_grid(fig5a, fig5b, align = "h", nrow = 2, labels = c("A", "B"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig5.pdf", fig5, base_aspect_ratio = 1.5, base_height = 5)
+
+# What were the most abundant taxa during both mixes?
+
+TBH <- bog_subset("TBH", otu_table)
+TBHdates <- extract_date(colnames(TBH))
+TBH_mixed_samples <- TBH[, match(TBHmixes, TBHdates)]
+topTBH <- sort(rowSums(TBH_mixed_samples), decreasing = T)[1:10]
+topTBH_tax <- taxonomy[match(names(topTBH), rownames(taxonomy)), ]
+
+NSH <- bog_subset("NSH", otu_table)
+NSHdates <- extract_date(colnames(NSH))
+NSH_mixed_samples <- NSH[, match(NSHmixes, NSHdates)[c(1:4, 6)]]
+topNSH <- sort(rowSums(NSH_mixed_samples), decreasing = T)[1:10]
+topNSH_tax <- taxonomy[match(names(topNSH), rownames(taxonomy)), ]
