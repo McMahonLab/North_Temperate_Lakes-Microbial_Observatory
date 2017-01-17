@@ -11,6 +11,7 @@ library(vegan)
 library(VennDiagram)
 library(exactRankTests)
 library(cowplot)
+library(indicspecies)
 
 data(metadata)
 data(otu_table)
@@ -18,6 +19,18 @@ data(taxonomy)
 seqs <- read.dna("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/16S_data/bog_repseqs_07Jul15.fasta", format = "fasta")
 d <- dist.dna(seqs, model = "raw")
 bogtree <- nj(d)
+
+# #find average ph by lake in 2007 - for table 1. Input file is 2007 metadata file from my D drive, organized bog data/
+# datasheet <- read.csv(file.choose(), header = T)
+# phdata <- datasheet[which(is.na(datasheet$pH) == F), ]
+# phdata$LakeLayer <- substr(phdata$Sample_Name, start = 1, stop = 3)
+# red_phdata <- phdata[, c(8, 11)]
+# attach(red_phdata)
+# meandata <- aggregate(red_phdata, by = list(pH, LakeLayer), FUN = mean)
+# 
+# library(plyr)
+# ddply(red_phdata, .(LakeLayer), summarize, mean_value = mean(pH))
+
 
 ##############
 # Figure 1
@@ -44,9 +57,7 @@ epi.data$epi.lakes <- ordered(epi.data$epi.lakes, levels = lakes)
 hypo.data$hypo.lakes <- ordered(hypo.data$hypo.lakes, levels = lakes)
 
 # plot 1A
-
-#pdf(file = paste(path2repo, "epi_boxplot.pdf", sep = ""), width = 3.3125, height = 3)
-fig1a <- ggplot(data = epi.data, aes(y = epi.obs, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank()) + labs(title = "Epilimnion")
+fig1a <- ggplot(data = epi.data, aes(y = epi.obs, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank()) + labs(title = "Epilimnion") + theme(legend.position = "none")
 fig1a <- fig1a + annotate("rect", xmin = 1.5, xmax = 2.5, ymin = 550, ymax = 537.5, fill = "#a6cee3", alpha = 0.5) #CB1
 fig1a <- fig1a + annotate("rect", xmin = 4.5, xmax = 8.5, ymin = 550, ymax = 537.5, fill = "#a6cee3", alpha = 0.5) #CB2
 fig1a <- fig1a + annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 525, ymax = 537.5, fill = "#1f78b4", alpha = 0.5) #FB1
@@ -63,8 +74,6 @@ fig1a <- fig1a + annotate("rect", xmin = 0.5, xmax = 5.5, ymin = 462.5, ymax = 4
 fig1a <- fig1a + annotate("rect", xmin = 7.5, xmax = 8.5, ymin = 462.5, ymax = 475, fill = "#fdbf6f", alpha = 0.5) #HK2
 fig1a <- fig1a + annotate("rect", xmin = 0.5, xmax = 7.5, ymin = 450, ymax = 462.5, fill = "#ff7f00", alpha = 0.5) #MA
 
-legend <- get_legend(fig1a)
-fig1a <- fig1a + theme(legend.position = "none")
 
 # plot 1B
 fig1b <- ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.position = "none") + labs(title = "Hypolimnion")
@@ -84,7 +93,6 @@ fig1b <- fig1b + annotate("rect", xmin = 7.5, xmax = 8.5, ymin = 562.5, ymax = 5
 fig1b <- fig1b + annotate("rect", xmin = 0.5, xmax = 7.5, ymin = 550, ymax = 562.5, fill = "#ff7f00", alpha = 0.5) #MA
 
 fig1 <- plot_grid(fig1a, fig1b, nrow = 2, labels = c("A", "B"), align = "w")
-fig1 <- plot_grid(fig1, legend, nrow = 1, rel_widths = c(3, 0.3))
 save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig1.pdf", fig1, base_aspect_ratio = 1.3, base_height = 4.75)
 
 
@@ -96,85 +104,86 @@ pairwise.wilcox.test(hypo.data$hypo.obs, hypo.data$hypo.lakes, p.adjust.method =
 ##########
 #Figure 2
 
-# Set up phyloseq object to run UniFrac on
-OTU <- otu_table(as.matrix(otu_table), taxa_are_rows = T)
-TAX <- tax_table(as.matrix(taxonomy))
-sampledata <- sample_data(data.frame(Bog = substr(colnames(otu_table), start = 1, stop = 2), Layer = substr(colnames(otu_table), start = 3, stop = 3), Year = substr(colnames(otu_table), start = 9, stop = 10), row.names = colnames(otu_table), stringsAsfactors = F)) 
-alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
+# A couple additional analyses first
+# # Set up phyloseq object to run UniFrac on
+# OTU <- otu_table(as.matrix(otu_table), taxa_are_rows = T)
+# TAX <- tax_table(as.matrix(taxonomy))
+# sampledata <- sample_data(data.frame(Bog = substr(colnames(otu_table), start = 1, stop = 2), Layer = substr(colnames(otu_table), start = 3, stop = 3), Year = substr(colnames(otu_table), start = 9, stop = 10), row.names = colnames(otu_table), stringsAsfactors = F)) 
+# alldata <- phyloseq(OTU, TAX, sampledata, bogtree)
+# 
+# #Run one plot with all the data
+# x <- UniFrac(alldata, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 1, stop = 3))
+# scores <- scores(pcoa)
+# layer <- factor(substr(rownames(scores$sites), start = 3, stop = 3), levels = c("E", "H"))
+# lakes <- factor(substr(rownames(scores$sites), start = 1, stop = 2), levels = c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA"))
+# regime <- c()
+# regime[which(lakes == "CB" | lakes == "FB" | lakes == "WS")] <- "polymictic"
+# regime[which(lakes == "TB" | lakes == "NS" | lakes == "SS")] <- "dimictic"
+# regime[which(lakes == "HK" | lakes == "MA")] <- "meromictic"
+# 
+# plot.pcoa <- data.frame(scores$sites, layer, lakes)
+# colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer", "Lake")
+# 
+# axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+# axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+# 
+# ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
 
-#Run one plot with all the data
-x <- UniFrac(alldata, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 1, stop = 3))
-scores <- scores(pcoa)
-layer <- factor(substr(rownames(scores$sites), start = 3, stop = 3), levels = c("E", "H"))
-lakes <- factor(substr(rownames(scores$sites), start = 1, stop = 2), levels = c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA"))
-regime <- c()
-regime[which(lakes == "CB" | lakes == "FB" | lakes == "WS")] <- "polymictic"
-regime[which(lakes == "TB" | lakes == "NS" | lakes == "SS")] <- "dimictic"
-regime[which(lakes == "HK" | lakes == "MA")] <- "meromictic"
-
-plot.pcoa <- data.frame(scores$sites, layer, lakes)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer", "Lake")
-
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-
-ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
-
-#Run the UniFrac by lake by layer, but don't plot - just get the r^2 from ANOSIM
-CB <- prune_samples(sampledata$Bog == "CB" & sampledata$Layer != "U", alldata)
-x <- UniFrac(CB, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(CB), "data.frame")) #0.03235 p = 0.003
-
-FB <- prune_samples(sampledata$Bog == "FB", alldata)
-x <- UniFrac(FB, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(FB), "data.frame")) #0.01592 p = 0.107
-
-WS <- prune_samples(sampledata$Bog == "WS", alldata)
-x <- UniFrac(WS, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(WS), "data.frame")) #0.10988 p < 0.001
-
-NS <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer != "U", alldata)
-x <- UniFrac(NS, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(NS), "data.frame")) #0.1782, p < 0.001
-
-TB <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer != "U", alldata)
-x <- UniFrac(TB, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(TB), "data.frame")) #0.14581 p < 0.001
-
-SS <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer != "U", alldata)
-x <- UniFrac(SS, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(SS), "data.frame")) #0.16489 p < 0.001
-
-HK <- prune_samples(sampledata$Bog == "HK" & sampledata$Layer != "U", alldata)
-x <- UniFrac(HK, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(HK), "data.frame")) #0.42182 p < 0.001
-
-MA <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer != "U", alldata)
-x <- UniFrac(MA, weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
-layer <- substr(labels(x), start = 3, stop = 3)
-adonis(x ~ layer, as(sample_data(MA), "data.frame")) #0.5 p < 0.001
-
-lakekey <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
-lakekey <- factor(lakekey, levels = lakekey)
-diffs <- c(0.03235, 0.01592, 0.10988, 0.1782, 0.14581, 0.16489, 0.42182, 0.5)
-layer_barplot <- data.frame(lakekey, diffs)
-ggplot(data = layer_barplot, aes(x = lakekey, y = diffs)) + geom_bar(stat = "identity")
+# #Run the UniFrac by lake by layer, but don't plot - just get the r^2 from ANOSIM
+# CB <- prune_samples(sampledata$Bog == "CB" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(CB, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(CB), "data.frame")) #0.03235 p = 0.003
+# 
+# FB <- prune_samples(sampledata$Bog == "FB", alldata)
+# x <- UniFrac(FB, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(FB), "data.frame")) #0.01592 p = 0.107
+# 
+# WS <- prune_samples(sampledata$Bog == "WS", alldata)
+# x <- UniFrac(WS, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(WS), "data.frame")) #0.10988 p < 0.001
+# 
+# NS <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(NS, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(NS), "data.frame")) #0.1782, p < 0.001
+# 
+# TB <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(TB, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(TB), "data.frame")) #0.14581 p < 0.001
+# 
+# SS <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(SS, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(SS), "data.frame")) #0.16489 p < 0.001
+# 
+# HK <- prune_samples(sampledata$Bog == "HK" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(HK, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(HK), "data.frame")) #0.42182 p < 0.001
+# 
+# MA <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer != "U", alldata)
+# x <- UniFrac(MA, weighted = T, normalize = T)
+# pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
+# layer <- substr(labels(x), start = 3, stop = 3)
+# adonis(x ~ layer, as(sample_data(MA), "data.frame")) #0.5 p < 0.001
+# 
+# lakekey <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA")
+# lakekey <- factor(lakekey, levels = lakekey)
+# diffs <- c(0.03235, 0.01592, 0.10988, 0.1782, 0.14581, 0.16489, 0.42182, 0.5)
+# layer_barplot <- data.frame(lakekey, diffs)
+# ggplot(data = layer_barplot, aes(x = lakekey, y = diffs)) + geom_bar(stat = "identity")
 
 # Separate epilimnion and hypolimnion samples
 epi <- prune_samples(sampledata$Layer == "E", alldata)
@@ -291,7 +300,7 @@ fig3a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_
 fig3_legend <- get_legend(fig3a)
 fig3a <- fig3a + theme(legend.position = "none")
 
-# Calculate PERMADISP - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
+# Calculate PERMANOVA - I'm interested in Pr (p-value) and R2 (amount of variance explained by year)
 adonis(x ~ Year, as(sample_data(TBH), "data.frame"))
 # r2 0.35531
 # Pr 0.001
@@ -367,16 +376,13 @@ fig3d <- ggplot() + geom_boxplot(data = plot.boxes, aes(x = Group, y = Distance)
 fig3_panel1 <- plot_grid(fig3a, fig3b, fig3c, nrow = 3, labels = c("A", "B", "C"))
 fig3_panel1 <- plot_grid(fig3_panel1, fig3_legend, nrow = 1, rel_widths = c(1, 0.1))
 fig3 <- plot_grid(fig3_panel1, fig3d, nrow = 1, rel_widths = c(1, 1), labels = c("", "D"))
-save_plot("C:/Users/amlin/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig3.pdf", fig3, base_aspect_ratio = 1.5, base_height = 6)
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig3.pdf", fig3, base_aspect_ratio = 1.5, base_height = 6)
 
 
 # Do layers in the same lake have significantly different dispersion?
-pairwise.wilcox.test(lakelayer_group$distances, lakelayer_group$group, p.adjust.method = "bonferroni")
-# Not different: CB, FB, HK, NS, WS
-# Different: MA, SS, TB
-# Conclusion: dimictic/meromictic hypolimnia are less variable than epilimnia
-
-# split by year and repeat (but don't save plots)
+permutest(lakelayer_group, pairwise = T)
+# Mulitple p-values by 8 (my number of comparisons) for a Bonferroni correction
+# Only TB and SS significant
 
 
 ###############
@@ -459,10 +465,10 @@ mero.epi <- HKE.vector > 0 & MAE.vector > 0
 mero.hypo <- HKH.vector > 0 & MAH.vector > 0
 
 grid.newpage()
-v1 <- draw.triple.venn(area1 = length(which(poly.epi == T)), area2 = length(which(di.epi == T)), area3 = length(which(mero.epi == T)), n12 = length(which(poly.epi == T & di.epi == T)), n13 = length(which(poly.epi == T & mero.epi == T)), n23 = length(which(mero.epi == T & di.epi == T)), n123 = length(which(poly.epi == T & di.epi == T & mero.epi == T)), category = c("Polymictic", "Dimictic", "Meromictic"), main = c("Epilimnion"), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4, cex = 1, cat.cex = 0.45)
+v1 <- draw.triple.venn(area1 = length(which(poly.epi == T)), area2 = length(which(di.epi == T)), area3 = length(which(mero.epi == T)), n12 = length(which(poly.epi == T & di.epi == T)), n13 = length(which(poly.epi == T & mero.epi == T)), n23 = length(which(mero.epi == T & di.epi == T)), n123 = length(which(poly.epi == T & di.epi == T & mero.epi == T)), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4)
 
 grid.newpage()
-v2 <- draw.triple.venn(area1 = length(which(poly.hypo == T)), area2 = length(which(di.hypo == T)), area3 = length(which(mero.hypo == T)), n12 = length(which(poly.hypo == T & di.hypo == T)), n13 = length(which(poly.hypo == T & mero.hypo == T)), n23 = length(which(mero.hypo == T & di.hypo == T)), n123 = length(which(poly.hypo == T & di.hypo == T & mero.hypo == T)), category = c("Polymictic", "Dimictic", "Meromictic"), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4, cex = 1, cat.cex = 0.45)
+v2 <- draw.triple.venn(area1 = length(which(poly.hypo == T)), area2 = length(which(di.hypo == T)), area3 = length(which(mero.hypo == T)), n12 = length(which(poly.hypo == T & di.hypo == T)), n13 = length(which(poly.hypo == T & mero.hypo == T)), n23 = length(which(mero.hypo == T & di.hypo == T)), n123 = length(which(poly.hypo == T & di.hypo == T & mero.hypo == T)), fill = c("#a6cee3", "#33a02c", "#fdbf6f"), alpha = 0.4)
 
 pdf(file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/Fig4a.pdf", width = 2, height = 2)
 grid.draw(v1)
@@ -532,3 +538,223 @@ NSHdates <- extract_date(colnames(NSH))
 NSH_mixed_samples <- NSH[, match(NSHmixes, NSHdates)[c(1:4, 6)]]
 topNSH <- sort(rowSums(NSH_mixed_samples), decreasing = T)[1:10]
 topNSH_tax <- taxonomy[match(names(topNSH), rownames(taxonomy)), ]
+
+
+##########
+#Supplemental figures
+##########
+#Figure S1
+#Phylum rank abundance
+
+archaea <- grep("Archaea", rownames(phylum_table))
+
+phylum_table <- reduce_names(phylum_table)
+
+
+# Sum total observations of each phylum in the full dataset and sort by abundance
+totals <- rowSums(phylum_table)
+totals <- sort(totals)
+
+# Remove the "p__" phylum designation from phylum names. This looks better for plotting.
+get.names <- strsplit(names(totals), "p__")
+phyla.names <- c()
+for(i in 1:length(get.names)){
+  phyla.names[i] <- get.names[[i]][2]
+}
+phyla.names[23] <- "unclassified Archaea"
+phyla.names[30] <- "unclassified"
+phyla.names[45] <- "unclassified Bacteria"
+
+# Set up a dataframe for plotting in ggplot2. Set the phyla.names to factors, with levels in order of abundance.
+phylum_totals <- data.frame(phyla.names, totals)
+phylum_totals$phyla.names <- factor(phylum_totals$phyla.names, levels = phylum_totals$phyla.names[order(phylum_totals$totals)])
+
+# Plot as a bar graph
+
+figs1 <- ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar(stat = "identity", fill = "grey", colour="black") + labs(x = NULL, y = "Log of Observed Reads") + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 12, colour = "black"), axis.title = element_text(size = 15, vjust=1.2), plot.title = element_text(size = 20), axis.text.y = element_text(colour="black")) + scale_y_log10(expand = c(0,0)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/FigS1.pdf", figs1, base_aspect_ratio = 2, base_height = 5)
+
+###########
+#Figure S2 - PCoAs of layers by years not shown in Fig 3
+
+NSE <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "E", alldata)
+NSE_year <- factor(substr(sample_names(NSE), start = 9, stop = 10), levels = years)
+x <- UniFrac(NSE, weighted = T, normalize = T)
+pcoa <- betadisper(x, NSE_year)
+scores <- scores(pcoa)
+# Locate centroids
+NSEcentroids <- scores$centroids
+NSEcentroids <- as.data.frame(NSEcentroids)
+NSEcentroids$Year <- factor(years[2:4], level = years[2:4])
+plot.pcoa <- data.frame(scores$sites, NSE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+figS2a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=NSEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+TBE <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer == "E", alldata)
+TBE_year <- factor(substr(sample_names(TBE), start = 9, stop = 10), levels = years)
+x <- UniFrac(TBE, weighted = T, normalize = T)
+pcoa <- betadisper(x, TBE_year)
+scores <- scores(pcoa)
+# Locate centroids
+TBEcentroids <- scores$centroids
+TBEcentroids <- as.data.frame(TBEcentroids)
+TBEcentroids$Year <- factor(years, level = years)
+plot.pcoa <- data.frame(scores$sites, TBE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+figS2b <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=TBEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Trout Bog Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+SSE <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "E", alldata)
+SSE_year <- factor(substr(sample_names(SSE), start = 9, stop = 10), levels = years)
+x <- UniFrac(SSE, weighted = T, normalize = T)
+pcoa <- betadisper(x, SSE_year)
+scores <- scores(pcoa)
+# Locate centroids
+SSEcentroids <- scores$centroids
+SSEcentroids <- as.data.frame(SSEcentroids)
+SSEcentroids$Year <- factor(years[2:4], level = years[2:4])
+plot.pcoa <- data.frame(scores$sites, SSE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+figS2c <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=SSEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "South Sparkling Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+MAE <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer == "E", alldata)
+MAE_year <- factor(substr(sample_names(MAE), start = 9, stop = 10), levels = years)
+x <- UniFrac(MAE, weighted = T, normalize = T)
+pcoa <- betadisper(x, MAE_year)
+scores <- scores(pcoa)
+# Locate centroids
+MAEcentroids <- scores$centroids
+MAEcentroids <- as.data.frame(MAEcentroids)
+MAEcentroids$Year <- factor(years, level = years)
+plot.pcoa <- data.frame(scores$sites, MAE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+figS2d <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=MAEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+NSH <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "H", alldata)
+NSH_year <- factor(substr(sample_names(NSH), start = 9, stop = 10), levels = years)
+NSH_year[17] = "08"
+x <- UniFrac(NSH, weighted = T, normalize = T)
+pcoa <- betadisper(x, NSH_year)
+scores <- scores(pcoa)
+# Locate centroids
+NSHcentroids <- scores$centroids
+NSHcentroids <- as.data.frame(NSHcentroids)
+NSHcentroids$Year <- factor(years[2:4], level = years[2:4])
+plot.pcoa <- data.frame(scores$sites, NSH_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+figS2e <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none") + geom_point(data=NSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Hypolimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+
+figS2 <- plot_grid(figS2a, figS2b, figS2c, figS2d, figS2e, align = "h", nrow = 3, labels = c("A", "B", "C", "D", "E"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/FigS2.pdf", figS2, base_aspect_ratio = 1, base_height = 7)
+
+##########
+#Figure S3 - rarefaction curves
+
+rarefaction <- function(table){
+  groups <- c()
+  totals <- c()
+  table <- table[, sample(ncol(table))]
+  for(i in 1:dim(table)[2]){
+    groups <- append(groups, rownames(table)[which(table[,i] > 0)], length(groups))
+    totals[i] <- length(unique(groups))
+  }
+  return(totals)
+}
+
+all.rf <- rarefaction(otu_table)
+all.rf <- data.frame(seq(1:length(all.rf)), all.rf)
+colnames(all.rf) <- c("Index", "OTUs")
+figS3a <- ggplot(all.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "All Data", x = "Number of Samples", y = "Number of Taxa")
+
+epi.rf <- rarefaction(bog_subset("..E", otu_table))
+epi.rf <- data.frame(seq(1:length(epi.rf)), epi.rf)
+colnames(epi.rf) <- c("Index", "OTUs")
+figS3b <- ggplot(epi.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "Epilimnion Data", x = "Number of Samples", y = "Number of Taxa")
+
+hypo.rf <- rarefaction(bog_subset("..H", otu_table))
+hypo.rf <- data.frame(seq(1:length(hypo.rf)), hypo.rf)
+colnames(hypo.rf) <- c("Index", "OTUs")
+figS3c <- ggplot(hypo.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "Hypo Data", x = "Number of Samples", y = "Number of Taxa")
+
+figS3 <- plot_grid(figS3a, figS3b, figS3c, align = "h", nrow = 1, labels = c("A", "B", "C"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/FigS3.pdf", figS3, base_aspect_ratio = 3, base_height = 3)
+
+# Bonus: nonrandom rarefaction
+rarefaction <- function(table){
+  groups <- c()
+  totals <- c()
+  #table <- table[, sample(ncol(table))]
+  for(i in 1:dim(table)[2]){
+    groups <- append(groups, rownames(table)[which(table[,i] > 0)], length(groups))
+    totals[i] <- length(unique(groups))
+  }
+  return(totals)
+}
+
+all.rf <- rarefaction(otu_table)
+all.rf <- data.frame(seq(1:length(all.rf)), all.rf)
+colnames(all.rf) <- c("Index", "OTUs")
+bonus <- ggplot(all.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "All Data", x = "Number of Samples", y = "Number of Taxa")
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/bonus.pdf", bonus, base_aspect_ratio = 1.2, base_height = 3)
+
+
+##########
+#Indicator analysis
+
+# Make tables at each phylogenetic level
+tribe_table <- combine_otus("Tribe", otu_table, taxonomy)
+clade_table <- combine_otus("Clade", otu_table, taxonomy)
+lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
+order_table <- combine_otus("Order", otu_table, taxonomy)
+class_table <- combine_otus("Class", otu_table, taxonomy)
+phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
+
+# Change OTU number designations to full taxonomic assignment
+named_otu_table <- otu_table
+fullnames <- c()
+for(i in 1:dim(taxonomy)[1]){
+  fullnames[i] <- paste(taxonomy[i, ], collapse = ";")
+}
+fullnames <- make.unique(fullnames)
+rownames(named_otu_table) <- fullnames
+
+# Combine tables at each level into one giant table
+full_table <- rbind(named_otu_table, tribe_table, clade_table, lineage_table, order_table, class_table, phylum_table)
+
+# Remove groups that are unclassified at any level
+classified <- grep("unclassified", rownames(full_table))
+classified1 <- grep("__$", rownames(full_table))
+input_table <- full_table[-c(classified, classified1),]
+
+# Keep only the top quantile in abundance
+threshold <- 500
+input_table <- input_table[which(rowSums(input_table) >= threshold),]
+
+# Format for input into mulitplatt() function
+input_table <- t(input_table)
+input_table <- as.data.frame(input_table)
+
+# Group by mixing regime
+lakeid <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK","MA")
+lakes <- substr(rownames(input_table), start = 1, stop = 2)
+
+mixing_groups <- c()
+mixing_groups[which(lakes == "CB" | lakes == "FB" | lakes == "WS")] <- 1
+mixing_groups[which(lakes == "TB"| lakes == "NS"| lakes == "SS")] <- 2
+mixing_groups[which(lakes == "MA" | lakes == "HK")] <- 3
+
+# Run indicator taxa analysis
+clades_by_mixing <- multipatt(x = input_table, cluster = mixing_groups, func = "r.g", control = how(nperm = 9999))
+
+# Save data
+write.csv(clades_by_mixing$sign, file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/indicators_by_mixing_2017-01-17.csv")
+
