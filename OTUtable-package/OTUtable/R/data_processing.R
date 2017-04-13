@@ -103,3 +103,23 @@ zscore <- function(table){
   colnames(ztable) <- colnames(table)
   return(ztable)
 }
+
+# keep taxa in the table based on an abundance threshold and the percentage of samples containing each OTU
+filter_taxa <- function(table, abundance, persistence){
+  pers <- c()
+  num_samples <- dim(table)[2]
+  
+  meets_abun_threshold <- c()
+  abun_threshold <- sum(table[, 1]) * (abundance/100)
+  
+  for(i in 1:dim(table)[1]){
+    # Calculate the percentage of samples present for each OTU
+    present <- length(which(table[i, ] > 0))
+    pers[i] <- present/num_samples * 100
+
+    meets_abun_threshold[i] <- length(which(table[i, ] >= abun_threshold)) > 0
+  }
+  
+  filtered_table <- table[which(pers >= persistence & meets_abun_threshold == T), ]
+  return(filtered_table)
+}

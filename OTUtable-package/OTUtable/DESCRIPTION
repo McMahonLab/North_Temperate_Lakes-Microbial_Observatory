@@ -1,11 +1,11 @@
 Package: OTUtable
 Type: Package
 Title: North Temperate Lakes - Microbial Observatory 16S Time Series Data and Functions
-Version: 1.0.0
-Date: 2016-03-16
+Version: 1.1.0
+Date: 2017-04-12
 Author: Alexandra Linz
 Maintainer: Alexandra Linz <amlinz16@gmail.com>
-Description: Analyses of OTU tables produced by 16S sequencing, as well as example data. It contains the data and scripts used in the paper Linz, et al. (2016) "Seasonal mixing as a barrier to the development of stable bacterial communities in bog lakes" (Manuscript in prep).
+Description: Analyses of OTU tables produced by 16S sequencing, as well as example data. It contains the data and scripts used in the paper Linz, et al. (2017) "Bacterial community composition and dynamics spanning five years in freshwater bog lakes" (Manuscript submitted, preprint available at <http://biorxiv.org/content/early/2017/04/12/127035>).
 License: GPL-3
 LazyLoad: yes
 Depends: R (>= 2.10)

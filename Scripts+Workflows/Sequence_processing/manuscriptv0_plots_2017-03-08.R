@@ -95,7 +95,7 @@ mean(hypo.data$hypo.obs[which(hypo.data$hypo.lakes == "MA")]) #477
 sd(hypo.data$hypo.obs[which(hypo.data$hypo.lakes == "MA")]) # 110
 
 # plot 1A
-fig1a <- ggplot(data = epi.data, aes(y = epi.obs, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank()) + labs(title = "Epilimnion") + theme(legend.position = "none") + ylim(0, 700)
+fig1a <- ggplot(data = epi.data, aes(y = epi.obs, x = epi.lakes, fill = epi.lakes)) + geom_boxplot() + labs(y = "Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank()) + labs(title = "Epilimnion") + ylim(0, 650) + theme(legend.position = "none") + background_grid(major = "xy", minor = "none")
 fig1a <- fig1a + annotate("rect", xmin = 1.5, xmax = 2.5, ymin = 650, ymax = 637.5, fill = "#a6cee3", alpha = 0.5) #CB1
 fig1a <- fig1a + annotate("rect", xmin = 4.5, xmax = 8.5, ymin = 650, ymax = 637.5, fill = "#a6cee3", alpha = 0.5) #CB2
 fig1a <- fig1a + annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 625, ymax = 637.5, fill = "#1f78b4", alpha = 0.5) #FB1
@@ -114,7 +114,7 @@ fig1a <- fig1a + annotate("rect", xmin = 0.5, xmax = 7.5, ymin = 550, ymax = 562
 
 
 # plot 1B
-fig1b <- ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + theme(legend.position = "none") + labs(title = "Hypolimnion") + ylim(0, 700)
+fig1b <- ggplot(data = hypo.data, aes(y = hypo.obs, x = hypo.lakes, fill = hypo.lakes)) + geom_boxplot() + labs(y="Observed Richness", x = NULL) + scale_fill_brewer(palette = "Paired") + labs(title = "Hypolimnion") + ylim(0, 650) + theme(legend.position = "none") + background_grid(major = "xy", minor = "none")
 fig1b <- fig1b + annotate("rect", xmin = 1.5, xmax = 8.5, ymin = 650, ymax = 637.5, fill = "#a6cee3", alpha = 0.5) #CB1
 fig1b <- fig1b + annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 625, ymax = 637.5, fill = "#1f78b4", alpha = 0.5) #FB1
 fig1b <- fig1b + annotate("rect", xmin = 2.5, xmax = 8.5, ymin = 625, ymax = 637.5, fill = "#1f78b4", alpha = 0.5) #FB2
