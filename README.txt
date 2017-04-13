@@ -13,7 +13,7 @@ https://github.com/McMahonLab
 Copyright(c) 2017, Katherine D. McMahon
 All rights reserved
 Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish your analysis, please cite:
-Linz A., Crary B., Shade A., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Trends in Bacterial Community Composition and Dynamics Span Multiple Years in Freshwater Bog Lakes." Manuscript in prep, March 10, 2017. 
+Linz A.M., Crary B.C., Shade A., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Bacterial community composition and dynamics spanning five years in freshwater bog lakes." Manuscript submitted and available on bioRxiv at http://biorxiv.org/content/early/2017/04/12/127035. 
 
 Last updated March 10, 2017
 
@@ -22,10 +22,11 @@ HOW TO USE THIS REPO
 If you are looking to access the NTL-MO dataset:
 	- Download the files in Data/16S_data
 	- Download raw sequencing data at http://metagenomics.anl.gov/?page=MetagenomeProject&project=127
-	- Install the R package "OTUtable" (included in OTUtable-package and on CRAN)
+	- Install the R package "OTUtable" (included in this repo and on CRAN)
 
 If you are looking to access the code used in our manuscript:
 	- Visit the Scripts+Workflows directory - Sequence_processing includes R scripts written as part of the mothur workflow, and Analysis_scripts contains analyses performed on the output of the mothur workflow
+	- The final code used for analyses and figures in the manuscript is located at /Scripts+Workflows/Analysis_scripts/manuscriptv0_plots_2017-03-08.R
 	- Functions used in these scripts are in the R package OTUtable. Source codes is included in OTUtable-package/OTUtable/R
 
 If you have any questions or concerns:
@@ -41,22 +42,27 @@ North_Temperate_Lakes-Microbial_Observatory
 ||- 16S_data
 |||- bog_repseqs_07Jul15.fasta					#Representative sequences for each OTU
 |||- bogs_OTUtable_07Jan15.csv					#Relative abundance table of OTUs
-|||- bogs_reclassified_29Dec15.csv				#Classifications of each OTU
+|||- bogs_reclassified_11Mar16.csv				#Classifications of each OTU
+|||- unclustered_sequences					#Same data as above, but unique sequences are not clustered into OTUs
 ||- deblurring_output
 |||- map.bogs.txt.gz						#Mapping file
 |||- bogs.min25.tar.gz						#Fasta file and biom table after deblurring
 ||- indicator_analysis		
-|||- dimictic indicators					#Source of data in Table 4
-|||- indicators_by_mixing					#Output of mixing_regime_indicator_table.R
-|||- meromictic indicators					#Soure of data in Table 5
-|||- polymictic indicators					#Source of data in Table 3
+|||- indicators_by_mixing_2017-01-17.csv			#Raw output of indicator analysis
+|||- indicators_by_mixing_2017-04-06.csv			#Labelled output of indicator analysis - included as supplemental dataset
+|||- indicators_by_times.csv					#Analysis of indicators by month rather than site. Not included in manuscript
 ||- metadata
 |||- 2005_to_2009_field_book_for_package.csv			#Environmental metadata from each sample collection site and date
 |||- NTL-MO_sample_metadata.xlsx				#MIMARKS-like file with information about the collection and sequencing of each sample
 ||- mothur_output
+|||- otus.98.70.70.taxonomy					#16STaxAss taxonomy output file
 |||- qc.bogs.clean.min25.phylip.an.0.02.cons.taxonomy		#Taxonomy output file
 |||- qc.bogs.clean.min25.phylip.an.0.02.subsample.shared	#Rarefied OTU table
 ||- unclustered_sequences					#Versions of the OTU table and classifications using the unclustered sequences from deblurring output
+|- Environmental_data						#Data on environmental parameters collected by other entities
+||- LTER_data							#Buoy data, chem data, and chlorophyll measurements for available study sites
+||- Minocqua_airport_data					#Solar radiation data collected by local airport
+||- NTLMO_phytodata						#Phytoplankton counts collected by previous grad students
 |- OTUtable-package
 |||- data							#Datasets for loading in package OTUtable
 |||- man
@@ -65,8 +71,11 @@ North_Temperate_Lakes-Microbial_Observatory
 |||- NAMESPACE							#Package namespace
 |||- OTUtable.Rproj						#Rstudio package building project
 ||- OTUtable
-||- OTUtable_1.0.tar.gz						#Downloadable package for Macs/Linux
-||- OTUtable_1.0.zip						#Downloadable package for Windows
+||- OTUtable_1.0.0.tar.gz					#Downloadable package for Macs/Linux
+||- OTUtable_1.0.0.zip						#Downloadable package for Windows
+||- OTUtable_1.1.0.tar.gz					#Updated release
+||- OTUtable_1.1.0.zip						#Updated release
+|- Plots							#Intermediate and final files for figures in manuscript + supplemental	
 |- Scripts+Workflows
 ||- Sequence_processing
 |||- 16S_deblurred_table_mothur_workflow.docx			#Workflow from sequence data to OTU table
@@ -75,3 +84,4 @@ North_Temperate_Lakes-Microbial_Observatory
 |||- remove_seqs_from_shared.R					#Removes sequences from .shared file that were removed in the .names file (from chimera and chloroplast removal steps)
 |||- shared_to_count.R						#Converts .shared to .count file
 ||- Analysis_scripts						#R code used for figures and indicator analysis
+|||- manuscriptv0_plots_2017-03-08.R				#Script for analyses and figures in the final version of the manuscript
