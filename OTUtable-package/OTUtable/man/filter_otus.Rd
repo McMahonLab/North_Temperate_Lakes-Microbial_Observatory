@@ -41,9 +41,9 @@ Alexandra Linz <amlinz16@gmail.com>
 # To make a table containing only OTUs with at least 0.1% abundance 
 # in at least one sample that were observed 
 # (at any abundance) in at least 50% of samples:
-library(OTUtable)
-data(otu_table)
-filtered_table <- filter_taxa(otu_table, abundance = 0.1, persistence = 50)
+# library(OTUtable)
+# data(otu_table)
+# filtered_table <- filter_taxa(otu_table, abundance = 0.1, persistence = 50)
 
 # To make a table containing only phyla with at least 10% abundance 
 # in any one sample and were observed 
