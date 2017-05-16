@@ -15,7 +15,7 @@ All rights reserved
 Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish your analysis, please cite:
 Linz A.M., Crary B.C., Shade A., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Bacterial community composition and dynamics spanning five years in freshwater bog lakes." Manuscript submitted and available on bioRxiv at http://biorxiv.org/content/early/2017/04/12/127035. 
 
-Last updated March 10, 2017
+Last updated April 13, 2017
 
 HOW TO USE THIS REPO
 --------------------

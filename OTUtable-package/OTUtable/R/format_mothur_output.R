@@ -70,7 +70,7 @@ clean_TaxAss_taxonomy <- function(taxonomy_file, table, remove_bootstrap){
   colnames(tax) <- c("Kingdom", "Phylum", "Class", "Order", "Lineage", "Clade", "Tribe")
   keep <- match(rownames(tax), rownames(table))
   tax <- tax[which(is.na(keep) == F), ]
-  tax <- tax[order(rownames(tax)), ]
+  y <- tax[order(rownames(tax)), ]
   
   if(remove_bootstrap == T){
     y$Kingdom <- gsub("\\(\\d*\\)", "", y$Kingdom)
