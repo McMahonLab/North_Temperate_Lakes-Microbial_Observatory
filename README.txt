@@ -92,3 +92,11 @@ North_Temperate_Lakes-Microbial_Observatory
 |||- indicators_by_time.R					#Performs indicator analysis by month instead of site
 |||- LSA_calcuation.R						#Script for performing LSA (network analysis)
 |||- mixing_regime_indicator_table.R				#Produces the supplemental document of the results of indicator analysis using mixing regime as the pre-defined group
+|- Manuscript_materials						
+||- bogtags_accepted_bioRxiv_maintext.pdf			#PDF of accepted manuscript for submission to bioRxiv
+||- bogtags_accepted_bioRxiv_supplemental.pdf			#PDF of supplemental figures accompanying accepted manuscript for submission to bioRxiv
+||- Linz_supplemental_2017-04-12.pdf				#Submitted supplemental materials (pre-review)
+||- Linz_manuscript_2017-04-12.docx				#Submitted manuscript (pre-review)
+||- Linz_response_to_reviewers_2017-06-02.docx			#Response to reviewer comments
+||- Linz_markedup_manuscript_2017-06-02.docx			#Tracked changes after review
+||- response2reviewers.R					#Code for figures included/referenced in the response to reviewers
