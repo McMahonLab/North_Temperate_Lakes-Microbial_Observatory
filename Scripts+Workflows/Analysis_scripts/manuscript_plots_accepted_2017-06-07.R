@@ -470,12 +470,33 @@ save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plo
 #Sampling frequency
 
 site <- substr(colnames(otu_table), start = 1, stop = 3)
+lake <- substr(colnames(otu_table), start = 1, stop = 2)
+year <- substr(colnames(otu_table), start = 9, stop = 10)
 date <- extract_date(colnames(otu_table))
 sampling_freq <- data.frame(colnames(otu_table), site, date)
 colnames(sampling_freq) <- c("Sample", "Site", "Date")
 
-figs1 <- ggplot(sampling_freq, aes(x = Date, y = Site)) + geom_point() + scale_x_date(date_breaks = "months", date_labels = "%b-%y") + theme(axis.text.x = element_text(angle = -90, hjust = 1))
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS1.pdf", figs1, base_aspect_ratio = 2, base_height = 4)
+nutrients <- rep("Temp/DO only", length(site))
+nutrients[which(lake == "FB" | lake == "WS" | lake == "HK")] <- "pH, DOC/DIC"
+nutrients[which(lake == "CB" & year == "05")] <- "Buoy"
+nutrients[which(lake == "CB" & year == "07")] <- "pH, DOC/DIC, Buoy"
+nutrients[which(lake == "CB" & year == "08")] <- "pH, DOC/DIC, TN/TDN, TP/TDP, Buoy"
+nutrients[which(lake == "CB" & year == "09")] <- "Buoy"
+nutrients[which(lake == "NS" & year == "07")] <- "pH, DOC/DIC"
+nutrients[which(lake == "NS" & year == "08")] <- "DOC/DIC, TN/TDN, TP/TDP, Buoy"
+nutrients[which(lake == "TB" & year == "05")] <- "Buoy"
+nutrients[which(lake == "TB" & year == "07")] <- "pH, DOC/DIC, Buoy"
+nutrients[which(lake == "TB" & year == "08")] <- "DOC/DIC, TN/TDN, TP/TDP, Buoy"
+nutrients[which(lake == "TB" & year == "09")] <- "Buoy"
+nutrients[which(lake == "SS" & year == "07")] <- "pH, DOC/DIC"
+nutrients[which(lake == "SS" & year == "08")] <- "DOC/DIC, TN/TDN, TP/TDP"
+nutrients[which(lake == "MA" & year == "07")] <- "pH, DOC/DIC"
+nutrients[which(lake == "MA" & year == "08")] <- "DOC/DIC, TN/TDN, TP/TDP"
+
+sampling_freq$Nutrients <- nutrients
+
+figs1 <- ggplot(sampling_freq, aes(x = Date, y = Site, color = Nutrients)) + geom_point() + scale_x_date(date_breaks = "months", date_labels = "%b-%y") + theme(axis.text.x = element_text(angle = -90, hjust = 1)) + scale_color_brewer(palette = "Set1")
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS1.pdf", figs1, base_aspect_ratio = 2.5, base_height = 4)
 
 
 #Figure S2
@@ -510,30 +531,7 @@ figs2 <- ggplot(data=phylum_totals, aes(x = phyla.names, y = totals)) + geom_bar
 save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS2.pdf", figs2, base_aspect_ratio = 2, base_height = 5)
 
 ###########
-#Figure S3
-# Mega PCoA!
-x <- UniFrac(prune_samples(sampledata$Layer != "U", alldata), weighted = T, normalize = T)
-pcoa <- betadisper(x, substr(labels(x), start = 1, stop = 3))
-scores <- scores(pcoa)
-layer <- factor(substr(rownames(scores$sites), start = 3, stop = 3), levels = c("E", "H"))
-lakes <- factor(substr(rownames(scores$sites), start = 1, stop = 2), levels = c("CB", "FB", "WS", "NS", "TB", "SS", "HK", "MA"))
-regime <- c()
-regime[which(lakes == "CB" | lakes == "FB" | lakes == "WS")] <- "polymictic"
-regime[which(lakes == "TB" | lakes == "NS" | lakes == "SS")] <- "dimictic"
-regime[which(lakes == "HK" | lakes == "MA")] <- "meromictic"
-
-plot.pcoa <- data.frame(scores$sites, layer, lakes)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer", "Lake")
-
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-
-figS3 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Lake, fill = Lake, shape = Layer)) + geom_point(size = 3, alpha = 1/2) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"), axis.ticks = element_line(colour = "black")) + theme(axis.text.x = element_text(hjust = 0.5, size = 10, colour = "black"), axis.text.y = element_text(size = 10, color = "black"), axis.title = element_text(size = 10, hjust = 0.5, vjust = 0.1), panel.border = element_rect(colour = "black", fill=NA, size=1)) + labs(title = "All Data", x = paste("PCoA1 (", axis1*100, "% variation explained)", sep = ""), y = paste("PCoA2 (", axis2*100, "% variation explained)")) + scale_shape_manual(values=c(21, 22, 23, 24))  + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired")
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS3.pdf", figS3, base_aspect_ratio = 2.5, base_height = 4)
-
-##########
-
-#Figure S4 - richness over time
+#Figure S3 - richness over time
 
 # Trout Bog, 2007
 
@@ -551,7 +549,7 @@ hypo.date <- hypo.date[c(1:32, 35:80)]
 # Make dataframe for plotting
 TB_richness <- data.frame(hypo.date, hypo.rich)
 
-figS4a <- ggplot() + geom_line(data = TB_richness, aes(x = hypo.date, y = hypo.rich), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness")
+figS3a <- ggplot() + geom_line(data = TB_richness, aes(x = hypo.date, y = hypo.rich), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness")
 
 # Repeat with North Sparkling, 2008
 
@@ -563,11 +561,11 @@ hypo.date <- extract_date(colnames(hypo))
 NS_richness <- data.frame(hypo.date, hypo.rich)
 
 
-figS4b <- ggplot() + geom_line(data = NS_richness, aes(x = hypo.date, y = hypo.rich), size = 1) + labs(title = "Trout Bog", x = NULL, y = "Observed Richness")
+figS3b <- ggplot() + geom_line(data = NS_richness, aes(x = hypo.date, y = hypo.rich), size = 1) + labs(title = "North Sparkling Bog", x = NULL, y = "Observed Richness")
 
 
-figS4 <- plot_grid(figS4a, figS4b, align = "h", nrow = 2, labels = c("A", "B"))
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS4.pdf", figS4, base_aspect_ratio = 1.5, base_height = 5)
+figS3 <- plot_grid(figS3a, figS3b, align = "h", nrow = 2, labels = c("A", "B"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS3.pdf", figS3, base_aspect_ratio = 1.5, base_height = 5)
 plot_column(make_temp_matrix("TBE.....07", metadata), "Trout Bog 2007")
 plot_column(make_temp_matrix("NSE.....08", metadata), "North Sparkling Bog 2008")
 
@@ -575,7 +573,7 @@ plot_column(make_temp_matrix("NSE.....08", metadata), "North Sparkling Bog 2008"
 
 
 ##########
-#Figure S5 - Run the UniFrac by lake by layer
+#Figure S4 - Run the UniFrac by lake by layer
 CB <- prune_samples(sampledata$Bog == "CB" & sampledata$Layer != "U", alldata)
 x <- UniFrac(CB, weighted = T, normalize = T)
 pcoa <- betadisper(x, substr(labels(x), start = 3, stop = 3))
@@ -585,9 +583,9 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot1 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Crystal Bog, r2 = 0.03", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac"))
+plot1 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Crystal Bog", subtitle = "r2 = 0.03", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac"))
 #plot_legend <- get_legend(plot1)
-plot1 <- plot1 + theme(legend.position = "none")
+plot1 <- plot1 + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(CB), "data.frame")) #0.03235 p = 0.003
 
 FB <- prune_samples(sampledata$Bog == "FB" & sampledata$Layer != "U", alldata)
@@ -599,7 +597,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot2 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Forestry Bog, r2 = 0.02", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot2 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Forestry Bog", subtitle = "r2 = 0.02", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(FB), "data.frame")) #0.01582, 0.101
 
 WS <- prune_samples(sampledata$Bog == "WS" & sampledata$Layer != "U", alldata)
@@ -611,7 +609,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot3 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "West Sparkling Bog, r2 = 0.12", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot3 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "West Sparkling Bog", subtitle = "r2 = 0.12", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(WS), "data.frame")) #0.10782, 0.001
 
 NS <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer != "U", alldata)
@@ -623,7 +621,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot4 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "North Sparkling Bog, r2 = 0.19", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot4 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "North Sparkling Bog", subtitle = "r2 = 0.19", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(NS), "data.frame")) #0.18548 p = 0.001
 
 TB <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer != "U", alldata)
@@ -635,7 +633,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot5 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Trout Bog, r2 = 0.18", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot5 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Trout Bog", subtitle = "r2 = 0.18", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(TB), "data.frame")) #0.17675 p = 0.001
 
 SS <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer != "U", alldata)
@@ -647,7 +645,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot6 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "South Sparkling Bog, r2 = 0.16", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot6 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "South Sparkling Bog", subtitle = "r2 = 0.16", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(SS), "data.frame")) #0.16416 p = 0.001
 
 HK <- prune_samples(sampledata$Bog == "HK" & sampledata$Layer != "U", alldata)
@@ -659,7 +657,7 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot7 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Hell's Kitchen, r2 = 0.40", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot7 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Hell's Kitchen", subtitle = "r2 = 0.40", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(HK), "data.frame")) #0.40011 p = 0.001
 
 MA <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer != "U", alldata)
@@ -671,11 +669,62 @@ plot.pcoa <- data.frame(scores$sites, layer)
 colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Layer")
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-plot8 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Mary Lake, r2 = 0.45", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none")
+plot8 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Layer)) + geom_point(size=2, alpha = 0.5) + labs(title = "Mary Lake", subtitle = "r2 = 0.45", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_manual(values = c("#d8b365", "#5ab4ac")) + theme(legend.position = "none", plot.subtitle = element_text(hjust = 0.5))
 #adonis(x ~ layer, as(sample_data(MA), "data.frame")) #0.4505 p = 0.001
 
-layer_splits <- plot_grid(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, align = "h", nrow = 3)
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots_2017/FigS4.pdf", layer_splits, base_aspect_ratio = 1.5, base_height = 8)
+colors <- c("#a6cee3", "#1f78b4", "#33a02c", "#b2df8a")
+years <- c("05", "07", "08", "09")
+
+TBE <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer == "E", alldata)
+TBE_year <- factor(substr(sample_names(TBE), start = 9, stop = 10), levels = years)
+x <- UniFrac(TBE, weighted = T, normalize = T)
+pcoa <- betadisper(x, TBE_year)
+scores <- scores(pcoa)
+# Locate centroids
+TBEcentroids <- scores$centroids
+TBEcentroids <- as.data.frame(TBEcentroids)
+TBEcentroids$Year <- factor(years, level = years)
+plot.pcoa <- data.frame(scores$sites, TBE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+plot9 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=TBEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Trout Bog", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.11") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+#adonis(x ~ Year, as(sample_data(TBE), "data.frame"))
+
+SSE <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "E", alldata)
+SSE_year <- factor(substr(sample_names(SSE), start = 9, stop = 10), levels = years)
+x <- UniFrac(SSE, weighted = T, normalize = T)
+pcoa <- betadisper(x, SSE_year)
+scores <- scores(pcoa)
+# Locate centroids
+SSEcentroids <- scores$centroids
+SSEcentroids <- as.data.frame(SSEcentroids)
+SSEcentroids$Year <- factor(years[2:4], level = years[2:4])
+plot.pcoa <- data.frame(scores$sites, SSE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+plot10 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=SSEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "South Sparkling", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.10") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+adonis(x ~ Year, as(sample_data(SSE), "data.frame"))
+
+MAE <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer == "E", alldata)
+MAE_year <- factor(substr(sample_names(MAE), start = 9, stop = 10), levels = years)
+x <- UniFrac(MAE, weighted = T, normalize = T)
+pcoa <- betadisper(x, MAE_year)
+scores <- scores(pcoa)
+# Locate centroids
+MAEcentroids <- scores$centroids
+MAEcentroids <- as.data.frame(MAEcentroids)
+MAEcentroids$Year <- factor(years, level = years)
+plot.pcoa <- data.frame(scores$sites, MAE_year)
+colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
+axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
+axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
+plot11 <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=MAEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.12") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
+#adonis(x ~ Year, as(sample_data(MAE), "data.frame"))
+
+layer_splits <- plot_grid(plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8, plot9, plot10, plot11, align = "h", nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"))
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS4.pdf", layer_splits, base_aspect_ratio = 1.5, base_height = 8)
 
 ##########
 #Figure S6 - alternative colorations of Fig 2
@@ -745,11 +794,11 @@ plot.pcoa$Temp <- tempdata
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
-figS6a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = as.integer(Date))) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#ffffcc", "#a1dab4","#41b6c4", "#225ea8"))
+figS5a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = as.integer(Date))) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#ffffcc", "#a1dab4","#41b6c4", "#225ea8"))
 
-figS6b <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Regime)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank())
+figS5b <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Regime)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank())
 
-figS6c <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Temp)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#2c7bb6", "#abd9e9","#fdae61", "#d7191c")) + theme(legend.title = element_blank())
+figS5c <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Temp)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Epilimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#2c7bb6", "#abd9e9","#fdae61", "#d7191c")) + theme(legend.title = element_blank())
 
 
 # Analyze and plot hypolimnion points
@@ -787,18 +836,12 @@ plot.pcoa$Temp <- tempdata
 axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
 axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
 
-figS6d <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = as.integer(Date))) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#ffffcc", "#a1dab4","#41b6c4", "#225ea8"))
+figS5d <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = as.integer(Date))) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#ffffcc", "#a1dab4","#41b6c4", "#225ea8"))
 
-figS6e <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Regime)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank())
+figS5e <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Regime)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_brewer(palette = "Paired") + scale_fill_brewer(palette = "Paired") + theme(legend.title = element_blank())
 
-figS6f <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Temp)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#2c7bb6", "#abd9e9","#fdae61", "#d7191c")) + theme(legend.title = element_blank())
+figS5f <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Temp)) + geom_point(size = 1, alpha = 1/2) + labs(title = "Hypolimnia", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")")) + scale_color_gradientn(colors = c("#2c7bb6", "#abd9e9","#fdae61", "#d7191c")) + theme(legend.title = element_blank())
 
-figS6 <- plot_grid(figS6a,figS6d, figS6b, figS6e, figS6c, figS6f, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"), align = "w")
-
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS6.pdf", figS7, base_aspect_ratio = 1.5, base_height = 6)
-
-##########
-#Figure S7 - alternative metric PCoA in Fig 2
 # Use Bray-Curtis to measure beta diversity between sites
 x <- vegdist(t(otu_table), method = "bray")
 beta_diversity <- as.matrix(x)
@@ -815,7 +858,7 @@ for(i in 1:dim(epi_comparison)[1]){
 }
 epi_comparison$Beta_Diversity <- epi_results
 
-p1 <- ggplot(data = epi_comparison, aes(x = Var1, y = Var2, fill = Beta_Diversity)) + geom_tile() + scale_fill_gradient2(low = "darkgreen", mid = "white", high = "darkred", midpoint = 0.7, name = "Bray-Curtis") + labs(x = NULL, y = NULL, title ="Epilimnia") 
+figS5g <- ggplot(data = epi_comparison, aes(x = Var1, y = Var2, fill = Beta_Diversity)) + geom_tile() + scale_fill_gradient2(low = "darkgreen", mid = "white", high = "darkred", midpoint = 0.7, name = "Bray-Curtis") + labs(x = NULL, y = NULL, title ="Epilimnia") 
 
 
 hypos <- c("CBH", "FBH", "WSH", "NSH", "TBH", "SSH", "HKH", "MAH")
@@ -829,102 +872,110 @@ for(i in 1:dim(hypo_comparison)[1]){
 }
 hypo_comparison$Beta_Diversity <- hypo_results
 
-p2 <- ggplot(data = hypo_comparison, aes(x = Var1, y = Var2, fill = Beta_Diversity)) + geom_tile() + scale_fill_gradient2(low = "darkgreen", mid = "white", high = "darkred", midpoint = 0.7, name = "Bray-Curtis") + labs(x = NULL, y = NULL, title ="Hypolimnia")
-figS7 <- plot_grid(p1, p2, nrow = 1)
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS7.pdf", figS7, base_aspect_ratio = 3, base_height = 4)
+figS5h <- ggplot(data = hypo_comparison, aes(x = Var1, y = Var2, fill = Beta_Diversity)) + geom_tile() + scale_fill_gradient2(low = "darkgreen", mid = "white", high = "darkred", midpoint = 0.7, name = "Bray-Curtis") + labs(x = NULL, y = NULL, title ="Hypolimnia")
 
+figS5 <- plot_grid(figS5a,figS5d, figS5b, figS5e, figS5c, figS5f, figS5g, figS5h, nrow = 4, labels = c("A", "B", "C", "D", "E", "F", "G", "H"), align = "w")
+
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS5.pdf", figS5, base_aspect_ratio = 1.4, base_height = 8)
+
+##########
+#FigS6 - zscore normalized OTUs over multiple years
+
+annual_trends <- function(lake, otu){
+  bog <- bog_subset(lake, otu_table)
+  year1 <- year_subset("05", bog)
+  year2 <- year_subset("07", bog)
+  year3 <- year_subset("08", bog)
+  year4 <- year_subset("09", bog)
+  
+  if(dim(year1)[2] > 0){
+    year1 <- zscore(year1)
+    year2 <- zscore(year2)
+    year3 <- zscore(year3)
+    year4 <- zscore(year4)
+    
+    ztable <- cbind(year1, year2, year3, year4)
+  }else if(dim(year1)[2] == 0 & dim(year3)[2] > 0){
+    year2 <- zscore(year2)
+    year3 <- zscore(year3)
+    year4 <- zscore(year4)
+    
+    ztable <- cbind(year2, year3, year4)
+  }else if(dim(year1)[2] == 0 & dim(year3)[2] == 0 & dim(year4)[2] > 0){
+    year2 <- zscore(year2)
+    year4 <- zscore(year4)
+    
+    ztable <- cbind(year2, year4)
+  }else{
+    ztable <- zscore(year2)
+  }
+  ztable <- melt(ztable)
+  ztable$Year <- substr(ztable$Var2, start = 9, stop = 10)
+  ztable$Day <- as.numeric(format(extract_date(ztable$Var2), format = "%j"))
+  
+  plot <- ggplot(data = ztable[which(ztable$Var1 == otu), ], aes(x = Day, y = value, group = Year, color = Year)) + geom_point() + geom_line() + theme_bw() + labs(title = paste(lake, otu, sep = ": "))
+  return(plot)
+}
+
+plot1 <- annual_trends("TBE", "Otu0002")
+plot2 <- annual_trends("TBH", "Otu0002")
+plot3 <- annual_trends("TBH", "Otu0050")
+plot4 <- annual_trends("MAH", "Otu0050")
+
+figS6 <- plot_grid(plot1, plot2, plot3, plot4, align = "h", nrow = 2)
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS6.pdf", figS6, base_aspect_ratio = 2.5, base_height = 4)
+
+##########
+### Figure S7 - Consistent lineage traits by year
+lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
+
+interest <- c(";betII$", ";acI$", ";betI$", ";bacI$", ";gamI$", ";verI-A$", ";betIV$", ";acV$", ";gamIII$", ";alfI$", ";betIII$")
+
+lineages <- lineage_table[grep(paste(interest, collapse = "|"), rownames(lineage_table)), ]
+
+year <- c("05", "07", "08", "09")
+for(i in 1:length(year)){
+  table <- bog_subset("TBH", lineages)
+  table <- year_subset(year[i], table)
+  abundance <- c()
+  variance <- c()
+  persistance <- c()
+  
+  for(j in 1:dim(table)[1]){
+    row <- table[j, ]
+    persistance[j] <- length(which(row > 0))/length(row)
+    if(sum(row) > 0){
+      variance[j] <- cv(as.numeric(row))
+      abundance[j] <- sum(row[which(row > 0)])/length(which(row > 0))
+    }else{
+      variance[j] <- 0
+      abundance[j] <- 0
+    }
+    
+  }
+  
+  to.plot <- data.frame(abundance, persistance, variance)
+  to.plot$lineage <- rownames(reduce_names(table))
+  
+  z <- ggplot(data = to.plot, aes(x = variance, y = abundance, fill = persistance)) + geom_point() + theme_bw() + labs(title = paste(year[i]), x = "Variability (CV)", y = "Mean Abundance when Present") + geom_label_repel(aes(label = lineage)) + scale_fill_gradient(low = "white", high = "lightgreen")  + theme(legend.title = element_blank())
+  
+  assign(paste("p", i, sep = ""), z)
+}
+
+figS7_legend <- get_legend(p2)
+p1 <- p1 + theme(legend.position = "none")
+p2 <- p2 + theme(legend.position = "none")
+p3 <- p3 + theme(legend.position = "none")
+p4 <- p4 + theme(legend.position = "none")
+
+figS7 <- plot_grid(p1, p2, p3, p4, nrow = 2, labels = c("A", "B", "C", "D"))
+figS7 <- plot_grid(figS7, figS7_legend, nrow = 1, rel_widths = c(1, 0.1))
+
+save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS7.pdf", figS7, base_aspect_ratio = 1.5, base_height = 6)
 
 
 ##########
-#Figure S8 - PCoAs of layers by years not shown in Fig 3
-colors <- c("#a6cee3", "#1f78b4", "#33a02c", "#b2df8a")
-
-NSE <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "E", alldata)
-NSE_year <- factor(substr(sample_names(NSE), start = 9, stop = 10), levels = years)
-x <- UniFrac(NSE, weighted = T, normalize = T)
-pcoa <- betadisper(x, NSE_year)
-scores <- scores(pcoa)
-# Locate centroids
-NSEcentroids <- scores$centroids
-NSEcentroids <- as.data.frame(NSEcentroids)
-NSEcentroids$Year <- factor(years[2:4], level = years[2:4])
-plot.pcoa <- data.frame(scores$sites, NSE_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-figS8a <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=NSEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.15, p = 0.001") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
-adonis(x ~ Year, as(sample_data(NSE), "data.frame"))
-
-TBE <- prune_samples(sampledata$Bog == "TB" & sampledata$Layer == "E", alldata)
-TBE_year <- factor(substr(sample_names(TBE), start = 9, stop = 10), levels = years)
-x <- UniFrac(TBE, weighted = T, normalize = T)
-pcoa <- betadisper(x, TBE_year)
-scores <- scores(pcoa)
-# Locate centroids
-TBEcentroids <- scores$centroids
-TBEcentroids <- as.data.frame(TBEcentroids)
-TBEcentroids$Year <- factor(years, level = years)
-plot.pcoa <- data.frame(scores$sites, TBE_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-figS8b <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=TBEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Trout Bog Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.11, p = 0.001") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
-adonis(x ~ Year, as(sample_data(TBE), "data.frame"))
-
-SSE <- prune_samples(sampledata$Bog == "SS" & sampledata$Layer == "E", alldata)
-SSE_year <- factor(substr(sample_names(SSE), start = 9, stop = 10), levels = years)
-x <- UniFrac(SSE, weighted = T, normalize = T)
-pcoa <- betadisper(x, SSE_year)
-scores <- scores(pcoa)
-# Locate centroids
-SSEcentroids <- scores$centroids
-SSEcentroids <- as.data.frame(SSEcentroids)
-SSEcentroids$Year <- factor(years[2:4], level = years[2:4])
-plot.pcoa <- data.frame(scores$sites, SSE_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-figS8c <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=SSEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "South Sparkling Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.10, p = 0.001") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
-adonis(x ~ Year, as(sample_data(SSE), "data.frame"))
-
-MAE <- prune_samples(sampledata$Bog == "MA" & sampledata$Layer == "E", alldata)
-MAE_year <- factor(substr(sample_names(MAE), start = 9, stop = 10), levels = years)
-x <- UniFrac(MAE, weighted = T, normalize = T)
-pcoa <- betadisper(x, MAE_year)
-scores <- scores(pcoa)
-# Locate centroids
-MAEcentroids <- scores$centroids
-MAEcentroids <- as.data.frame(MAEcentroids)
-MAEcentroids$Year <- factor(years, level = years)
-plot.pcoa <- data.frame(scores$sites, MAE_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-figS8d <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=MAEcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "Mary Lake Epilimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.12, p = 0.001") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
-adonis(x ~ Year, as(sample_data(MAE), "data.frame"))
-
-NSH <- prune_samples(sampledata$Bog == "NS" & sampledata$Layer == "H", alldata)
-NSH_year <- factor(substr(sample_names(NSH), start = 9, stop = 10), levels = years)
-NSH_year[17] = "08"
-x <- UniFrac(NSH, weighted = T, normalize = T)
-pcoa <- betadisper(x, NSH_year)
-scores <- scores(pcoa)
-# Locate centroids
-NSHcentroids <- scores$centroids
-NSHcentroids <- as.data.frame(NSHcentroids)
-NSHcentroids$Year <- factor(years[2:4], level = years[2:4])
-plot.pcoa <- data.frame(scores$sites, NSH_year)
-colnames(plot.pcoa) <- c("PCoA1", "PCoA2", "Year")
-axis1 <- round(pcoa$eig[1]/sum(pcoa$eig), digits = 2)
-axis2 <- round(pcoa$eig[2]/sum(pcoa$eig), digits = 2)
-figS8e <- ggplot(data=plot.pcoa, aes(x = PCoA1, y = PCoA2, color = Year)) + geom_point(size=1) + theme(legend.position="none", plot.subtitle = element_text(hjust = 0.5)) + geom_point(data=NSHcentroids, aes(x = PCoA1, y = PCoA2, color = Year), size = 3, shape = 3, color = "black") + labs(title = "North Sparkling Hypolimnion", x = paste("PCoA1 (", axis1, ")", sep = ""), y = paste("PCoA2 (", axis2, ")"), subtitle = "r2 = 0.11, p = 0.001") + coord_cartesian(xlim = c(-0.2, 0.2), ylim = c(-0.2, 0.2)) + scale_color_manual(values = colors)
-adonis(x ~ Year, as(sample_data(NSH), "data.frame"))
-
-figS8 <- plot_grid(figS8a, figS8b, figS8c, figS8d, figS8e, align = "h", nrow = 3, labels = c("A", "B", "C", "D", "E"))
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS8.pdf", figS8, base_aspect_ratio = 1, base_height = 7)
-
-##########
-#Figure 9
+#Bonus
 # Time decay plots
 
 x <- UniFrac(alldata, weighted = T, normalize = T)
@@ -971,185 +1022,3 @@ for(i in 1:length(site)){
   object2 <- ggplot(data = plot_turnover, aes(x = Date2, y = NormDiversity)) + geom_point() + geom_path() + labs(x = c("Date"), y = c("Turnover"), title = paste(site[i], "Turnover"))
   print(object2)
 }
-
-##########
-#FigS10 - zscore normalized OTUs over multiple years
-
-annual_trends <- function(lake, otu){
-  bog <- bog_subset(lake, otu_table)
-  year1 <- year_subset("05", bog)
-  year2 <- year_subset("07", bog)
-  year3 <- year_subset("08", bog)
-  year4 <- year_subset("09", bog)
-  
-  if(dim(year1)[2] > 0){
-    year1 <- zscore(year1)
-    year2 <- zscore(year2)
-    year3 <- zscore(year3)
-    year4 <- zscore(year4)
-    
-    ztable <- cbind(year1, year2, year3, year4)
-  }else if(dim(year1)[2] == 0 & dim(year3)[2] > 0){
-    year2 <- zscore(year2)
-    year3 <- zscore(year3)
-    year4 <- zscore(year4)
-    
-    ztable <- cbind(year2, year3, year4)
-  }else if(dim(year1)[2] == 0 & dim(year3)[2] == 0 & dim(year4)[2] > 0){
-    year2 <- zscore(year2)
-    year4 <- zscore(year4)
-    
-    ztable <- cbind(year2, year4)
-  }else{
-    ztable <- zscore(year2)
-  }
-  ztable <- melt(ztable)
-  ztable$Year <- substr(ztable$Var2, start = 9, stop = 10)
-  ztable$Day <- as.numeric(format(extract_date(ztable$Var2), format = "%j"))
-  
-  plot <- ggplot(data = ztable[which(ztable$Var1 == otu), ], aes(x = Day, y = value, group = Year, color = Year)) + geom_point() + geom_line() + theme_bw() + labs(title = paste(lake, otu, sep = ": "))
-  return(plot)
-}
-
-plot1 <- annual_trends("TBE", "Otu0002")
-plot2 <- annual_trends("TBH", "Otu0002")
-plot3 <- annual_trends("TBH", "Otu0050")
-plot4 <- annual_trends("MAH", "Otu0050")
-
-figS10 <- plot_grid(plot1, plot2, plot3, plot4, align = "h", nrow = 2)
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS10.pdf", figS10, base_aspect_ratio = 2.5, base_height = 4)
-
-##########
-#Figure S11 - rarefaction curves
-
-rarefaction <- function(table){
-  groups <- c()
-  totals <- c()
-  table <- table[, sample(ncol(table))]
-  for(i in 1:dim(table)[2]){
-    groups <- append(groups, rownames(table)[which(table[,i] > 0)], length(groups))
-    totals[i] <- length(unique(groups))
-  }
-  return(totals)
-}
-
-all.rf <- rarefaction(otu_table)
-all.rf <- data.frame(seq(1:length(all.rf)), all.rf)
-colnames(all.rf) <- c("Index", "OTUs")
-figS11a <- ggplot(all.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "All Data", x = "Number of Samples", y = "Number of Taxa")
-
-epi.rf <- rarefaction(bog_subset("..E", otu_table))
-epi.rf <- data.frame(seq(1:length(epi.rf)), epi.rf)
-colnames(epi.rf) <- c("Index", "OTUs")
-figS11b <- ggplot(epi.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "Epilimnion Data", x = "Number of Samples", y = "Number of Taxa")
-
-hypo.rf <- rarefaction(bog_subset("..H", otu_table))
-hypo.rf <- data.frame(seq(1:length(hypo.rf)), hypo.rf)
-colnames(hypo.rf) <- c("Index", "OTUs")
-figS11c <- ggplot(hypo.rf, aes(x = Index, y = OTUs)) + geom_line(size = 1) + labs(title = "Hypo Data", x = "Number of Samples", y = "Number of Taxa")
-
-figS11 <- plot_grid(figS11a, figS11b, figS11c, align = "h", nrow = 1, labels = c("A", "B", "C"))
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS11.pdf", figS11, base_aspect_ratio = 3, base_height = 3)
-
-
-### Figure S8 - Consistent lineage traits by year
-lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
-
-interest <- c(";betII$", ";acI$", ";betI$", ";bacI$", ";gamI$", ";verI-A$", ";betIV$", ";acV$", ";gamIII$", ";alfI$", ";betIII$")
-
-lineages <- lineage_table[grep(paste(interest, collapse = "|"), rownames(lineage_table)), ]
-
-year <- c("05", "07", "08", "09")
-for(i in 1:length(year)){
-  table <- bog_subset("TBH", lineages)
-  table <- year_subset(year[i], table)
-  abundance <- c()
-  variance <- c()
-  persistance <- c()
-  
-  for(j in 1:dim(table)[1]){
-    row <- table[j, ]
-    persistance[j] <- length(which(row > 0))/length(row)
-    if(sum(row) > 0){
-      variance[j] <- cv(as.numeric(row))
-      abundance[j] <- sum(row[which(row > 0)])/length(which(row > 0))
-    }else{
-      variance[j] <- 0
-      abundance[j] <- 0
-    }
-    
-  }
-  
-  to.plot <- data.frame(abundance, persistance, variance)
-  to.plot$lineage <- rownames(reduce_names(table))
-  
-  z <- ggplot(data = to.plot, aes(x = variance, y = abundance, fill = persistance)) + geom_point() + theme_bw() + labs(title = paste(year[i]), x = "Variability (CV)", y = "Mean Abundance when Present") + geom_label_repel(aes(label = lineage)) + scale_fill_gradient(low = "white", high = "lightgreen")  + theme(legend.title = element_blank())
-  
-  assign(paste("p", i, sep = ""), z)
-}
-
-figS12_legend <- get_legend(p2)
-p1 <- p1 + theme(legend.position = "none")
-p2 <- p2 + theme(legend.position = "none")
-p3 <- p3 + theme(legend.position = "none")
-p4 <- p4 + theme(legend.position = "none")
-
-figS12 <- plot_grid(p1, p2, p3, p4, nrow = 2, labels = c("A", "B", "C", "D"))
-figS12 <- plot_grid(figS12, figS12_legend, nrow = 1, rel_widths = c(1, 0.1))
-
-save_plot("C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Plots/FigS12.pdf", figS12, base_aspect_ratio = 1.5, base_height = 6)
-
-# ##########
-# #Indicator analysis
-# 
-# # Make tables at each phylogenetic level
-# tribe_table <- combine_otus("Tribe", otu_table, taxonomy)
-# clade_table <- combine_otus("Clade", otu_table, taxonomy)
-# lineage_table <- combine_otus("Lineage", otu_table, taxonomy)
-# order_table <- combine_otus("Order", otu_table, taxonomy)
-# class_table <- combine_otus("Class", otu_table, taxonomy)
-# phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
-# 
-# # Change OTU number designations to full taxonomic assignment
-# named_otu_table <- otu_table
-# fullnames <- c()
-# for(i in 1:dim(taxonomy)[1]){
-#   fullnames[i] <- paste(taxonomy[i, ], collapse = ";")
-# }
-# fullnames <- make.unique(fullnames)
-# rownames(named_otu_table) <- fullnames
-# 
-# # Combine tables at each level into one giant table
-# full_table <- rbind(named_otu_table, tribe_table, clade_table, lineage_table, order_table, class_table, phylum_table)
-# 
-# # Remove groups that are unclassified at any level
-# classified <- grep("unclassified", rownames(full_table))
-# classified1 <- grep("__$", rownames(full_table))
-# input_table <- full_table[-c(classified, classified1),]
-# 
-# # Keep only the top quantile in abundance
-# threshold <- 500
-# input_table <- input_table[which(rowSums(input_table) >= threshold),]
-# 
-# # Format for input into mulitplatt() function
-# input_table <- t(input_table)
-# input_table <- as.data.frame(input_table)
-# 
-# # Group by mixing regime
-# lakeid <- c("CB", "FB", "WS", "NS", "TB", "SS", "HK","MA")
-# lakes <- substr(rownames(input_table), start = 1, stop = 2)
-# 
-# mixing_groups <- c()
-# mixing_groups[which(lakes == "CB" | lakes == "FB" | lakes == "WS")] <- 1
-# mixing_groups[which(lakes == "TB"| lakes == "NS"| lakes == "SS")] <- 2
-# mixing_groups[which(lakes == "MA" | lakes == "HK")] <- 3
-# 
-# # Run indicator taxa analysis
-# clades_by_mixing <- multipatt(x = input_table, cluster = mixing_groups, func = "r.g", control = how(nperm = 9999))
-# 
-# # Save data
-# write.csv(clades_by_mixing$sign, file = "C:/Users/Alex/Desktop/North_Temperate_Lakes-Microbial_Observatory/Data/indicators_by_mixing_2017-01-17.csv")
-
-
-
-
