@@ -1,0 +1,485 @@
+
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "OTUtable"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> options(pager = "console")
+> library('OTUtable')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("bog_subset")
+> ### * bog_subset
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: bog_subset
+> ### Title: Subset OTU table by sampling site
+> ### Aliases: bog_subset
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> 
+> Trout_Bog_Epilimnion <- bog_subset("TBE", otu_table)
+> 
+> Hells_Kitchen_Hypolimnion <- bog_subset("HKH", otu_table)
+> 
+> # Include both epilimnion and hypolimnion in a single table
+> Trout_Bog_both_layers <- bog_subset("TB.", otu_table)
+> 
+> # Include all meromictic hypolimnia
+> meromictic_hypolimnia <- bog_subset("HKH|MAH", otu_table)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("chao1")
+> ### * chao1
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: chao1
+> ### Title: Chao1 Richness
+> ### Aliases: chao1
+> ### Keywords: biodiversity
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> chao1_richness <- apply(otu_table, 2, chao1)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("clean_TaxAss_taxonomy")
+> ### * clean_TaxAss_taxonomy
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: clean_TaxAss_taxonomy
+> ### Title: Clean Taxonomy File Output by TaxAss Workflow
+> ### Aliases: clean_TaxAss_taxonomy
+> ### Keywords: format_mothur_output
+> 
+> ### ** Examples
+> 
+> 
+> # Example path only: path <- "TaxAss_output/bogs.taxonomy"
+> # table <- clean_shared("mothur_output/bogs.shared", trim.names = T)
+> # taxonomy <- clean_TaxAss_taxonomy(path, table, remove_bootstrap = F)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("clean_mothur_taxonomy")
+> ### * clean_mothur_taxonomy
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: clean_mothur_taxonomy
+> ### Title: Clean mothur-format Taxonomy File
+> ### Aliases: clean_mothur_taxonomy
+> ### Keywords: format_mothur_output
+> 
+> ### ** Examples
+> 
+> 
+> # Example path only: path <- "mothur_output/bogs.taxonomy"
+> # table <- clean_shared("mothur_output/bogs.shared", trim.names = T)
+> # taxonomy <- clean_mothur_taxonomy(path, table, remove_bootstrap = F)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("clean_shared")
+> ### * clean_shared
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: clean_shared
+> ### Title: Reformat a shared file
+> ### Aliases: clean_shared
+> ### Keywords: format_mothur_output
+> 
+> ### ** Examples
+> 
+> 
+> # Example path only: path <- "mothur_output/bogs.shared"
+> 
+> # otu_table <- clean_shared(path, trim.names = T)
+> # write.csv(otu_table, file = "bogs_otu_table.csv", quote = F, row.names = T)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("combine_otus")
+> ### * combine_otus
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: combine_otus
+> ### Title: Combine OTUs based on identical taxonomic assignments
+> ### Aliases: combine_otus
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> 
+> data(otu_table)
+> data(taxonomy)
+> 
+> example_table <- year_subset("05", otu_table)
+> example_table <- bog_subset("TBE", example_table)
+> 
+> phylum_table <- combine_otus("Phylum", example_table, taxonomy)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("extract_date")
+> ### * extract_date
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: extract_date
+> ### Title: Extract sampling date from a vector of sample names
+> ### Aliases: extract_date
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> 
+> samples <- c("TBE01JUN09.R1", "TBE05JUN09", "TBE10JUN09.R2")
+> extract_date(samples)
+[1] "2009-06-01" "2009-06-05" "2009-06-10"
+> 
+> # Extract sample dates from the OTU table
+> data(otu_table)
+> x <- extract_date(colnames(otu_table))
+> 
+> # Extract sample dates from the metadata
+> data(metadata)
+> x <- extract_date(metadata$Sample_Name)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("filter_otus")
+> ### * filter_otus
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: filter_taxa
+> ### Title: Filter Taxa Based on Abundance and Persistence
+> ### Aliases: filter_taxa
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> 
+> # To make a table containing only OTUs with at least 0.1% abundance 
+> # in at least one sample that were observed 
+> # (at any abundance) in at least 50% of samples:
+> # library(OTUtable)
+> # data(otu_table)
+> # filtered_table <- filter_taxa(otu_table, abundance = 0.1, persistence = 50)
+> 
+> # To make a table containing only phyla with at least 10% abundance 
+> # in any one sample and were observed 
+> # at any abundance in at least 10% of samples:
+> # data(taxonomy)
+> # phylum_table <- combine_otus("Phylum", otu_table, taxonomy)
+> # filtered_phylum_table <- filter_taxa(phylum_table, abundance = 10, persistence = 10)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("grab_group")
+> ### * grab_group
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: grab_group
+> ### Title: Subset OTU table by taxonomic assignment
+> ### Aliases: grab_group
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+>  
+> data(otu_table)
+> data(taxonomy)
+> 
+> acI <- grab_group("acI", "Clade", otu_table, taxonomy)
+> verruco <- grab_group("Verrucomicrobia", "Phylum", otu_table, taxonomy)
+> 
+> # Example where two search terms are needed due to classification with two databases
+> methylophilaceae <- grab_group("Methylophilaceae|betIV", "Clade", otu_table, taxonomy)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("make_do_matrix")
+> ### * make_do_matrix
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: make_do_matrix
+> ### Title: Make matrix of dissolved oxygen data
+> ### Aliases: make_do_matrix
+> ### Keywords: water_column_plots
+> 
+> ### ** Examples
+> 
+> data(metadata)
+> 
+> dissolved_oxygen <- make_do_matrix("TBE.....07", metadata)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("make_temp_matrix")
+> ### * make_temp_matrix
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: make_temp_matrix
+> ### Title: Make matrix of temperature data
+> ### Aliases: make_temp_matrix
+> ### Keywords: water_column_plots
+> 
+> ### ** Examples
+> 
+> data(metadata)
+> 
+> temp <- make_temp_matrix("TBE.....07", metadata)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("obs_richness")
+> ### * obs_richness
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: obs_richness
+> ### Title: Observed Richness
+> ### Aliases: obs_richness
+> ### Keywords: biodiversity
+> 
+> ### ** Examples
+> 
+>  data(otu_table)
+>  richness <- apply(otu_table, 2, obs_richness)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("pielou")
+> ### * pielou
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: pielou
+> ### Title: Pielou's Evenness
+> ### Aliases: pielou
+> ### Keywords: biodiversity
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> even <- apply(otu_table, 2, pielou)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("plot_column")
+> ### * plot_column
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: plot_column
+> ### Title: Plot DO or temperature data from a depth profile over time
+> ### Aliases: plot_column
+> ### Keywords: water_column_plots
+> 
+> ### ** Examples
+> 
+> data(metadata)
+> temp <- make_temp_matrix("TBE.....07", metadata)
+> plot_column(temp, "Trout Bog 2007 Temperature")
+> 
+> 
+> 
+> cleanEx()
+> nameEx("reduce_names")
+> ### * reduce_names
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: reduce_names
+> ### Title: Shorten taxonomic assignment in table row names
+> ### Aliases: reduce_names
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> data(taxonomy)
+> 
+> # Create a small table for the example
+> # example <- year_subset("05", otu_table)
+> # example <- bog_subset("TBE", example)
+> 
+> # clade_table <- combine_otus("Clade", example, taxonomy)
+> # clade_table <- clade_table[which(rowSums(clade_table) > 0),]
+> # head(rownames(clade_table))
+> # reduced_clades <- reduce_names(clade_table)
+> # head(rownames(reduced_clades))
+> 
+> 
+> 
+> cleanEx()
+> nameEx("remove_reps")
+> ### * remove_reps
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: remove_reps
+> ### Title: Remove the second replicate of each sample, when it exists
+> ### Aliases: remove_reps
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+>  data(otu_table)
+>  no_reps <- remove_reps(otu_table)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("rotate")
+> ### * rotate
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: rotate
+> ### Title: Rotate a matrix
+> ### Aliases: rotate
+> ### Keywords: water_column_plots
+> 
+> ### ** Examples
+> 
+> data(metadata)
+> temp <- make_temp_matrix("TBE.....07", metadata)
+> r_temp <- rotate(temp)
+> 
+> 
+> 
+> 
+> cleanEx()
+> nameEx("shannon")
+> ### * shannon
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: shannon
+> ### Title: Shannon's Biodiversity Index
+> ### Aliases: shannon
+> ### Keywords: biodiversity
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> richness <- apply(otu_table, 2, shannon)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("year_subset")
+> ### * year_subset
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: year_subset
+> ### Title: Subset samples by a specific year
+> ### Aliases: year_subset
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> 
+> seven <- year_subset("07", otu_table)
+> 
+> # Select two years at once
+> two_years <- year_subset("07|08", otu_table)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("zscore")
+> ### * zscore
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: zscore
+> ### Title: Z-score normalize relative abundance data
+> ### Aliases: zscore
+> ### Keywords: data_processing
+> 
+> ### ** Examples
+> 
+> data(otu_table)
+> 
+> # Create a small table for z-score normalization
+> example <- year_subset("05", otu_table)
+> example <- bog_subset("TBE", example)
+> 
+> # Remove OTUs that are not present in this subset
+> example <- example[which(rowSums(example) > 0), ]
+> 
+> z_otu_table <- zscore(example)
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  9.18 0.95 11.18 NA NA 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

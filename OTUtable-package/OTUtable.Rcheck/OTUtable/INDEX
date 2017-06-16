@@ -1,0 +1,29 @@
+OTUtable-package        OTU table analysis functions
+bog_subset              Subset OTU table by sampling site
+chao1                   Chao1 Richness
+clean_TaxAss_taxonomy   Clean Taxonomy File Output by TaxAss Workflow
+clean_mothur_taxonomy   Clean mothur-format Taxonomy File
+clean_shared            Reformat a shared file
+combine_otus            Combine OTUs based on identical taxonomic
+                        assignments
+extract_date            Extract sampling date from a vector of sample
+                        names
+filter_taxa             Filter Taxa Based on Abundance and Persistence
+grab_group              Subset OTU table by taxonomic assignment
+make_do_matrix          Make matrix of dissolved oxygen data
+make_temp_matrix        Make matrix of temperature data
+metadata                Lake metadata for OTU table
+obs_richness            Observed Richness
+otu_table               OTU table generated from 8 bog lakes over 4
+                        years
+pielou                  Pielou's Evenness
+plot_column             Plot DO or temperature data from a depth
+                        profile over time
+reduce_names            Shorten taxonomic assignment in table row names
+remove_reps             Remove the second replicate of each sample,
+                        when it exists
+rotate                  Rotate a matrix
+shannon                 Shannon's Biodiversity Index
+taxonomy                Taxonomic assignments of OTUs
+year_subset             Subset samples by a specific year
+zscore                  Z-score normalize relative abundance data
