@@ -1,0 +1,17 @@
+citHeader("To cite OTUtable in a publication, please use:")
+bibentry(bibtype = "Article",
+         title = "Bacterial community composition and dynamics spanning five years in freshwater bog lakes",
+         author = c(person("Alexandra M.", "Linz"),
+                    person("Benjamin C.", "Crary"),
+                    person("Ashley", "Shade"),
+                    person("Sarah", "Owens"),
+                    person("Jack A.", "Gilbert"),
+		    person("Rob", "Knight"),
+		    person("Katherine D.", "McMahon")),
+         year = "2017",
+         journal = "mSphere",
+	 number = "2(3)",
+	 doi = "10.1128/mSphere.00169-17",
+         url = "http://msphere.asm.org/content/2/3/e00169-17",
+	 textVersion = "Alexandra M. Linz, Benjamin C. Crary, Ashley Shade, Sarah Owens, Jack A. Gilbert, Rob Knight, Katherine D. McMahon. Bacterial Community Composition and Dynamics Spanning Five Years in Freshwater Bog Lakes. mSphere Jun 2017, 2 (3) e00169-17; DOI: 10.1128/mSphere.00169-17"
+)

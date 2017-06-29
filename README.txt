@@ -12,22 +12,25 @@ https://github.com/McMahonLab
 
 Copyright(c) 2017, Katherine D. McMahon
 All rights reserved
-Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish your analysis, please cite:
-Linz A.M., Crary B.C., Shade A., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Bacterial community composition and dynamics spanning five years in freshwater bog lakes." Manuscript submitted and available on bioRxiv at http://biorxiv.org/content/early/2017/04/12/127035. 
+Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish analyses using our data or code, cite:
+Alexandra M. Linz, Benjamin C. Crary, Ashley Shade, Sarah Owens, Jack A. Gilbert, Rob Knight, Katherine D. McMahon.
+Bacterial Community Composition and Dynamics Spanning Five Years in Freshwater Bog Lakes. mSphere Jun 2017, 2 (3)
+e00169-17; DOI: 10.1128/mSphere.00169-17
 
-Last updated March 10, 2017
+Last updated June 29, 2017
 
 HOW TO USE THIS REPO
 --------------------
 If you are looking to access the NTL-MO dataset:
 	- Download the files in Data/16S_data
-	- Download raw sequencing data at http://metagenomics.anl.gov/?page=MetagenomeProject&project=127
+	- Download the sequencing data at http://qiita.microbio.me
 	- Install the R package "OTUtable" (included in this repo and on CRAN)
 
 If you are looking to access the code used in our manuscript:
 	- Visit the Scripts+Workflows directory - Sequence_processing includes R scripts written as part of the mothur workflow, and Analysis_scripts contains analyses performed on the output of the mothur workflow
-	- The final code used for analyses and figures in the manuscript is located at /Scripts+Workflows/Analysis_scripts/manuscriptv0_plots_2017-03-08.R
+	- The final code used for analyses and figures in the manuscript is located at /Scripts+Workflows/Analysis_scripts/manuscript_plots_accepted_2017-06-07.R
 	- Functions used in these scripts are in the R package OTUtable. Source codes is included in OTUtable-package/OTUtable/R
+	- The classification workflow used is available at https://github.com/McMahonLab/TaxAss (manuscript in prep)
 
 If you have any questions or concerns:
 	- Contact us!
@@ -36,8 +39,9 @@ Repo Structure
 --------------
 North_Temperate_Lakes-Microbial_Observatory
 |- README.txt							#This file
+|- annual_trends_in_otus.R					#Code accompanying Figure S7
 |- Additional_analyses
-||- Networks						#LSA output of networks split by lake and layer. minReads = 100, minLSA = 0.75, no lag allowed.
+||- Networks							#LSA output of networks split by lake and layer. minReads = 100, minLSA = 0.75, no lag allowed.
 |- Data
 ||- 16S_data
 |||- bog_repseqs_07Jul15.fasta					#Representative sequences for each OTU
@@ -84,4 +88,17 @@ North_Temperate_Lakes-Microbial_Observatory
 |||- remove_seqs_from_shared.R					#Removes sequences from .shared file that were removed in the .names file (from chimera and chloroplast removal steps)
 |||- shared_to_count.R						#Converts .shared to .count file
 ||- Analysis_scripts						#R code used for figures and indicator analysis
-|||- manuscriptv0_plots_2017-03-08.R				#Script for analyses and figures in the final version of the manuscript
+|||- manuscript_plots_accepted_2017-06-07.R			#Script for analyses and figures in the final version of the manuscript
+|||- manuscript_plots_submitted_2017-05-15.R			#Script for analyses and figures in the submitted version of the manuscript
+|||- distance_metric_tests_4-9-16.R				#Script for comparing beta diversity metrics
+|||- indicators_by_time.R					#Performs indicator analysis by month instead of site
+|||- LSA_calcuation.R						#Script for performing LSA (network analysis)
+|||- mixing_regime_indicator_table.R				#Produces the supplemental document of the results of indicator analysis using mixing regime as the pre-defined group
+|- Manuscript_materials						
+||- bogtags_accepted_bioRxiv_maintext.pdf			#PDF of accepted manuscript for submission to bioRxiv
+||- bogtags_accepted_bioRxiv_supplemental.pdf			#PDF of supplemental figures accompanying accepted manuscript for submission to bioRxiv
+||- Linz_supplemental_2017-04-12.pdf				#Submitted supplemental materials (pre-review)
+||- Linz_manuscript_2017-04-12.docx				#Submitted manuscript (pre-review)
+||- Linz_response_to_reviewers_2017-06-02.docx			#Response to reviewer comments
+||- Linz_markedup_manuscript_2017-06-02.docx			#Tracked changes after review
+||- response2reviewers.R					#Code for figures included/referenced in the response to reviewers
