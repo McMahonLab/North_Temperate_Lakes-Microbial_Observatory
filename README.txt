@@ -13,9 +13,11 @@ https://github.com/McMahonLab
 Copyright(c) 2017, Katherine D. McMahon
 All rights reserved
 Feel free to download and use the data and code in this repo for non-commerical purposes. If you publish analyses using our data or code, cite:
-Linz A.M., Crary B.C., Shade A., Owens S., Gilbert J.A., Knight R., McMahon K.D. "Bacterial community composition and dynamics spanning five years in freshwater bog lakes." Manuscript accepted to mSphere. Preprint available on bioRxiv at http://biorxiv.org/content/early/2017/04/12/127035. 
+Alexandra M. Linz, Benjamin C. Crary, Ashley Shade, Sarah Owens, Jack A. Gilbert, Rob Knight, Katherine D. McMahon.
+Bacterial Community Composition and Dynamics Spanning Five Years in Freshwater Bog Lakes. mSphere Jun 2017, 2 (3)
+e00169-17; DOI: 10.1128/mSphere.00169-17
 
-Last updated June 15, 2017
+Last updated June 29, 2017
 
 HOW TO USE THIS REPO
 --------------------
